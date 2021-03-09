@@ -1,0 +1,11 @@
+.list-materi, .detail-materi, #absen-area{
+    border: 1px solid grey;
+    border-radius: 8px;
+    margin: 20px;
+    padding: 20px;
+}
+
+#absen-area{
+    margin-left: 10px;
+    margin-right: 50px;
+}

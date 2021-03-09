@@ -1,0 +1,32 @@
+.member-img{
+    background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQO21KD34SnaDlniOfV9RPIa2ncbStjcE6-4A&usqp=CAU');
+    height:225px; 
+    width:225px;
+}
+
+.post-img{
+    background-image: url('https://cdn3.iconfinder.com/data/icons/ballicons-reloaded-free/512/icon-70-512.png');
+    background-size: cover;
+    height:300px; 
+    width:300px;
+}
+
+button.btn-card-content-2-1{
+    width: 140%;
+}
+
+.card{
+    min-width: 270px;
+}
+
+.card-img-top{
+    object-fit: cover;
+    height: 200px;
+}
+
+@media (max-width: 1200px) {
+
+    button.btn-card-content-2-1{
+        width: 100%;
+    }
+}

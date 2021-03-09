@@ -1,0 +1,11 @@
+.card{
+    min-width: 270px;
+}
+
+.card-header{
+    padding: 0;
+}
+.card-img-top{
+    object-fit: cover;
+    height: 200px;
+}
