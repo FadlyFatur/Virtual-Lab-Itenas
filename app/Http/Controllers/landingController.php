@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\jurusan;
 use App\lab;
 use App\praktikum;
+use App\enroll;
+use Auth;
 
 class landingController extends Controller
 {
@@ -42,12 +44,13 @@ class landingController extends Controller
     {
         $lab = lab::where('id',$id)->first();
         $data = praktikum::where('laboratorium',$id)->get();
-
-        return view('landing.praktikum', compact('lab', 'data'));
+        $enroll = enroll::where('user_id', Auth::user()->id)->get();
+        return view('landing.praktikum', compact('lab', 'data', 'enroll'));
     }
 
     public function indexRekrutmen()
     {
-        return view('landing.rekrut');
+        $jurusan = jurusan::all();
+        return view('landing.rekrut', compact('jurusan'));
     }
 }

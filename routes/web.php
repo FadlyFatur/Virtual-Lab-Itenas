@@ -38,10 +38,10 @@ Route::get('laboratorium/{slug}', 'landingController@indexlaboratorium')->name('
 
 
 Route::group(['prefix' => 'praktikum'], function () {
-    Route::get('/{id}', 'landingController@detailLab')->name('praktikum-list');
+    Route::get('/{id}', 'landingController@detailLab')->name('praktikum-list')->middleware('auth');
     Route::get('/{id}/{slug}', 'MateriController@indexMateri')->name('detail-materi');
     Route::get('/get-data-materi', 'MateriController@getMateri')->name('get-materi');
-    Route::post('/daftar', 'MateriController@daftarPrak')->name('daftar-Prak');
+    Route::get('/daftar/{id}/{slug}', 'MateriController@daftarPrak')->name('daftar-prak')->middleware('auth');
 });
 
 Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function (){

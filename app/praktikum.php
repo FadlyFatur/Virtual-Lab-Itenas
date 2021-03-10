@@ -19,4 +19,9 @@ class praktikum extends Model
     {
         return $this->hasMany('App\Materi', 'praktikum_id', 'id');
     }
+
+    public function enroll()
+    {
+        return $this->hasMany('App\enroll', 'praktikum_id', 'id');
+    }
 }

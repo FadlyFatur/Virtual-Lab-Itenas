@@ -21,7 +21,7 @@
 
     <div class="container">
 
-      <div class="card card-warning collapsed-card">
+      {{-- <div class="card card-warning collapsed-card">
         <div class="card-header">
           <h5 class="card-title">Input User</h5>
 
@@ -30,9 +30,9 @@
               <i class="fas fa-plus"></i>
             </button>
           </div>
-      </div>
+      </div> --}}
         <!-- /.card-header -->
-        <div class="card-body">
+        {{-- <div class="card-body">
           <form role="form">
             <div class="row">
               <div class="col-sm-6">
@@ -175,9 +175,9 @@
               </div>
             </div>
           </form>
-        </div>
+        </div> --}}
         <!-- /.card-body -->
-      </div>
+      {{-- </div> --}}
 
       <div class="card">
         <div class="card-header">

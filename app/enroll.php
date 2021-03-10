@@ -6,5 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class enroll extends Model
 {
-    //
+    protected $fillable = [
+        'status', 'user_id', 'praktikum_id', 'thumbnail','thumbnail_path'
+    ];
+
+    public function praktikum()
+    {
+        return $this->belongsTo('App\praktikum', 'praktikum_id');
+    }
 }

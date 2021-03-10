@@ -7,13 +7,10 @@
             <div class="col-md-4">
                 <label for="jurusan">Pilih Jurusan</label>
                 <select id="jurusan" class="custom-select">
-                    <option selected>Open this select menu</option>
-                    <option value="1">Umum</option>
-                    <option value="2">Informatika</option>
-                    <option value="3">Teknik Mesin</option>
-                    <option value="4">Teknik Kimia</option>
-                    <option value="5">Arsitektur</option>
-                    <option value="6">DKV</option>
+                    <option selected>Buka dan pilih jurusan</option>
+                    @foreach ($jurusan as $j)
+                        <option value="{{$j->id}}">{{$j->nama}}</option>
+                    @endforeach
                   </select>
                 <hr>
 

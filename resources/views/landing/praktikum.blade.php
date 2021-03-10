@@ -45,8 +45,11 @@
                           <p class="card-text"><small class="text-muted">Tanggal Dibuat : {{$d->created_at->format('d F Y')}}</small></p>
                         </div>
                         <div class="card-footer d-flex justify-content-center">
-                          {{-- <a href=""><button class="btn btn-success">Daftar</button></a> --}}
-                          <a href="{{route('detail-materi',['id' => $d->id, 'slug' => $d->slug])}}"><button class="btn btn-info">Masuk</button></a>
+                          @if ($enroll->where('praktikum_id', $d->id)->count() > 0)
+                            <a href="{{route('detail-materi',['id' => $d->id, 'slug' => $d->slug])}}"><button class="btn btn-info" style="color: #fff;">Masuk</button></a>
+                          @else
+                            <a href="{{route('daftar-prak',['id' => $d->id, 'slug' => $d->slug])}}"><button class="btn btn-success">Daftar</button></a>
+                          @endif
                         </div>
                       </div>
                     </div>
@@ -56,12 +59,9 @@
         </div>
 
     </div>
-
-
-
 @endsection
 
 @section('js')
     @parent
-   
+    $('')
 @endsection
