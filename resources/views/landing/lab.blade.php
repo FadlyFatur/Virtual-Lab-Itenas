@@ -16,7 +16,7 @@
                                     {{-- <p class="card-text text-left">{{$l->deskripsi}}</p> --}}
                                 </div>
                                 <div class="card-footer">
-                                    <a href="{{route('praktikum-list',$l->id)}}" class="btn btn-primary">Akses Materi  <i class="fa fa-angle-double-right"></i></a>
+                                    <a href="{{route('praktikum-list',$l->slug)}}" class="btn btn-primary">Akses Materi  <i class="fa fa-angle-double-right"></i></a>
                                 </div>
                             </div>
                         </div>

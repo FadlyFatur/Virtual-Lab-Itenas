@@ -40,17 +40,10 @@ class landingController extends Controller
         return view('landing.berita');
     }
 
-    public function detailLab($id)
-    {
-        $lab = lab::where('id',$id)->first();
-        $data = praktikum::where('laboratorium',$id)->get();
-        $enroll = enroll::where('user_id', Auth::user()->id)->get();
-        return view('landing.praktikum', compact('lab', 'data', 'enroll'));
-    }
-
     public function indexRekrutmen()
     {
         $jurusan = jurusan::all();
+        
         return view('landing.rekrut', compact('jurusan'));
     }
 }

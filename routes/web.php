@@ -29,20 +29,19 @@ Route::prefix('berita')->group(function () {
     Route::get('/detail-berita', 'landingController@indexBerita')->name('berita');
 });
 
-
 Route::group(['middleware' => 'auth', 'verified'], function () {
     Route::get('/rekrutmen', 'landingController@indexRekrutmen')->name('rekrutmen');
 });
 
 Route::get('laboratorium/{slug}', 'landingController@indexlaboratorium')->name('lab');
 
-
 Route::group(['prefix' => 'praktikum'], function () {
-    Route::get('/{id}', 'landingController@detailLab')->name('praktikum-list')->middleware('auth');
-    Route::get('/{id}/{slug}', 'MateriController@indexMateri')->name('detail-materi');
-    Route::get('/get-data-materi', 'MateriController@getMateri')->name('get-materi');
-    Route::get('/daftar/{id}/{slug}', 'MateriController@daftarPrak')->name('daftar-prak')->middleware('auth');
+    Route::get('/{slug}', 'materiController@listPraktikum')->name('praktikum-list')->middleware('auth');
+    Route::get('/kelas/{id}', 'MateriController@indexMateri')->name('detail-materi');
+    Route::get('/daftar/{id}', 'MateriController@daftarPrak')->name('daftar-prak')->middleware('auth');
 });
+
+route::get('get-materi/{id}','MateriController@getMateri')->name('getMateri');
 
 Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function (){
     Route::get('/', 'AdminController@index')->name('dashboard');
