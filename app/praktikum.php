@@ -24,4 +24,9 @@ class praktikum extends Model
     {
         return $this->hasMany('App\enroll', 'praktikum_id', 'id');
     }
+
+    public function getKelas()
+    {
+        return $this->belongsTo('App\kelas_praktikum', 'kelas');
+    }
 }

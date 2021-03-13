@@ -11,6 +11,7 @@ use App\jurusan;
 use App\lab;
 use App\Materi;
 use App\praktikum;
+use App\kelas_praktikum as kelas;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
@@ -184,40 +185,60 @@ class AdminController extends Controller
 
     public function postMateri(Request $request, $id)
     {
-        // dd($request->all(), $id);
-        if ($request->has('thumb')){
-            Validator::make($request->all(), [
-                'nama_materi' => 'required | string | max:100',
-                'deskripsi' => 'string | max:1000',
-                'materi' => 'required | string | max:3000',
-                'link_materi' => 'string | max:200',
-                'thumb' => 'required | mimes:jpg,png,jpeg|max:7000', // max 7MB
-                'file' => 'required | mimes:rar,zip|max:10000', // max 7MB
-            ]);
+        $validator = Validator::make($request->all(), [
+            'nama_materi' => 'required | string | max:100',
+            'deskripsi' => 'string | max:1000',
+        ]);
 
-            $name = "".Carbon::now()->format('YmdHs')."_".$request->file('thumb')->getClientOriginalName();
-            $path_img = Storage::putFileAs('images/materi', $request->file('thumb'), $name);
-
-            $name_file = "".Carbon::now()->format('YmdHs')."_".$request->file('file')->getClientOriginalName();
-            $path_file = Storage::putFileAs('images/file', $request->file('file'), $name);
-            materi::create([
-                'nama' => $request->get('nama_materi'),
-                'slug' => Str::slug($request->get('nama_materi'),'-'),
-                'deskripsi' => $request->get('deskripsi'),
-                'materi' => $request->get('materi'),
-                'img_path' => $path_img,
-                'file' => $path_file,
-                'link_materi' => $request->get('link_materi'),
-                'praktikum_id' => $id
-            ]);
-
+        if ($validator->fails()) { 
             return redirect()
-                ->back()
-                ->withSuccess("Data berhasil di submit");
+            ->back()
+            ->withError("Data gagal di submit, lengkapi form input data");
         }
+
+        materi::create([
+            'nama' => $request->get('nama_materi'),
+            'slug' => Str::slug($request->get('nama_materi'),'-'),
+            'deskripsi' => $request->get('deskripsi'),
+            'praktikum_id' => $id
+        ]);
+
         return redirect()
-                ->back()
-                ->withError("Data gagal di submit");
+            ->back()
+            ->withSuccess("Data berhasil di submit");
+    }
+
+    public function postDataMateri(Request $request)
+    {
+        dd($request->all());
+    }
+
+    public function postKelas(Request $request)
+    {
+        // dd($request->all());
+        $validator = Validator::make($request->all(), [
+            'nama_kelas' => 'required | string | max:100',
+            'wm' => 'required',
+            'ws' => 'required',
+            'hari' => 'required | string', // max 7MB
+        ]);
+        if ($validator->fails()) { 
+            return redirect()
+            ->back()
+            ->withError("Data gagal di submit, lengkapi form input data");
+        }
+
+        kelas::create([
+            'nama' => $request->get('nama_kelas'),
+            'hari' => $request->get('hari'),
+            'deskripsi' => $request->get('deskripsi'),
+            'jadwal_mulai' => $request->get('wm'),
+            'jadwal_akhir' => $request->get('ws'),
+        ]);
+
+        return redirect()
+            ->back()
+            ->withSuccess("Data berhasil di submit");
     }
 
     public function indexPrak($slug)

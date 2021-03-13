@@ -9,4 +9,9 @@ class kelas_praktikum extends Model
     protected $fillable = [
         'nama', 'deskripsi', 'hari', 'jadwal_mulai', 'jadwal_akhir'
     ];
+
+    public function praktikum()
+    {
+        return $this->hasMany('App\praktikum', 'kelas', 'id');
+    }
 }

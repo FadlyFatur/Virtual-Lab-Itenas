@@ -6,59 +6,110 @@
 @endsection
 
 @section('content')
+<style>
+    .btn-file {
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-file input[type=file] {
+        position: absolute;
+        top: 0;
+        right: 0;
+        min-width: 100%;
+        min-height: 100%;
+        font-size: 100px;
+        text-align: right;
+        filter: alpha(opacity=0);
+        opacity: 0;
+        outline: none;
+        background: white;
+        cursor: inherit;
+        display: block;
+    }
+  
+    #img-upload{
+      height: 100px;
+      width: 100px;
+    }
+  </style>
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Tambah Materi</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form action="{{route('post-materi',$prak->id)}}" method="POST">
+            @csrf
+              <div class="row">
+                <div class="col">
+                  <div class="form-group">
+                    <label>Nama Materi</label>
+                    <input type="text" class="form-control" name="nama_materi" placeholder="Nama Materi" required autofocus> 
+                  </div>
+                  <div class="form-group">
+                    <label>Deskripsi/Rangkuman Singkat Materi</label>
+                    <textarea class="form-control" rows="5" name="deskripsi" placeholder="Masukan Deskripsi/Penjelsan Singkat" required autofocus></textarea>
+                  </div>
+                </div>
+              </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Tambah</button>
+        </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
     <div class="container-fluid margin-top">
+        @if(session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+      @endif
+
+      @if(session('errors'))
+          <div class="alert alert-danger">
+              {{ session('errors') }}
+          </div>
+      @endif
         <div class="row">
-            <div class="col-md-3 list-materi">
+            <div class="col-md-3">
                 <ul class="list-group">
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal"><i class="fa fa-plus"></i> Tambah Materi</button>
+                    <br>
                     <li class="list-group-item">
-                        <a href="#" id="absen">Absen</a>
+                        <a href="#" id="absen"><i class="fa fa-check" aria-hidden="true"></i> Absen</a>
                     </li>
                     @foreach ($data as $d)
                         <li class="list-group-item">
-                            <button class="btn btn-light" id="{{$d->id}}" onclick="materiClick({{$d->id}})">{{$d->nama}}</button>
+                            <button onclick="materiClick( {{$d->id}} )" class="btn btn-light" id="{{$d->id}}"><i class="fa fa-chevron-circle-right" aria-hidden="true"></i> {{$d->nama}}</button>
                         </li>
                     @endforeach
-                </ul>
+                </ul><br><br>
             </div>
 
-            <div class="col-md-8 detail-materi">
-                <br>
-                <div id="box-pilih" class="box-pilih d-flex justify-content-center">
-                    <h1 class="text-center pilih-materi">Silahkan pilih materi...</h1>
-                </div><br>
-
-                <div id="materi-area">
-                    <h1 class="text-center" id="judul-materi">Judul Materi 1</h1><br>
-                    <div class=" container multimedia-area d-flex justify-content-center">
-                        <img id="image-materi" class="img-fluid" src="https://www.gurupendidikan.co.id/wp-content/uploads/2019/07/Jaringan-Komputer.jpg" alt="">
-                    </div><br><hr>
-                    <h2 id="judul-deskripsi">Deskrispi materi 1</h3>
-                    <p id="deskripsi">Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloribus eius aut sint esse provident voluptates quaerat, quod blanditiis aspernatur excepturi culpa sed, minus, ad corrupti itaque repellendus error eligendi in!</p>
-                    <hr><br>
-                    <div class="file-area">
-                        <h2>Materi Download</h2>
-                        <ul class="list-group">
-                            <li class="list-group-item">
-                                <a id="file-materi" href="#">File Materi 1 <i class="fa fa-download"></i></a>
-                            </li>
-                            <li class="list-group-item">
-                                <a id="link-materi" href="#">Link Materi 1 <i class="fa fa-globe"></i></a>
-                            </li>
-                        </ul>
-                    </div><hr><br>
-                    <div class="upload-area">
-                        <h2>Upload Tugas</h2>
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
-                            Kirim
-                        </button>
-                    </div>
+            <div class="col-md-8 side-line">
+                <div class="d-flex justify-content-center mt-5 mb-2" id="input_area">
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#input_materi">Input Materi</button><hr>
                 </div>
-
-                
+                <div id="materi-area">
+                    <div class="text-center">
+                        <h1 class="text-center" id="judul-materi">{{$prak->nama}}</h1><br>
+                        <p>{{$prak->deskripsi}}</p>
+                    </div>
+                    
+                </div>
             </div>
         </div>
         <br>
-        <div id="scrollhere"></div>
+        {{-- <div id="scrollhere"></div>
         <div class="row">
             <div>
                 <h2>Absen Mahasiswa</h2><br>
@@ -100,24 +151,70 @@
                     </table>
                 </div>
             </div>
-        </div>
+        </div> --}}
     </div>
 
-    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal fade" id="input_materi" tabindex="-1" role="dialog" aria-labelledby="input_materiTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+              <h5 class="modal-title" id="input_materiTitle">Input Materi</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
             <div class="modal-body">
-              ...
+                <form role="form" method="POST" action="{{route('post-data-materi')}}" enctype="multipart/form-data">
+                    @csrf
+                    <div class="row">
+                      <div class="col-sm-6">
+                        <div class="form-group">
+                          <label>Nama Materi</label>
+                          <input type="text" class="form-control" name="nama_materi" placeholder="Materi" required autofocus> 
+                        </div>
+                        <div class="form-group">
+                          <label>Deskripsi/Rangkuman Singkat</label>
+                          <textarea class="form-control" rows="3" name="deskripsi" placeholder="Masukan Deskripsi/Penjelsan Singkat" required autofocus></textarea>
+                        </div>
+                      </div>
+                      <div class="col-sm-6">
+                        <div class="form-group">
+                          <label>Materi</label>
+                          <textarea class="form-control" rows="7" name="materi" placeholder="Masukan materi Jurusan" required autofocus></textarea>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-6">
+                        <div class="form-group">
+                          <label>Thumbnail</label>
+                          <div class="input-group">
+                              <span class="input-group-btn">
+                                  <span class="btn btn-default btn-file">
+                                      Browse… <input type="file" name="thumb" id="imgInp">
+                                  </span>
+                              </span>
+                              <input type="text" class="form-control" readonly>
+                          </div>
+                          <img id='img-upload'/>
+                        </div>
+                      </div>
+                      <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="exampleFormControlFile1">File/berkas praktikum</label>
+                            <input type="file" class="form-control-file" id="exampleFormControlFile1">
+                        </div>
+                        <div class="form-group">
+                          <label>Link Materi (*jika ada)</label>
+                          <input type="text" class="form-control" name="link_materi" placeholder="Masukan link" required autofocus> 
+                        </div>
+                      </div>
+                    </div>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-primary">Save changes</button>
+              <button type="button" class="btn btn-primary">Simpan</button>
+            </form>
             </div>
           </div>
         </div>
@@ -130,33 +227,71 @@
 
     <script>
     $(document).ready(function () {
-
         $("#absen").on('click', function() {
             $('html,body').animate({
                 scrollTop: $("#scrollhere").offset().top},
                 'slow');
-            });    
+        });    
+
+        $(document).on('change', '.btn-file :file', function() {
+            var input = $(this),
+            label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+            input.trigger('fileselect', [label]);
         });
 
-        function materiClick(id) {
-            $.ajax({
-                url: '/get-materi/'+id,
-                type: 'get',
-                dataType: 'json',
-                success: function (resp) {
-                    console.log(resp['nama']);
-                    $("#box-pilih").css("display", "none");
-                    $("#materi-area").css("display", "block");
-                    $("#judul-materi").text(resp['nama']);
-                    $("#judul-deskripsi").text('Deskripsi '+resp['nama']);
-                    $("#image-materi").attr("src",(resp['thumb']));
-                    $("#file-materi").attr("href",(resp['file']));
-                    $("#link-materi").attr("href",(resp['link']));
-                },
-                error: function (resp) {
-                    console.log('error');
+        $('.btn-file :file').on('fileselect', function(event, label) {
+            
+            var input = $(this).parents('.input-group').find(':text'),
+                log = label;
+            
+            if( input.length ) {
+                input.val(log);
+            } else {
+                if( log ) alert(log);
+            }
+            
+        });
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                
+                reader.onload = function (e) {
+                    $('#img-upload').attr('src', e.target.result);
                 }
-            })
+                
+                reader.readAsDataURL(input.files[0]);
+            }
         }
-        </script>
+
+        $("#imgInp").change(function(){
+            readURL(this);
+        }); 	
+    });
+
+    
+    function materiClick(id) {
+        $.ajax({
+            url: '/get-materi/'+id,
+            type: 'get',
+            dataType: 'json',
+            success: function (resp) {
+                // console.log('get', resp);
+                $('#materi-area').empty();
+                if(resp.length == 0){
+                    console.log('tidak');
+                    $('#materi-area').append(up_btn);
+                    alert('materi belum dimasukan');
+                    return;
+                }else{
+                    console.log('ada');
+                }
+
+            },
+            error: function (resp) {
+                alert('error! materi tidak bisa dibuka')
+                console.log('error');
+            }
+        });
+    }
+    </script>
 @endsection

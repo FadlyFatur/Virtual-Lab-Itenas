@@ -7,6 +7,7 @@ use App\Materi;
 use App\enroll;
 use App\lab;
 use App\praktikum;
+use App\file_materi;
 Use Alert;
 use Auth;
 
@@ -15,7 +16,6 @@ class MateriController extends Controller
     public function listPraktikum($slug)
     {
         $lab = lab::where('slug',$slug)->first();
-        // dd($slug);
 
         $data = praktikum::where('laboratorium',$lab->id)->get();
         $enroll = enroll::where('user_id', Auth::user()->id)->get();
@@ -24,8 +24,9 @@ class MateriController extends Controller
 
     public function indexMateri($id)
     {
+        $prak = praktikum::where('id',$id)->first();
         $data = Materi::where('praktikum_id',$id)->get();
-        return view('landing.detail-materi',compact('data'));
+        return view('landing.detail-materi',compact('data','prak'));
     }
 
     public function daftarPrak($id)
@@ -40,17 +41,7 @@ class MateriController extends Controller
     }
 
     public function getMateri($id){
-        $data = materi::where('id',$id)->first();
-        $materi = [];
-        $materi =[
-            'nama' => $data->nama,
-            'deskripsi' => $data->deskripsi,
-            'materi' => $data->materi,
-            'thumb' => asset($data->img_path),
-            'file' => asset($data->file),
-            'link' => $data->link_materi,
-            'judul_file' => $data->judul_file
-        ];
-        return response()->json($materi);
+        $data = file_materi::where('id',$id)->get();
+        return response()->json($data);
     }
 }

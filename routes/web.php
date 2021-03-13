@@ -55,17 +55,19 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function 
         Route::get('/', 'AdminController@indexLab')->name('laboratorium');
         Route::get('json', 'AdminController@getLab')->name('get-Lab');
         Route::post('post-lab', 'AdminController@postLab')->name('post-Lab');
+    });
 
-        Route::prefix('praktikum')->group(function (){
-            Route::get('{slug}', 'AdminController@indexPrak')->name('praktikum');
-            Route::get('get-data/{id}', 'AdminController@getPrak')->name('get-praktikum');
-            Route::post('post-praktikum/{id}', 'AdminController@postPrak')->name('post-praktikum');
+    Route::prefix('praktikum')->group(function (){
+        Route::get('{slug}', 'AdminController@indexPrak')->name('praktikum');
+        Route::get('get-data/{id}', 'AdminController@getPrak')->name('get-praktikum');
+        Route::post('post-praktikum/{id}', 'AdminController@postPrak')->name('post-praktikum');
 
-            Route::prefix('materi')->group(function (){
-                Route::get('{id}', 'AdminController@indexMateri')->name('materi');
-                Route::get('get-data/{id}', 'AdminController@getMateri')->name('get-materi');
-                Route::post('post-materi/{id}', 'AdminController@postMateri')->name('post-materi');
-            });
+        Route::prefix('materi')->group(function (){
+            Route::get('{id}', 'AdminController@indexMateri')->name('materi');
+            Route::get('get-data/{id}', 'AdminController@getMateri')->name('get-materi');
+            Route::post('post-materi/{id}', 'AdminController@postMateri')->name('post-materi');
+            Route::post('post-data-materi', 'AdminController@postDataMateri')->name('post-data-materi');
+            Route::post('post-kelas', 'AdminController@postKelas')->name('post-kelas');
         });
     });
 

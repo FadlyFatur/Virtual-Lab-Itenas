@@ -14,4 +14,10 @@ class Materi extends Model
     {
         return $this->belongsTo('App\praktikum', 'praktikum_id');
     }
+
+    public function getFile()
+    {
+        return $this->hasMany('App\file_materi', 'materi_id', 'id');
+    }
+
 }

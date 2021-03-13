@@ -3,6 +3,8 @@
 @section('style')
     @parent
     <link href="{{ asset('css/detail-lab.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/css/tempusdominus-bootstrap-4.min.css" />
+
 @endsection
 
 @section('content')
@@ -10,27 +12,27 @@
   .btn-file {
     position: relative;
     overflow: hidden;
-}
-.btn-file input[type=file] {
-    position: absolute;
-    top: 0;
-    right: 0;
-    min-width: 100%;
-    min-height: 100%;
-    font-size: 100px;
-    text-align: right;
-    filter: alpha(opacity=0);
-    opacity: 0;
-    outline: none;
-    background: white;
-    cursor: inherit;
-    display: block;
-}
+  }
+  .btn-file input[type=file] {
+      position: absolute;
+      top: 0;
+      right: 0;
+      min-width: 100%;
+      min-height: 100%;
+      font-size: 100px;
+      text-align: right;
+      filter: alpha(opacity=0);
+      opacity: 0;
+      outline: none;
+      background: white;
+      cursor: inherit;
+      display: block;
+  }
 
-#img-upload{
-  height: 100px;
-  width: 100px;
-}
+  #img-upload{
+    height: 100px;
+    width: 100px;
+  }
 </style>
     <!-- Modal -->
     <div class="modal fade" id="tambah" tabindex="-1" role="dialog" aria-labelledby="tambahLabel" aria-hidden="true">
@@ -48,7 +50,7 @@
               <div class="row">
                 <div class="col-sm-6">
                   <div class="form-group">
-                    <label>Nama Materi</label>
+                    <label>Nama Praktikum</label>
                     <input type="text" class="form-control" name="nama_praktikum" placeholder="Nama Praktikum" required autofocus> 
                   </div>
                   <div class="form-group">
@@ -103,28 +105,49 @@
             </button>
           </div>
           <div class="modal-body">
-            <form role="form" method="POST" action="{{route('post-praktikum', $lab->id)}}" enctype="multipart/form-data">
+            <form role="form" method="POST" action="{{route('post-kelas')}}" enctype="multipart/form-data">
               @csrf
               <div class="row">
                 <div class="col-sm-6">
                   <div class="form-group">
                     <label>Nama Kelas</label>
-                    <input type="text" class="form-control" name="nama_praktikum" placeholder="Nama Praktikum" required autofocus> 
+                    <input type="text" class="form-control" name="nama_kelas" placeholder="Nama/Kode Kelas" required autofocus> 
                   </div>
                   <div class="form-group">
                     <label>Deskripsi Kelas</label>
-                    <textarea class="form-control" rows="5" name="deskripsi" placeholder="Masukan Deskripsi/Penjelsan Singkat" required autofocus></textarea>
+                    <textarea class="form-control" rows="5" name="deskripsi" placeholder="Masukan Deskripsi/Penjelsan Singkat" autofocus></textarea>
                   </div>
                 </div>
                 <div class="col-sm-6">
                   <div class="form-group">
-                   
+                    <label>Waktu Mulai</label>
+                    <div class="input-group date" id="datetimepicker3" data-target-input="nearest">
+                      <input type="text" class="form-control datetimepicker-input" data-target="#datetimepicker3" name="wm" required/>
+                      <div class="input-group-append" data-target="#datetimepicker3" data-toggle="datetimepicker">
+                          <div class="input-group-text"><i class="fa fa-clock-o"></i></div>
+                      </div>
+                    </div>
                   </div>
                   <div class="form-group">
-                   
+                    <label>Waktu Selesai</label>
+                    <div class="input-group date" id="datetimepicker4" data-target-input="nearest">
+                      <input type="text" class="form-control datetimepicker-input" data-target="#datetimepicker4" name="ws" required/>
+                      <div class="input-group-append" data-target="#datetimepicker4" data-toggle="datetimepicker">
+                          <div class="input-group-text"><i class="fa fa-clock-o"></i></div>
+                      </div>
+                    </div>
                   </div>
                   <div class="form-group">
-                   
+                    <label>Hari</label>
+                    <select name="hari" class="custom-select form-control" required>
+                      <option value= "" selected>Pilih salah satu</option>
+                        <option value="Senin">Senin</option>
+                        <option value="Selasa">Selasa</option>
+                        <option value="Rabu">Rabu</option>
+                        <option value="Kamis">Kamis</option>
+                        <option value="Jumat">Jumat</option>
+                        <option value="Sabtu">Sabtu</option>
+                    </select>
                   </div>
                 </div>
               </div>
@@ -137,7 +160,19 @@
         </div>
       </div>
     </div>
+
     <div class="container margin-top nama-lab">
+      @if(session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+      @endif
+
+      @if(session('errors'))
+          <div class="alert alert-danger">
+              {{ session('errors') }}
+          </div>
+      @endif
         <div class="text-center mx-auto">
             <h1>Laboratorium {{$lab->nama}}</h1>
         </div>
@@ -170,8 +205,8 @@
                         <div class="jadwal-materi text-center">
                             <h2 style="color:#230b50;">Jadwal</h2>
                             <hr>
-                            <h3>kelas</h3>
-                            <h5>Jam</h5><br>
+                            <h5>{{$d->getKelas->nama}}</h5>
+                            <p>{{Carbon\Carbon::parse($d->getKelas->jadwal_mulai)->format('H:i')}} - {{Carbon\Carbon::parse($d->getKelas->jadwal_akhir)->format('H:i')}}</p><br>
                             <p>Koor Lab</p><hr>
                             <p>Semester {{$d->Semester}} <br> {{$d->tahun_ajaran}}</p>
                         </div>
@@ -201,12 +236,14 @@
 
 @section('js')
     @parent
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/js/tempusdominus-bootstrap-4.min.js"></script>
     <script>
       $(document).ready( function() {
-          $(document).on('change', '.btn-file :file', function() {
-        var input = $(this),
-          label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
-        input.trigger('fileselect', [label]);
+        $(document).on('change', '.btn-file :file', function() {
+          var input = $(this),
+            label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+          input.trigger('fileselect', [label]);
         });
 
         $('.btn-file :file').on('fileselect', function(event, label) {
@@ -235,7 +272,14 @@
 
         $("#imgInp").change(function(){
             readURL(this);
-        }); 	
+        }); 
+        
+        $('#datetimepicker3').datetimepicker({
+          format: 'H:mm',
+        });
+        $('#datetimepicker4').datetimepicker({
+          format: 'H:mm'
+        });
       });
     </script> 
 @endsection
