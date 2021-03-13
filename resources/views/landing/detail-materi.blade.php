@@ -144,7 +144,6 @@
                 type: 'get',
                 dataType: 'json',
                 success: function (resp) {
-                    // console.log(resp['data']);
                     console.log(resp['nama']);
                     $("#box-pilih").css("display", "none");
                     $("#materi-area").css("display", "block");

@@ -7,6 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class mahasiswa extends Model
 {
     protected $fillable = [
-        'nama', 'nrp'
+        'nama', 'nomer_unik'
     ];
 }

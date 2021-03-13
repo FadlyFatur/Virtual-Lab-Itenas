@@ -19,8 +19,8 @@ class CreateJurusansTable extends Migration
             $table->string('nama');
             $table->string('slug');
             $table->text('deskripsi')->nullable();
-            $table->string('thumbnail');
-            $table->string('thumbnail_path');
+            $table->string('thumbnail')->nullable();
+            $table->string('thumbnail_path')->nullable();
             $table->timestamps();
         });
     }

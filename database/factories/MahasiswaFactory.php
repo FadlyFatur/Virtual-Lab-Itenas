@@ -8,6 +8,6 @@ use Faker\Generator as Faker;
 $factory->define(mahasiswa::class, function (Faker $faker) {
     return [
         'nama' => $faker->name,
-        'nrp' => $faker->unique()->numberBetween(1, 1000),
+        'nomer_unik' => $faker->unique()->numberBetween(1, 1000),
     ];
 });

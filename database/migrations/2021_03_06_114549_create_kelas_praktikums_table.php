@@ -17,8 +17,9 @@ class CreateKelasPraktikumsTable extends Migration
             $table->id();
             $table->string('nama');
             $table->text('deskripsi')->nullable();
-            $table->date('jadwal_mulai');
-            $table->date('jadwal_akhir');
+            $table->text('hari');
+            $table->time('jadwal_mulai');
+            $table->time('jadwal_akhir');
             $table->boolean('status')->default(1);
             $table->timestamps();
         });

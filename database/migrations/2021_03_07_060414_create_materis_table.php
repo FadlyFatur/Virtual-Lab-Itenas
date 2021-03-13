@@ -19,11 +19,6 @@ class CreateMaterisTable extends Migration
             $table->string('nama',100);
             $table->string('slug');
             $table->text('deskripsi')->nullable();
-            $table->text('materi',100);
-            $table->string('img_path')->nullable();
-            $table->string('judul_file',100)->nullable();
-            $table->string('file')->nullable();
-            $table->string('link_materi')->nullable();
             $table->foreignId('praktikum_id')
                 ->nullable()
                 ->constrained('praktikums')

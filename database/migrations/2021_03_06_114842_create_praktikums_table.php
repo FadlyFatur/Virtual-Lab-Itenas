@@ -19,7 +19,7 @@ class CreatePraktikumsTable extends Migration
             $table->string('nama');
             $table->string('slug');
             $table->text('deskripsi')->nullable();
-            $table->string('Semester');
+            $table->string('semester');
             $table->string('tahun_ajaran');
             $table->foreignId('laboratorium')
                 ->nullable()

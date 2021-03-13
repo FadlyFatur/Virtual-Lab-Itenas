@@ -16,7 +16,7 @@ class CreateMahasiswasTable extends Migration
         Schema::create('mahasiswas', function (Blueprint $table) {
             $table->id();
             $table->string('nama');
-            $table->string('nrp');
+            $table->string('nomer_unik');
             $table->boolean('status')->default(1);
             $table->foreignId('user_id')
                 ->nullable()

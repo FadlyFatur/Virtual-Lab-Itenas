@@ -86,12 +86,14 @@
               <div class="col-sm-6">
                 <div class="form-group">
                   <label>Kelas</label>
+                  @php
+                      $kelas = App\kelas_praktikum::all();
+                  @endphp
                   <select name="kelas" class="custom-select form-control">
                     <option value= "" selected>Pilih salah satu</option>
-                    <option value="1">A</option>
-                    <option value="2">B</option>
-                    <option value="3">C</option>
-                    <option value="4">D</option>
+                    @foreach ($data as $d)
+                      <option value= "{{$d->id}}">{{$d->nama}}</option>
+                    @endforeach
                   </select>
                 </div>
                 <div class="form-group">
