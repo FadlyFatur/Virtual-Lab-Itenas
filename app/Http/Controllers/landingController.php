@@ -46,4 +46,9 @@ class landingController extends Controller
         
         return view('landing.rekrut', compact('jurusan'));
     }
+
+    public function detailBerita()
+    {
+        return view('landing.detail-berita');
+    }
 }
