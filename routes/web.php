@@ -18,6 +18,7 @@ Route::get('/', 'landingController@landing')->name('landing');
 
 Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/jurusan', 'landingController@indexJurusan')->name('jurusan');
+Route::get('/detail-berita', 'landingController@detailBerita')->name('detail-berita');
 
 Route::prefix('pengajar')->group(function () {
     Route::get('/', 'landingController@indexPengajar')->name('pengajar');
