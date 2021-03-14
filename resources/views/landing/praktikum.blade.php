@@ -191,8 +191,12 @@
               <button class="btn btn-primary">Cek</button>
             </div>
           </div>
-          <button class="btn btn-info" data-toggle="modal" data-target="#tambah" style="margin-left: 32px">Tambah Praktikum</button>
-          <button class="btn btn-info" data-toggle="modal" data-target="#tambah-kelas" style="margin-left: 32px">Tambah Kelas</button>
+          @if (Auth::check())
+              @if (Auth::user()->roles_id != 1)
+              <button class="btn btn-info" data-toggle="modal" data-target="#tambah" style="margin-left: 32px">Tambah Praktikum</button>
+              <button class="btn btn-info" data-toggle="modal" data-target="#tambah-kelas" style="margin-left: 32px">Tambah Kelas</button>
+              @endif
+          @endif
         </div>
         <br><hr>
     
