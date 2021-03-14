@@ -70,6 +70,41 @@
       </div>
   </div>
 
+  <!-- Modal -->
+<div class="modal fade" id="absen" tabindex="-1" role="dialog" aria-labelledby="absenLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="absenLabel">Absen</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <h4>Praktikum :</h4>
+        <h5>Absen Tanggal : </h5>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
+          <label class="form-check-label" for="inlineRadio1">Masuk</label>
+          </div>
+          <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
+          <label class="form-check-label" for="inlineRadio2">Telat</label>
+          </div>
+          <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
+          <label class="form-check-label" for="inlineRadio2">Absen</label>
+          </div>
+      
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
     <div class="container-fluid margin-top">
         @if(session('success'))
         <div class="alert alert-success">
@@ -85,10 +120,14 @@
         <div class="row">
             <div class="col-md-3">
                 <ul class="list-group">
-                    <button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal"><i class="fa fa-plus"></i> Tambah Materi</button>
+                  @if (Auth::check())
+                    @if (Auth::user()->roles_id != 1)
+                      <button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal"><i class="fa fa-plus"></i> Tambah Materi</button>
+                    @endif
+                  @endif
                     <br>
                     <li class="list-group-item">
-                        <a href="#" id="absen"><i class="fa fa-check" aria-hidden="true"></i> Absen</a>
+                        <a href="#" id="absen" data-toggle="modal" data-target="#absen"><i class="fa fa-check" aria-hidden="true"></i> Absen</a>
                     </li>
                     @foreach ($data as $d)
                         <li class="list-group-item">
@@ -99,13 +138,18 @@
             </div>
 
             <div class="col-md-8 side-line">
-                <div class="d-flex justify-content-center mt-5 mb-2" id="input_area">
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#input_materi">Input Materi</button><hr>
-                </div>
+              @if (Auth::check())
+                @if (Auth::user()->roles_id != 1)
+                  <div class="pull-left" id="input_area">
+                      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#input_materi">Input Materi</button>
+                  </div><br><hr>
+                @endif
+              @endif
                 <div id="materi-area">
                     <div class="text-center">
                         <h1 class="text-center" id="judul-materi">{{$prak->nama}}</h1><br>
                         <p>{{$prak->deskripsi}}</p>
+                        <button class="btn btn-secondary">Silahkan Pilih Materi</button>
                     </div>
                     
                 </div>
@@ -243,6 +287,7 @@
                 scrollTop: $("#scrollhere").offset().top},
                 'slow');
         });    
+
         $(".materi-input").hide();
         $(".gambar-input").hide();
         $(".file-input").hide();
@@ -310,7 +355,6 @@
         }); 	
     });
 
-    
     function materiClick(id) {
         $.ajax({
             url: '/get-materi/'+id,
@@ -325,12 +369,59 @@
                     alert('materi belum dimasukan');
                     return;
                 }else{
-                    console.log('ada');
+                    console.log(resp);
+                    var header = ` <div class="text-center">
+                    <h1 class="text-center" id="judul-materi">`+resp.materi['nama']+`</h1><br>
+                    <p>`+resp.materi['deskripsi']+`</p>
+                    </div><hr>`;
+                    $("#materi-area").append(header);
+                    var body = "";
+                    if (resp.file_materi != 'null') {
+                      $.each(resp.file_materi,function(index,value){
+                        console.log(value);
+                          if (value.img != null) {
+                            body += `<div class=" container multimedia-area d-flex justify-content-center">
+                              <img class="img-fluid" src="`+value.img+`" alt="">
+                              </div><br><hr>`
+                          }
+
+                          if (value.materi != null) {
+                            body += `<h2>Deskrispi Materi</h3>
+                                        <p>`+value.materi+`</p><hr><br>`
+                          }
+
+                          if (value.file != null) {
+                            body += `<div class="file-area">
+                                        <h2>Materi Download</h2>
+                                        <ul class="list-group">
+                                            <li class="list-group-item">
+                                                <a href="`+value.file+`" download>File Materi 1 <i class="fa fa-download"></i></a>
+                                            </li>
+                                        </ul>
+                                    </div>`
+                          }
+
+                          if (value.link != null){
+                            body += `<div class="link-area">
+                                        <ul class="list-group">
+                                            <li class="list-group-item">
+                                                <a target="_blank" href="`+value.link+`">Link Materi 1 <i class="fa fa-globe"></i></a>
+                                            </li>
+                                        </ul>
+                                    </div><hr><br>`
+                          }
+                        
+                      });
+                      $("#materi-area").append(body);
+                    }else{
+                      body += `<h5>Materi tidak ditemukan</h5>`
+                      $("#materi-area").append(body);
+                    }
                 }
 
             },
             error: function (resp) {
-                alert('error! materi tidak bisa dibuka')
+                alert('error! materi tidak bisa dibuka/ditemukan')
                 console.log('error');
             }
         });

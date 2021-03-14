@@ -351,7 +351,7 @@ class AdminController extends Controller
             $validator = Validator::make($request->all(), [
                 'nama_materi' => 'required | string',
                 'pilih_materi' => 'required',
-                'file' => 'required|max:10000|mimes:doc,docx,excel,zip,rar,ppt,pptx'
+                'file' => 'required|max:10000|mimes:doc,docx,xlsx,zip,rar,ppt,pptx,pdf'
             ]);
 
             if ($validator->fails()) { 
