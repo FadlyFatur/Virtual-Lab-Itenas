@@ -296,4 +296,9 @@ class AdminController extends Controller
             ->rawColumns(['opsi'])
             ->make(true);
     }
+
+    public function postDetailMateri(Request $request)
+    {
+        dd($request->all());
+    }
 }

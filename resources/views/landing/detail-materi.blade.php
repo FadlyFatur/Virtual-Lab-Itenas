@@ -28,43 +28,46 @@
     }
   
     #img-upload{
-      height: 100px;
-      width: 100px;
+      height: 350px;
+      width: 350px;
+      display:block;
+      margin:auto;
     }
-  </style>
+</style>
+
 <!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Tambah Materi</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <form action="{{route('post-materi',$prak->id)}}" method="POST">
-            @csrf
-              <div class="row">
-                <div class="col">
-                  <div class="form-group">
-                    <label>Nama Materi</label>
-                    <input type="text" class="form-control" name="nama_materi" placeholder="Nama Materi" required autofocus> 
-                  </div>
-                  <div class="form-group">
-                    <label>Deskripsi/Rangkuman Singkat Materi</label>
-                    <textarea class="form-control" rows="5" name="deskripsi" placeholder="Masukan Deskripsi/Penjelsan Singkat" required autofocus></textarea>
+  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Tambah Materi</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form action="{{route('post-materi',$prak->id)}}" method="POST">
+              @csrf
+                <div class="row">
+                  <div class="col">
+                    <div class="form-group">
+                      <label>Nama Materi</label>
+                      <input type="text" class="form-control" name="nama_materi" placeholder="Nama Materi" required autofocus> 
+                    </div>
+                    <div class="form-group">
+                      <label>Deskripsi/Rangkuman Singkat Materi</label>
+                      <textarea class="form-control" rows="5" name="deskripsi" placeholder="Masukan Deskripsi/Penjelsan Singkat" required autofocus></textarea>
+                    </div>
                   </div>
                 </div>
-              </div>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary">Tambah</button>
-        </form>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Tambah</button>
+          </form>
+          </div>
         </div>
       </div>
-    </div>
   </div>
 
     <div class="container-fluid margin-top">
@@ -155,7 +158,7 @@
     </div>
 
     <div class="modal fade" id="input_materi" tabindex="-1" role="dialog" aria-labelledby="input_materiTitle" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-dialog modal-dialog-centered" role="document">
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title" id="input_materiTitle">Input Materi</h5>
@@ -164,31 +167,30 @@
               </button>
             </div>
             <div class="modal-body">
-                <form role="form" method="POST" action="{{route('post-data-materi')}}" enctype="multipart/form-data">
+                <form role="form" method="POST" action="{{route('post-Detail-materi')}}" enctype="multipart/form-data">
                     @csrf
-                    <div class="row">
-                      <div class="col-sm-6">
-                        <div class="form-group">
-                          <label>Nama Materi</label>
-                          <input type="text" class="form-control" name="nama_materi" placeholder="Materi" required autofocus> 
-                        </div>
-                        <div class="form-group">
-                          <label>Deskripsi/Rangkuman Singkat</label>
-                          <textarea class="form-control" rows="3" name="deskripsi" placeholder="Masukan Deskripsi/Penjelsan Singkat" required autofocus></textarea>
-                        </div>
-                      </div>
-                      <div class="col-sm-6">
+                    <label for="tipe">Pilih Tipe</label>
+                    <select name="tipe" id="tipe" class="form-select" aria-label="type materi">
+                      <option selected>Pilih jenis file</option>
+                      <option value="1">Teks/Deskriptif</option>
+                      <option value="2">Gambar/Image</option>
+                      <option value="3">File</option>
+                      <option value="4">Link/URL</option>
+                    </select><br>
+                    <label>Nama Materi</label>
+                    <input type="text" class="form-control" name="nama_materi" placeholder="Materi" autofocus> 
+                    <hr>
+                    <div class="tipe-materi">
+                      <div class="materi-input">
                         <div class="form-group">
                           <label>Materi</label>
-                          <textarea class="form-control" rows="7" name="materi" placeholder="Masukan materi Jurusan" required autofocus></textarea>
+                          <textarea class="form-control" rows="7" name="materi" placeholder="Masukan materi Jurusan" autofocus></textarea>
                         </div>
                       </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-sm-6">
+                      <div class="gambar-input">
                         <div class="form-group">
                           <label>Thumbnail</label>
-                          <div class="input-group">
+                          <div class="input-group ">
                               <span class="input-group-btn">
                                   <span class="btn btn-default btn-file">
                                       Browse… <input type="file" name="thumb" id="imgInp">
@@ -199,23 +201,25 @@
                           <img id='img-upload'/>
                         </div>
                       </div>
-                      <div class="col-sm-6">
+                      <div class="file-input">
                         <div class="form-group">
-                            <label for="exampleFormControlFile1">File/berkas praktikum</label>
-                            <input type="file" class="form-control-file" id="exampleFormControlFile1">
+                            <label for="file">File/berkas praktikum</label>
+                            <input type="file" class="form-control-file" id="file">
                         </div>
+                      </div>
+                      <div class="link-input">
                         <div class="form-group">
                           <label>Link Materi (*jika ada)</label>
-                          <input type="text" class="form-control" name="link_materi" placeholder="Masukan link" required autofocus> 
+                          <input type="text" class="form-control" name="link_materi" placeholder="Masukan link" autofocus> 
                         </div>
                       </div>
                     </div>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-primary">Simpan</button>
-            </form>
+              <button type="submit" class="btn btn-primary">Simpan</button>
             </div>
+            </form>
           </div>
         </div>
       </div>
@@ -232,6 +236,37 @@
                 scrollTop: $("#scrollhere").offset().top},
                 'slow');
         });    
+        $(".materi-input").hide();
+        $(".gambar-input").hide();
+        $(".file-input").hide();
+        $(".link-input").hide();
+
+        $("#tipe").on('change', function() {
+            if ($(this).val() == '1'){
+                $(".materi-input").show();
+                $(".gambar-input").hide();
+                $(".file-input").hide();
+                $(".link-input").hide();
+            } if ($(this).val() == '2'){
+                console.log('foto');
+                $(".gambar-input").show();
+                $(".materi-input").hide();
+                $(".file-input").hide();
+                $(".link-input").hide();
+            } if ($(this).val() == '3'){
+                console.log('file');
+                $(".file-input").show();
+                $(".gambar-input").hide();
+                $(".materi-input").hide();
+                $(".link-input").hide();
+            } if ($(this).val() == '4'){
+                console.log('link');
+                $(".link-input").show();
+                $(".gambar-input").hide();
+                $(".file-input").hide();
+                $(".materi-input").hide();
+            }
+        });
 
         $(document).on('change', '.btn-file :file', function() {
             var input = $(this),
