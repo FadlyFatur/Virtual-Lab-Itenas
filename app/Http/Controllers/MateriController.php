@@ -44,4 +44,6 @@ class MateriController extends Controller
         $data = file_materi::where('id',$id)->get();
         return response()->json($data);
     }
+
+    
 }

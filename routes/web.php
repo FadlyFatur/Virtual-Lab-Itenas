@@ -67,6 +67,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function 
             Route::get('get-data/{id}', 'AdminController@getMateri')->name('get-materi');
             Route::post('post-materi/{id}', 'AdminController@postMateri')->name('post-materi');
             Route::post('post-data-materi', 'AdminController@postDataMateri')->name('post-data-materi');
+            Route::post('post-detail-materi', 'AdminController@postDetailMateri')->name('post-Detail-materi');
             Route::post('post-kelas', 'AdminController@postKelas')->name('post-kelas');
         });
     });
