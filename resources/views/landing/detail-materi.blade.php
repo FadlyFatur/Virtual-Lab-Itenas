@@ -79,7 +79,7 @@
 
       @if(session('errors'))
           <div class="alert alert-danger">
-              {{ session('errors') }}
+            {{ implode('', $errors->all(':message, ')) }}
           </div>
       @endif
         <div class="row">
@@ -177,6 +177,13 @@
                       <option value="3">File</option>
                       <option value="4">Link/URL</option>
                     </select><br>
+                    <label for="pilih_materi">Pilih Materi</label>
+                    <select name="pilih_materi" id="pilih_materi" class="form-select" aria-label="type materi">
+                      <option value="" selected>Pilih Materi</option>
+                      @foreach ($data as $d)
+                        <option value="{{$d->id}}">{{$d->nama}}</option>
+                      @endforeach
+                    </select><br>
                     <label>Nama Materi</label>
                     <input type="text" class="form-control" name="nama_materi" placeholder="Materi" autofocus> 
                     <hr>
@@ -204,12 +211,12 @@
                       <div class="file-input">
                         <div class="form-group">
                             <label for="file">File/berkas praktikum</label>
-                            <input type="file" class="form-control-file" id="file">
+                            <input type="file" class="form-control-file" name="file" id="file">
                         </div>
                       </div>
                       <div class="link-input">
                         <div class="form-group">
-                          <label>Link Materi (*jika ada)</label>
+                          <label>Link Materi (*bentuk URL/Link)</label>
                           <input type="text" class="form-control" name="link_materi" placeholder="Masukan link" autofocus> 
                         </div>
                       </div>
