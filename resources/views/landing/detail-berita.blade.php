@@ -7,7 +7,7 @@
 @section('content')
     <div class="VIRTUAL-LAB-ITENAS">
         <div class="VIRTUAL-LAB-ITENAS_img">
-            <img src="images/tesla.jpg" alt="">
+            <img src="tesla.jpg" alt="">
         </div>
         <div class="VIRTUAL-LAB-ITENAS_info">
             <div class="VIRTUAL-LAB-ITENAS_date">
@@ -19,7 +19,7 @@
             CEO Tesla Elon Musk dan dewan perusahaan mobil listrik Tesla secara resmi digugat pemegang saham 
             karena penggunaan Twitter.
             </p>
-            <a href="#" class="VIRTUAL-LAB-ITENAS_cta"></a>
+            <a href="#" class="VIRTUAL-LAB-ITENAS_cta">read more</a>
         </div>
 
     </div>    
