@@ -7,7 +7,7 @@
 @section('content')
     <div class="VIRTUAL-LAB-ITENAS">
         <div class="VIRTUAL-LAB-ITENAS_img">
-            <img src="images/tesla.jpg" alt="">
+            <img src="tesla.jpg" alt="">
         </div>
         <div class="VIRTUAL-LAB-ITENAS_info">
             <div class="VIRTUAL-LAB-ITENAS_date">
