@@ -35,21 +35,21 @@
           <img src="http://api.elements.buildwithangga.com/storage/files/2/assets/Content/Content2/Content-2-2.png" alt="">
         </div>
         <p class="icon-content-2-1-caption">Pengguna</p>            
-          <h3 class="icon-content-2-1-title">500</h3>
+          <h3 class="icon-content-2-1-title">{{$totalUser}}</h3>
       </div>
       <div class="col-lg-4 column-content-2-1">
         <div class="icon-content-2-1">
           <img src="http://api.elements.buildwithangga.com/storage/files/2/assets/Content/Content2/Content-2-3.png" alt="">
         </div>
         <p class="icon-content-2-1-caption">Laboratorium</p>
-          <h3 class="icon-content-2-1-title">10</h3>
+          <h3 class="icon-content-2-1-title">{{$totalLab}}</h3>
       </div>
       <div class="col-lg-4 column-content-2-1">
         <div class="icon-content-2-1">
           <img src="http://api.elements.buildwithangga.com/storage/files/2/assets/Content/Content2/Content-2-4.png" alt="">
         </div>
         <p class="icon-content-2-1-caption">Materi</p>
-        <h3 class="icon-content-2-1-title">70</h3>
+        <h3 class="icon-content-2-1-title">{{$totalMateri}}</h3>
       </div>
     </div>
   </div>

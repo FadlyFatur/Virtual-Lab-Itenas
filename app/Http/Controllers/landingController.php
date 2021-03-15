@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\jurusan;
 use App\lab;
+use App\User;
+use App\Materi;
 use App\praktikum;
 use App\enroll;
 use Auth;
@@ -14,7 +16,10 @@ class landingController extends Controller
     public function landing()
     {
         $jurusan = jurusan::all()->take(6);
-        return view('welcome', compact('jurusan'));
+        $totalLab = lab::all()->count();
+        $totalUser = User::all()->count();
+        $totalMateri = Materi::all()->count();
+        return view('welcome', compact('jurusan','totalLab','totalUser','totalMateri'));
     }
 
     public function indexJurusan()

@@ -299,7 +299,8 @@ class AdminController extends Controller
             $validator = Validator::make($request->all(), [
                 'materi' => 'required | string | max:2000',
                 'pilih_materi' => 'required',
-                'nama_materi' => 'required | string'
+                'nama_materi' => 'required | string',
+                'urutan' => 'required | integer'
             ]);
     
             if ($validator->fails()) { 
@@ -313,19 +314,20 @@ class AdminController extends Controller
                 'materi' => $request->get('materi'),
                 'type' => $request->get('tipe'),
                 'materi_id' => $request->get('pilih_materi'),
+                'urutan' =>  $request->get('urutan')
             ]);
+            Alert::success('Sukses', 'Materi Berhasil ditambah');
             return redirect()
                 ->back()
                 ->withSuccess("Data berhasil di simpan");
 
         } if ($request->get('tipe') == '2' && $request->has('thumb')){
-            // dd('masuk ke tipe 2');
             $validator = Validator::make($request->all(), [
                 'nama_materi' => 'required | string',
                 'pilih_materi' => 'required',
                 'thumb' => 'required | image', // max 7MB
+                'urutan' => 'required | integer'
             ]);
-            // dd($validator);
             if ($validator->fails()) { 
                 return redirect()
                 ->back()
@@ -340,18 +342,19 @@ class AdminController extends Controller
                 'img' => $path_img,
                 'type' => $request->get('tipe'),
                 'materi_id' => $request->get('pilih_materi'),
+                'urutan' =>  $request->get('urutan')
             ]);
-
+            Alert::success('Sukses', 'Materi Berhasil ditambah');
             return redirect()
                 ->back()
                 ->withSuccess("Data berhasil di simpan");
 
         } if ($request->get('tipe') == '3' && $request->has('file')){
-            // dd('masuk ke tipe 3');
             $validator = Validator::make($request->all(), [
                 'nama_materi' => 'required | string',
                 'pilih_materi' => 'required',
-                'file' => 'required|max:10000|mimes:doc,docx,xlsx,zip,rar,ppt,pptx,pdf'
+                'file' => 'required|max:10000|mimes:doc,docx,xlsx,zip,rar,ppt,pptx,pdf',
+                'urutan' => 'required | integer'
             ]);
 
             if ($validator->fails()) { 
@@ -368,19 +371,19 @@ class AdminController extends Controller
                 'file' => $path_file,
                 'type' => $request->get('tipe'),
                 'materi_id' => $request->get('pilih_materi'),
+                'urutan' =>  $request->get('urutan')
             ]);
-
+            Alert::success('Sukses', 'Materi Berhasil ditambah');
             return redirect()
                 ->back()
                 ->withSuccess("Data berhasil di simpan");
 
-
         } if ($request->get('tipe') == '4' && $request->get('link_materi') != null){
-            // dd('masuk ke tipe 4');
             $validator = Validator::make($request->all(), [
                 'link_materi' => 'required' ,
                 'pilih_materi' => 'required',
-                'nama_materi' => 'required | string'
+                'nama_materi' => 'required | string',
+                'urutan' => 'required | integer'
             ]);
     
             if ($validator->fails()) { 
@@ -394,7 +397,9 @@ class AdminController extends Controller
                 'link' => $request->get('link_materi'),
                 'type' => $request->get('tipe'),
                 'materi_id' => $request->get('pilih_materi'),
+                'urutan' =>  $request->get('urutan')
             ]);
+            Alert::success('Sukses', 'Materi Berhasil ditambah');
             return redirect()
                 ->back()
                 ->withSuccess("Data berhasil di simpan");

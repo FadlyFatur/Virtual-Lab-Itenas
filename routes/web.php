@@ -43,6 +43,7 @@ Route::group(['prefix' => 'praktikum'], function () {
 });
 
 route::get('get-materi/{id}','MateriController@getMateri')->name('getMateri');
+route::post('delete-materi/{id}','MateriController@deleteMateri')->name('deleteMateri');
 
 Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function (){
     Route::get('/', 'AdminController@index')->name('dashboard');

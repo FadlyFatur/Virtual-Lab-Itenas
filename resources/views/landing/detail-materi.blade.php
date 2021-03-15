@@ -35,7 +35,7 @@
     }
 </style>
 
-<!-- Modal -->
+<!-- Modal materi -->
   <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -70,40 +70,61 @@
       </div>
   </div>
 
-  <!-- Modal -->
-<div class="modal fade" id="absen" tabindex="-1" role="dialog" aria-labelledby="absenLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="absenLabel">Absen</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <h4>Praktikum :</h4>
-        <h5>Absen Tanggal : </h5>
-        <div class="form-check form-check-inline">
-          <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
-          <label class="form-check-label" for="inlineRadio1">Masuk</label>
-          </div>
+  <!-- Modal absen-->
+  <div class="modal fade" id="absen" tabindex="-1" role="dialog" aria-labelledby="absenLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="absenLabel">Absen</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <h4>Praktikum : {{$prak->nama}}</h4>
+          <h5>Absen Tanggal : {{Carbon\Carbon::now()->toFormattedDateString()}}</h5>
           <div class="form-check form-check-inline">
-          <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
-          <label class="form-check-label" for="inlineRadio2">Telat</label>
-          </div>
-          <div class="form-check form-check-inline">
-          <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
-          <label class="form-check-label" for="inlineRadio2">Absen</label>
-          </div>
-      
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
+            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
+            <label class="form-check-label" for="inlineRadio1">Masuk</label>
+            </div>
+            <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
+            <label class="form-check-label" for="inlineRadio2">Telat</label>
+            </div>
+            <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
+            <label class="form-check-label" for="inlineRadio2">Absen</label>
+            </div>
+        
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
+
+  <!-- Modal absen-->
+  <div class="modal fade" id="TambahAbsen" tabindex="-1" role="dialog" aria-labelledby="TambahAbsenLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="TambahAbsenLabel">Absen</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+         
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
     <div class="container-fluid margin-top">
         @if(session('success'))
@@ -121,17 +142,29 @@
             <div class="col-md-3">
                 <ul class="list-group">
                   @if (Auth::check())
-                    @if (Auth::user()->roles_id != 1)
-                      <button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal"><i class="fa fa-plus"></i> Tambah Materi</button>
+                    @if (Auth::user()->roles_id != 1 || Auth::user()->roles_id != 2)
+                      <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#exampleModal"><i class="fa fa-plus"></i> Tambah Materi</button>
+                      <button class="btn btn-primary" data-toggle="modal" data-target="#TambahAbsen"><i class="fa fa-plus"></i> Tambah Absen</button>
                     @endif
                   @endif
                     <br>
                     <li class="list-group-item">
-                        <a href="#" id="absen" data-toggle="modal" data-target="#absen"><i class="fa fa-check" aria-hidden="true"></i> Absen</a>
+                        <a href="#" id="absen" data-toggle="modal" data-target="#absen"><i class="fa fa-list" aria-hidden="true"></i> Absen</a>
                     </li>
                     @foreach ($data as $d)
                         <li class="list-group-item">
+                          <div id="materi-list" class="pull-left">
                             <button onclick="materiClick( {{$d->id}} )" class="btn btn-light" id="{{$d->id}}"><i class="fa fa-chevron-circle-right" aria-hidden="true"></i> {{$d->nama}}</button>
+                          </div>
+                          @if (Auth::check())
+                            @if (Auth::user()->roles_id != 1 || Auth::user()->roles_id != 2)
+                              <div id="edit-materi" class="pull-right">
+                                <a onclick="hapusMateri( {{$d->id}} )" class="btn btn-danger">
+                                  <i class="fa fa-trash" aria-hidden="true"></i>
+                                </a>
+                              </div>
+                            @endif
+                          @endif
                         </li>
                     @endforeach
                 </ul><br><br>
@@ -156,53 +189,12 @@
             </div>
         </div>
         <br>
-        {{-- <div id="scrollhere"></div>
-        <div class="row">
-            <div>
-                <h2>Absen Mahasiswa</h2><br>
-                <div class="table-responsive-md">
-                    <table class="table">
-                        <caption>Absen 15-02-2021</caption>
-                        <thead>
-                            <tr>
-                            <th scope="col">Materi</th>
-                            <th scope="col">Absen</th>
-                            <th scope="col">Tanggal Absen</th>
-                            <th scope="col">Status</th>
-                            <th scope="col">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                            <td>Materi 1</td>
-                            <td>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
-                                    <label class="form-check-label" for="inlineRadio1">Masuk</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
-                                    <label class="form-check-label" for="inlineRadio2">Telat</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
-                                    <label class="form-check-label" for="inlineRadio2">Absen</label>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>-</td>
-                            <td><span class="badge badge-danger">Belum Absen</span></td>
-                            <td><a class="btn btn-primary" href="#">Simpan</a></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div> --}}
+
     </div>
 
+    {{-- modal materi  --}}
     <div class="modal fade" id="input_materi" tabindex="-1" role="dialog" aria-labelledby="input_materiTitle" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title" id="input_materiTitle">Input Materi</h5>
@@ -228,14 +220,20 @@
                         <option value="{{$d->id}}">{{$d->nama}}</option>
                       @endforeach
                     </select><br>
-                    <label>Nama Materi</label>
-                    <input type="text" class="form-control" name="nama_materi" placeholder="Materi" autofocus> 
+                    <div class="form-group">
+                      <label for="nama_materi">Nama Materi</label>
+                      <input type="text" class="form-control" name="nama_materi" placeholder="Materi" autofocus> 
+                    </div>
+                    <div class="form-group">
+                      <label for="urutan">Urutan Materi</label>
+                      <input type="number" class="form-control" name="urutan" placeholder="Materi" autofocus> 
+                    </div>
                     <hr>
                     <div class="tipe-materi">
                       <div class="materi-input">
                         <div class="form-group">
                           <label>Materi</label>
-                          <textarea class="form-control" rows="7" name="materi" placeholder="Masukan materi Jurusan" autofocus></textarea>
+                          <textarea class="form-control" rows="7" name="materi" placeholder="Masukan materi Jurusan"></textarea>
                         </div>
                       </div>
                       <div class="gambar-input">
@@ -261,7 +259,7 @@
                       <div class="link-input">
                         <div class="form-group">
                           <label>Link Materi (*bentuk URL/Link)</label>
-                          <input type="text" class="form-control" name="link_materi" placeholder="Masukan link" autofocus> 
+                          <input type="text" class="form-control" name="link_materi" placeholder="Masukan link" > 
                         </div>
                       </div>
                     </div>
@@ -282,11 +280,6 @@
 
     <script>
     $(document).ready(function () {
-        $("#absen").on('click', function() {
-            $('html,body').animate({
-                scrollTop: $("#scrollhere").offset().top},
-                'slow');
-        });    
 
         $(".materi-input").hide();
         $(".gambar-input").hide();
@@ -372,8 +365,8 @@
                     console.log(resp);
                     var header = ` <div class="text-center">
                     <h1 class="text-center" id="judul-materi">`+resp.materi['nama']+`</h1><br>
-                    <p>`+resp.materi['deskripsi']+`</p>
-                    </div><hr>`;
+                    <p style="font-size:24px;">`+resp.materi['deskripsi']+`</p>
+                    </div><br><br>`;
                     $("#materi-area").append(header);
                     var body = "";
                     if (resp.file_materi != 'null') {
@@ -386,7 +379,7 @@
                           }
 
                           if (value.materi != null) {
-                            body += `<h2>Deskrispi Materi</h3>
+                            body += `<h2>`+value.nama+`</h3>
                                         <p>`+value.materi+`</p><hr><br>`
                           }
 
@@ -425,6 +418,42 @@
                 console.log('error');
             }
         });
+    }
+
+    function hapusMateri(id) {
+        swal({
+            title: "Apakah yakin?",
+            text: "Materi yang dihapus tidak dapat dikembalikan!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+          })
+          .then((willDelete) => {
+            if (willDelete) {
+              $.ajax({
+                    type: 'POST',
+                    url: "{{url('/delete-materi')}}/" + id,
+                    // data: {_token: CSRF_TOKEN},
+                    dataType: 'JSON',
+                    success: function (results) {
+                        if (results.success === true) {
+                          swal("Oke! Materi telah dihapus", {
+                            icon: "success",
+                          });
+                          location.reload();
+                        } else {
+                            swal("Gagal!", results.message, "error");
+                            location.reload();
+                        }
+                    }
+                });
+              swal("Poof! Your imaginary file has been deleted!", {
+                icon: "success",
+              });
+            } else {
+              swal("Your imaginary file is safe!");
+            }
+          });
     }
     </script>
 @endsection

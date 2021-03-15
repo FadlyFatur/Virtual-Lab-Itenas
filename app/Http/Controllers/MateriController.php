@@ -43,7 +43,7 @@ class MateriController extends Controller
     }
 
     public function getMateri($id){
-        $fdata = file_materi::where('materi_id',$id)->get();
+        $fdata = file_materi::where('materi_id',$id)->orderBy('urutan','ASC')->get();
         
         $fmateri = Materi::where('id',$id)->first();
         if (!$fdata->isEmpty()) {
@@ -61,6 +61,7 @@ class MateriController extends Controller
                 }
             
                 $data[] = [
+                    'nama' => $d->nama,
                     'materi' => $d->materi,
                     'file' => asset($d->file),
                     'img' => $img,
@@ -87,5 +88,24 @@ class MateriController extends Controller
         return response()->json($resp);
     }
 
+    public function deleteMateri($id)
+    {
+        $delete = Materi::where('id', $id)->delete();
+
+        // check data deleted or not
+        if ($delete == 1) {
+            $success = true;
+            $message = "Materi berhasil dihapus";
+        } else {
+            $success = true;
+            $message = "Materi tidak ditemukan";
+        }
+
+        //  Return response
+        return response()->json([
+            'success' => $success,
+            'message' => $message,
+        ]);
+    }
     
 }

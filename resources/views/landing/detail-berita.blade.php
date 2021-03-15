@@ -4,7 +4,7 @@
     <link href="{{ asset('css/detail-berita.css') }}" rel="stylesheet">
 @endsection
 
-<body>
+@section('content')
     <div class="VIRTUAL-LAB-ITENAS">
         <div class="VIRTUAL-LAB-ITENAS_img">
             <img src="images/tesla.jpg" alt="">
@@ -22,5 +22,5 @@
             <a href="#" class="VIRTUAL-LAB-ITENAS_cta"></a>
         </div>
 
-    </div>
-</body>
+    </div>    
+@endsection
