@@ -3,7 +3,7 @@
     <meta charset="UTF-8">
     <meta name="viewsport" conten="weidth=device-weidth, initial-scale=1.0">
     <title>berita</title>
-    <link rel="stylesheet" herf="berita.css">
+    <link rel="stylesheet" herf="detail-berita.css">
     <link herf="https://fonts.googleapis.com/css?family=Open+Sans|Roboto+Slab&display=swap"rel="stylesheet">
 </head> 
 <body>
@@ -63,7 +63,7 @@ Meski gugatan ini telah diberikan oleh  investor Tesla, hingga saat ini belum ad
             <h4> loream ipsum </h4>
             <p> blalalalalalalal </p>
         </div>
-        <div class="images-3">
+        <div class="images-2">
         <div class="p-3">
             <h4> loream ipsum </h4>
             <p> blalalalalalalal </p>
