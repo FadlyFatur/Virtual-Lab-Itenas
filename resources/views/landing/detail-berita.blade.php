@@ -10,7 +10,7 @@
             <img src="tesla.jpg" alt="">
         </div>
         <div class="VIRTUAL-LAB-ITENAS_info">
-            <div class="VIRTUAL-LAB-ITENAS_date">
+            <div class="VIRTXUAL-LAB-ITENAS_date">
                 <span>Selasa</span>
                 <span>15 maret 2021</span>
             </div>
