@@ -10,8 +10,6 @@
     border-radius: .8rem;
 }
 .VIRTUAL-LAB-ITENAS_img{
-    min-width: 35rem;
-    max-width: 35rem;
     height: 30rem;
     transform: translateX(-2rem);
     position: relative;
@@ -21,7 +19,12 @@
     height: 90%;
     object-fit: cover;
     display: block;
+<<<<<<< HEAD
     border-radius: 4rem;
+=======
+    margin-left: 50px;
+    border-radius: 1rem;
+>>>>>>> 0aa75fc5989443222e2c03c32d5dd065ec429d7d
 }
 .VIRTUAL-LAB-ITENAS_img::before{
     content: '';
