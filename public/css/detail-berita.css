@@ -19,12 +19,9 @@
     height: 90%;
     object-fit: cover;
     display: block;
-<<<<<<< HEAD
+    
     border-radius: 4rem;
-=======
-    margin-left: 50px;
-    border-radius: 1rem;
->>>>>>> 0aa75fc5989443222e2c03c32d5dd065ec429d7d
+
 }
 .VIRTUAL-LAB-ITENAS_img::before{
     content: '';
