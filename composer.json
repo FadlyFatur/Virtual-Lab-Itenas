@@ -9,6 +9,7 @@
     "license": "MIT",
     "require": {
         "php": "^7.2.5",
+        "fzaninotto/faker": "^1.9.1",
         "fideloper/proxy": "^4.2",
         "fruitcake/laravel-cors": "^1.0",
         "guzzlehttp/guzzle": "^6.3",
@@ -16,8 +17,7 @@
         "laravel/tinker": "^2.0",
         "laravel/ui": "2.0",
         "realrashid/sweet-alert": "^3.2",
-        "yajra/laravel-datatables-oracle": "^9.15",
-        "fzaninotto/faker": "^1.9.1"
+        "yajra/laravel-datatables-oracle": "^9.15"
     },
     "require-dev": {
         "facade/ignition": "^2.0",
