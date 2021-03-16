@@ -269,7 +269,7 @@ class AdminController extends Controller
                 'nama' => $request->get('nama_praktikum'),
                 'slug' => Str::slug($request->get('nama_praktikum'),'-'),
                 'deskripsi' => $request->get('deskripsi'),
-                'Semester' => $request->get('semester'),
+                'semester' => $request->get('semester'),
                 'tahun_ajaran' => $request->get('tahun_ajaran'),
                 'laboratorium' => $id,
             ]);
