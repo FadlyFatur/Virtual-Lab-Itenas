@@ -37,7 +37,7 @@ Route::group(['middleware' => 'auth', 'verified'], function () {
 Route::get('laboratorium/{slug}', 'landingController@indexlaboratorium')->name('lab');
 
 Route::group(['prefix' => 'praktikum'], function () {
-    Route::get('/{slug}', 'materiController@listPraktikum')->name('praktikum-list')->middleware('auth');
+    Route::get('/{slug}', 'MateriController@listPraktikum')->name('praktikum-list')->middleware('auth');
     Route::get('/kelas/{id}', 'MateriController@indexMateri')->name('detail-materi');
     Route::get('/daftar/{id}', 'MateriController@daftarPrak')->name('daftar-prak')->middleware('auth');
 });
