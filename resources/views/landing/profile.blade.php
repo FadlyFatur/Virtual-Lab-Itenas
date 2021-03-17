@@ -30,9 +30,9 @@
                     </div>
                 </div>
             </div>
-            <div class="Project">
+            <div class="project">
                 <h3>PROJECTS</h3>
-                <div class="Project_data">
+                <div class="project_data">
                     <div class="data">
                         <h4>Recent</h4>
                         <p>Loream ipsum blalalala</p>
