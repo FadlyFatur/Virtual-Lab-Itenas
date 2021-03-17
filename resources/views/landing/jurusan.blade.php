@@ -10,14 +10,15 @@
             <div class="group-jurusan">
                 <div class="row gy-4">
                     @foreach ($jurusan as $j)
-                        <div class="col-lg-3 col-md-6 d-flex align-items-stretch mb-3">
+                        <div class="col-lg-6 col-sm-12 d-flex align-items-stretch mb-3">
                             <div class="card">
                                 <div class="card-header">
                                     <img src="{{asset($j->thumbnail_path)}}" class="card-img-top" alt="{{$j->nama}}">
                                 </div>
                                 <div class="card-body">
                                     <h5 class="card-title">{{$j->nama}}</h5>
-                                    <p class="card-text text-left">{{substr($j->deskripsi, 0, 300)}} ...</p>
+                                    {{-- <p class="card-text text-left">{!!substr($j->deskripsi, 0, 300)!!} ...</p> --}}
+                                    <p class="card-text text-left">{!!$j->deskripsi!!}</p>
                                 </div>
                                 <div class="card-footer">
                                     <a href="{{ route('lab', $j->slug) }}" class="btn btn-primary">Lihat  <i class="fa fa-angle-double-right"></i></a>
@@ -31,3 +32,4 @@
         </div>
     </div>
 @endsection
+

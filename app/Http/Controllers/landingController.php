@@ -56,4 +56,9 @@ class landingController extends Controller
     {
         return view('landing.detail-berita');
     }
+
+    public function profil()
+    {
+        return view('landing.profile');
+    }
 }

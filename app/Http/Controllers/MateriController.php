@@ -17,29 +17,34 @@ class MateriController extends Controller
     public function listPraktikum($slug)
     {
         $lab = lab::where('slug',$slug)->first();
-
+        $role = Auth::user()->roles_id;
         $data = praktikum::where('laboratorium',$lab->id)->get();
         $enroll = enroll::where('user_id', Auth::user()->id)->get();
-        return view('landing.praktikum', compact('lab', 'data', 'enroll'));
+        return view('landing.praktikum', compact('lab', 'data', 'enroll', 'role'));
     }
 
     public function indexMateri($id)
     {
+        $role = Auth::user()->roles_id;
         $prak = praktikum::where('id',$id)->first();
         $data = Materi::where('praktikum_id',$id)->get();
-        return view('landing.detail-materi',compact('data','prak'));
+        return view('landing.detail-materi',compact('data','prak', 'role'));
     }
 
     public function daftarPrak($id)
     {
-        enroll::create([
-            'user_id' => Auth::user()->id,
-            'praktikum_id' => $id,
-        ]);
-        Alert::success('Berhasil', 'Selamat anda berhasil mendaftar kelas Praktikum');
-        $data = Materi::where('praktikum_id',$id)->get();
-        $prak = praktikum::where('id',$id)->first();
-        return view('landing.detail-materi',compact('data','prak'));
+        if (enroll::where('user_id',Auth::user()->id)->where('praktikum_id',$id)->count() == 0){
+            enroll::create([
+                'user_id' => Auth::user()->id,
+                'praktikum_id' => $id,
+            ]);
+            Alert::success('Berhasil', 'Selamat anda berhasil mendaftar kelas Praktikum');
+            $data = Materi::where('praktikum_id',$id)->get();
+            $prak = praktikum::where('id',$id)->first();
+            $role = Auth::user()->roles_id;
+            return view('landing.detail-materi',compact('data','prak', 'role'));
+        }
+        return redirect()->back();
     }
 
     public function getMateri($id){

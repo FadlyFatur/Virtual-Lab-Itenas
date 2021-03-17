@@ -16,8 +16,7 @@ class CreateKelasPraktikumsTable extends Migration
         Schema::create('kelas_praktikums', function (Blueprint $table) {
             $table->id();
             $table->string('nama');
-            $table->text('deskripsi')->nullable();
-            $table->text('hari');
+            $table->string('hari');
             $table->time('jadwal_mulai');
             $table->time('jadwal_akhir');
             $table->boolean('status')->default(1);

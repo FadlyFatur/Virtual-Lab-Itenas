@@ -23,5 +23,29 @@ class UserSeeder extends Seeder
         if(!User::where('email',$adminUser['email'])->exists()){
             User::create($adminUser);
         }
+
+        $user = [
+            'name' => "user",
+            'email' => "user@test.com",
+            'roles_id' => 1,
+            'email_verified_at' => now(),
+            'password' => bcrypt('12345'),
+            'remember_token' => Str::random(10),
+        ];
+        if(!User::where('email',$user['email'])->exists()){
+            User::create($user);
+        }
+
+        $mahasiswa = [
+            'name' => "mahasiswa",
+            'email' => "mahasiswa@test.com",
+            'roles_id' => 2,
+            'email_verified_at' => now(),
+            'password' => bcrypt('12345'),
+            'remember_token' => Str::random(10),
+        ];
+        if(!User::where('email',$mahasiswa['email'])->exists()){
+            User::create($mahasiswa);
+        }
     }
 }

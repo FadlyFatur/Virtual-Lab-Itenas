@@ -4,9 +4,9 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class dosen extends Model
+class assisten extends Model
 {
     protected $fillable = [
-        'nama', 'nomer_id', 'status', 'user_id'
+        'jabatan', 'mahasiswa_id'
     ];
 }

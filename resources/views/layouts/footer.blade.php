@@ -33,7 +33,7 @@
       </div>
       </div>
       <div class="col-lg-3 col-md-6">
-        <h2 class="footer-text-title-footer-2-1 list-space-footer-2-1-title">Product</h2>
+        {{-- <h2 class="footer-text-title-footer-2-1 list-space-footer-2-1-title">Product</h2>
         <nav style="list-style-type:none;">
           <li class="list-space-footer-2-1">
             <a class="list-menu-footer-2-1">Real Time Analytic</a>
@@ -50,10 +50,10 @@
           <li class="list-space-footer-2-1">
               <a class="list-menu-footer-2-1">Story</a>
           </li>
-        </nav>
+        </nav> --}}
       </div>
       <div class="col-lg-3 col-md-6">
-        <h2 class="footer-text-title-footer-2-1 list-space-footer-2-1-title">Company</h2>
+        {{-- <h2 class="footer-text-title-footer-2-1 list-space-footer-2-1-title">Company</h2>
         <nav style="list-style-type:none;">
             <li class="list-space-footer-2-1">
             <a class="list-menu-footer-2-1">Contact Us</a>
@@ -67,7 +67,7 @@
             <li class="list-space-footer-2-1">
             <a class="list-menu-footer-2-1">Security</a>
             </li>
-        </nav>
+        </nav> --}}
       </div>
       <div class="col-lg-3 col-md-6">
         <h2 class="footer-text-title-footer-2-1 list-space-footer-2-1-title">Support</h2>

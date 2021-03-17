@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class jurusan extends Model
 {
     protected $fillable = [
-        'nama', 'slug', 'deskripsi', 'thumbnail','thumbnail_path'
+        'status', 'nama', 'slug', 'deskripsi', 'thumbnail','thumbnail_path', 'ketua_jurusan'
     ];
 
     public function lab()

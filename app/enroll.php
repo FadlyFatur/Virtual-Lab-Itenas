@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class enroll extends Model
 {
     protected $fillable = [
-        'status', 'user_id', 'praktikum_id', 'thumbnail','thumbnail_path'
+        'status', 'user_id', 'praktikum_id'
     ];
 
     public function praktikum()

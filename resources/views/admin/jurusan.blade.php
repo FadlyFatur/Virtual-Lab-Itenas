@@ -80,7 +80,7 @@
                 </div>
                 <div class="form-group">
                   <label>Deskripsi</label>
-                  <textarea class="form-control" rows="3" name="deskripsi_jurusan" placeholder="Masukan Deskripsi Jurusan" required autofocus></textarea>
+                  <textarea class="form-control" id="jurusan" name="deskripsi_jurusan" placeholder="Masukan Deskripsi Jurusan" required autofocus></textarea>
                 </div>
               </div>
               <div class="col-sm-6">
@@ -114,7 +114,6 @@
           <table class="table table-bordered data-table">
             <thead>
                 <tr>
-                    <th>Id</th>
                     <th>Status</th>
                     <th>Jurusan</th>
                     <th>Deskripsi</th>
@@ -134,64 +133,69 @@
   <script>
     $(document).ready( function() {
         $(document).on('change', '.btn-file :file', function() {
-      var input = $(this),
-        label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
-      input.trigger('fileselect', [label]);
-      });
+          var input = $(this),
+          label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+          input.trigger('fileselect', [label]);
+        });
 
-      $('.btn-file :file').on('fileselect', function(event, label) {
+        $('.btn-file :file').on('fileselect', function(event, label) {
+            
+            var input = $(this).parents('.input-group').find(':text'),
+                log = label;
+            
+            if( input.length ) {
+                input.val(log);
+            } else {
+                if( log ) alert(log);
+            }
           
-          var input = $(this).parents('.input-group').find(':text'),
-              log = label;
-          
-          if( input.length ) {
-              input.val(log);
-          } else {
-              if( log ) alert(log);
-          }
+        });
         
-      });
-      function readURL(input) {
-          if (input.files && input.files[0]) {
-              var reader = new FileReader();
-              
-              reader.onload = function (e) {
-                  $('#img-upload').attr('src', e.target.result);
-              }
-              
-              reader.readAsDataURL(input.files[0]);
-          }
-      }
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                
+                reader.onload = function (e) {
+                    $('#img-upload').attr('src', e.target.result);
+                }
+                
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
 
-      $("#imgInp").change(function(){
-          readURL(this);
-      }); 	
-    });
-  </script>   
+        $("#imgInp").change(function(){
+            readURL(this);
+        }); 	
 
-  <script type="text/javascript">
-    $(function () {
-      
-      var table = $('.data-table').DataTable({
+        $('#jurusan').summernote({
+          height: 150,
+          toolbar: [
+            // [groupName, [list of button]]
+            ['style', ['bold', 'italic', 'underline', 'clear']],
+            ['font', ['strikethrough', 'superscript', 'subscript']],
+            ['fontsize', ['fontsize']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['insert', ['link']],
+            ['view', ['fullscreen', 'codeview']],
+          ]
+        });
+
+        var table = $('.data-table').DataTable({
           processing: true,
           serverSide: true,
           ajax: "{{ route('get-jurusan') }}",
           columns: [
-              {data: 'id'},
               {data: 'status', 
                 render: function (data, type, row) {
-                    if (data == 1) {
-                        return `<div class="custom-control custom-switch">
-                                  <input type="checkbox" class="custom-control-input" id="switch`+row.id+`" checked>
-                                  <label class="custom-control-label" for="switch`+row.id+`"></label>
-                                </div>`;
+                    let checked = null;
+                    if(data == 1){
+                        checked = "checked";
                     }
-                    if (data == 0) {
-                        return `<div class="custom-control custom-switch">
-                                  <input type="checkbox" class="custom-control-input" id="switch`+row.id+`">
-                                  <label class="custom-control-label" for="switch`+row.id+`"></label>
-                                </div>`;
-                    }
+                    return `<div class="custom-control custom-switch">
+                              <input type="checkbox" class="custom-control-input" onchange="changeStatus(`+row.id+`)" id="switch`+row.id+`" `+checked+`>
+                              <label class="custom-control-label" for="switch`+row.id+`"></label>
+                            </div>`
                 },
                 orderable: false, 
                 searchable: false
@@ -199,9 +203,65 @@
               {data: 'nama'},
               {data: 'deskripsi'},
               {data: 'opsi', orderable: false, searchable: false}
-          ]
-      });
-      
+            ]
+        });
     });
+
+    function changeStatus(id){
+      $.ajax({
+          type:'GET',
+          url:"status-jurusan/"+id,
+          success:function(data){
+              if(data.status === true){
+                  swal({
+                      title: "Success!",
+                      text: data.message,
+                      icon: "success",
+                  });
+              }else{
+                  let message = data.message;
+                  swal({
+                  title: "Ups!",
+                      text: data.message,
+                      icon: "error",
+                  });
+              }
+          }
+      });
+    }
+
+    function deleted(id){
+      swal({
+            title: "Apakah yakin?",
+            text: "Jurusan yang dihapus tidak dapat dikembalikan!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+        .then((willDelete) => {
+          if (willDelete) {
+            $.ajax({
+                type: 'POST',
+                url: "{{url('admin/delete-jurusan')}}/" + id,
+                dataType: 'JSON',
+                success: function (results) {
+                    if (results.success === true) {
+                      swal("Oke! Jurusan telah dihapus", {
+                        icon: "success",
+                      });
+                      location.reload();
+                    } else {
+                      swal("Gagal!", results.message, "error");
+                      location.reload();
+                    }
+                }
+            });
+            swal("Jurusan telah terhapus!", {
+              icon: "success",
+            });
+          } 
+      });
+      // table.ajax.reload( null, false );
+    }
   </script>   
 @endsection

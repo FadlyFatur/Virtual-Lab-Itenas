@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Materi extends Model
 {
     protected $fillable = [
-        'status', 'nama', 'slug', 'deskripsi', 'materi', 'img_path', 'judul_file', 'file', 'link_materi', 'praktikum_id'
+        'status', 'nama', 'slug', 'deskripsi', 'praktikum_id'
     ];
 
     public function prak()

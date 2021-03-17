@@ -16,11 +16,16 @@ class CreateMahasiswasTable extends Migration
         Schema::create('mahasiswas', function (Blueprint $table) {
             $table->id();
             $table->string('nama');
-            $table->string('nomer_unik');
+            $table->string('nomer_id');
             $table->boolean('status')->default(1);
             $table->foreignId('user_id')
                 ->nullable()
                 ->constrained('users')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
+            $table->foreignId('jurusan_id')
+                ->nullable()
+                ->constrained('jurusans')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
             $table->timestamps();

@@ -3,38 +3,12 @@
 @section('style')
     @parent
     <link href="{{ asset('css/detail-materi.css') }}" rel="stylesheet">
+    <!-- summernote -->
+    <link rel="stylesheet" href="{{asset('plugins/summernote/summernote-bs4.css')}}">
+      
 @endsection
 
 @section('content')
-<style>
-    .btn-file {
-      position: relative;
-      overflow: hidden;
-    }
-    .btn-file input[type=file] {
-        position: absolute;
-        top: 0;
-        right: 0;
-        min-width: 100%;
-        min-height: 100%;
-        font-size: 100px;
-        text-align: right;
-        filter: alpha(opacity=0);
-        opacity: 0;
-        outline: none;
-        background: white;
-        cursor: inherit;
-        display: block;
-    }
-  
-    #img-upload{
-      height: 350px;
-      width: 350px;
-      display:block;
-      margin:auto;
-    }
-</style>
-
 <!-- Modal materi -->
   <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-lg" role="document">
@@ -52,11 +26,11 @@
                   <div class="col">
                     <div class="form-group">
                       <label>Nama Materi</label>
-                      <input type="text" class="form-control" name="nama_materi" placeholder="Nama Materi" required autofocus> 
+                      <input type="text" class="form-control" name="nama_materi" placeholder="Nama Materi (*Pengenalan, Teori)" required> 
                     </div>
                     <div class="form-group">
                       <label>Deskripsi/Rangkuman Singkat Materi</label>
-                      <textarea class="form-control" rows="5" name="deskripsi" placeholder="Masukan Deskripsi/Penjelsan Singkat" required autofocus></textarea>
+                      <textarea class="form-control" id="materi" rows="5" name="deskripsi" placeholder="Masukan Deskripsi/Penjelsan Singkat" required></textarea>
                     </div>
                   </div>
                 </div>
@@ -141,43 +115,39 @@
         <div class="row">
             <div class="col-md-3">
                 <ul class="list-group">
-                  @if (Auth::check())
-                    @if (Auth::user()->roles_id != 1 || Auth::user()->roles_id != 2)
+                    @if ($role != 1 &&  $role != 2)
                       <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#exampleModal"><i class="fa fa-plus"></i> Tambah Materi</button>
                       <button class="btn btn-primary" data-toggle="modal" data-target="#TambahAbsen"><i class="fa fa-plus"></i> Tambah Absen</button>
                     @endif
-                  @endif
                     <br>
-                    <li class="list-group-item">
-                        <a href="#" id="absen" data-toggle="modal" data-target="#absen"><i class="fa fa-list" aria-hidden="true"></i> Absen</a>
-                    </li>
+                    @if ($role != 1)
+                      <li class="list-group-item">
+                          <a href="#" id="absen" data-toggle="modal" data-target="#absen"><i class="fa fa-list" aria-hidden="true"></i> Absen</a>
+                      </li>
+                    @endif
                     @foreach ($data as $d)
                         <li class="list-group-item">
                           <div id="materi-list" class="pull-left">
                             <button onclick="materiClick( {{$d->id}} )" class="btn btn-light" id="{{$d->id}}"><i class="fa fa-chevron-circle-right" aria-hidden="true"></i> {{$d->nama}}</button>
                           </div>
-                          @if (Auth::check())
-                            @if (Auth::user()->roles_id != 1 || Auth::user()->roles_id != 2)
+                            @if ( $role != 1 &&  $role != 2)
                               <div id="edit-materi" class="pull-right">
                                 <a onclick="hapusMateri( {{$d->id}} )" class="btn btn-danger">
                                   <i class="fa fa-trash" aria-hidden="true"></i>
                                 </a>
                               </div>
                             @endif
-                          @endif
                         </li>
                     @endforeach
                 </ul><br><br>
             </div>
 
             <div class="col-md-8 side-line">
-              @if (Auth::check())
-                @if (Auth::user()->roles_id != 1)
+                @if ($role != 1 &&  $role != 2)
                   <div class="pull-left" id="input_area">
                       <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#input_materi">Input Materi</button>
                   </div><br><hr>
                 @endif
-              @endif
                 <div id="materi-area">
                     <div class="text-center">
                         <h1 class="text-center" id="judul-materi">{{$prak->nama}}</h1><br>
@@ -222,18 +192,18 @@
                     </select><br>
                     <div class="form-group">
                       <label for="nama_materi">Nama Materi</label>
-                      <input type="text" class="form-control" name="nama_materi" placeholder="Materi" autofocus> 
+                      <input type="text" class="form-control" name="nama_materi" placeholder="Nama Materi (*Tipe Data, Function)" autofocus> 
                     </div>
                     <div class="form-group">
                       <label for="urutan">Urutan Materi</label>
-                      <input type="number" class="form-control" name="urutan" placeholder="Materi" autofocus> 
+                      <input type="number" class="form-control" name="urutan" placeholder="Urutan Materi (*1, 2, 3)" autofocus> 
                     </div>
                     <hr>
                     <div class="tipe-materi">
                       <div class="materi-input">
                         <div class="form-group">
                           <label>Materi</label>
-                          <textarea class="form-control" rows="7" name="materi" placeholder="Masukan materi Jurusan"></textarea>
+                          <textarea class="form-control" id="materi-praktikum" rows="7" name="materi" placeholder="Masukan materi"></textarea>
                         </div>
                       </div>
                       <div class="gambar-input">
@@ -277,6 +247,8 @@
 @section('js')
     @parent
     <link href="{{ asset('js/detail-materi.js') }}">
+    <!-- Summernote -->
+    <script src="{{asset('plugins/summernote/summernote-bs4.min.js')}}"></script>
 
     <script>
     $(document).ready(function () {
@@ -346,6 +318,34 @@
         $("#imgInp").change(function(){
             readURL(this);
         }); 	
+
+        $('#materi').summernote({
+          height: 250,
+          toolbar: [
+            // [groupName, [list of button]]
+            ['style', ['bold', 'italic', 'underline', 'clear']],
+            ['font', ['strikethrough', 'superscript', 'subscript']],
+            ['fontsize', ['fontsize']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['insert', ['link']],
+            ['view', ['fullscreen', 'codeview']],
+          ]
+        });
+
+        $('#materi-praktikum').summernote({
+          height: 250,
+          toolbar: [
+            // [groupName, [list of button]]
+            ['style', ['bold', 'italic', 'underline', 'clear']],
+            ['font', ['strikethrough', 'superscript', 'subscript']],
+            ['fontsize', ['fontsize']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['insert', ['link']],
+            ['view', ['fullscreen', 'codeview']],
+          ]
+        });
     });
 
     function materiClick(id) {
@@ -427,33 +427,34 @@
             icon: "warning",
             buttons: true,
             dangerMode: true,
-          })
-          .then((willDelete) => {
-            if (willDelete) {
-              $.ajax({
-                    type: 'POST',
-                    url: "{{url('/delete-materi')}}/" + id,
-                    // data: {_token: CSRF_TOKEN},
-                    dataType: 'JSON',
-                    success: function (results) {
-                        if (results.success === true) {
-                          swal("Oke! Materi telah dihapus", {
-                            icon: "success",
-                          });
+        })
+        .then((willDelete) => {
+          if (willDelete) {
+            $.ajax({
+                  type: 'POST',
+                  url: "{{url('/delete-materi')}}/" + id,
+                  // data: {_token: CSRF_TOKEN},
+                  dataType: 'JSON',
+                  success: function (results) {
+                      if (results.success === true) {
+                        swal("Oke! Materi telah dihapus", {
+                          icon: "success",
+                        });
+                        location.reload();
+                      } else {
+                          swal("Gagal!", results.message, "error");
                           location.reload();
-                        } else {
-                            swal("Gagal!", results.message, "error");
-                            location.reload();
-                        }
-                    }
-                });
-              swal("Poof! Your imaginary file has been deleted!", {
-                icon: "success",
+                      }
+                  }
               });
-            } else {
-              swal("Your imaginary file is safe!");
-            }
-          });
+            swal("Materi telah terhapus!", {
+              icon: "success",
+            });
+          } else {
+            swal("Materi Aman!");
+          }
+        });
     }
+
     </script>
 @endsection

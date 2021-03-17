@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAbsenMahasiswasTable extends Migration
+class CreateAssistensTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,18 +13,13 @@ class CreateAbsenMahasiswasTable extends Migration
      */
     public function up()
     {
-        Schema::create('absen_mahasiswas', function (Blueprint $table) {
+        Schema::create('assistens', function (Blueprint $table) {
             $table->id();
             $table->boolean('status')->default(1);
-            $table->integer('tipe');
-            $table->foreignId('absen_id')
+            $table->integer('jabatan');
+            $table->foreignId('mahasiswa_id')
                 ->nullable()
-                ->constrained('absens')
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
-            $table->foreignId('user_id')
-                ->nullable()
-                ->constrained('users')
+                ->constrained('mahasiswas')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
             $table->timestamps();
@@ -38,6 +33,6 @@ class CreateAbsenMahasiswasTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('absen_mahasiswas');
+        Schema::dropIfExists('assistens');
     }
 }

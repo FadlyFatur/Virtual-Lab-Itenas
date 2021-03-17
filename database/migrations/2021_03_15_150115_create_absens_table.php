@@ -16,9 +16,8 @@ class CreateAbsensTable extends Migration
         Schema::create('absens', function (Blueprint $table) {
             $table->id();
             $table->string('nama');
-            $table->string('deadline')->nullable();
+            $table->date('tanggal_absen')->nullable();
             $table->foreignId('praktikum_id')
-                ->nullable()
                 ->constrained('praktikums')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');

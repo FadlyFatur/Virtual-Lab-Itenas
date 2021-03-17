@@ -4,9 +4,9 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class dosen extends Model
+class berita extends Model
 {
     protected $fillable = [
-        'nama', 'nomer_id', 'status', 'user_id'
+        'status', 'judul', 'slug', 'deskripsi','img'
     ];
 }

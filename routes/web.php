@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Route;
 
 Auth::routes(['verify' => true]);
 Route::get('/', 'landingController@landing')->name('landing');
+Route::get('/profil', 'landingController@profil')->name('profil');
 
 Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/jurusan', 'landingController@indexJurusan')->name('jurusan');
@@ -47,6 +48,10 @@ route::post('delete-materi/{id}','MateriController@deleteMateri')->name('deleteM
 
 Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function (){
     Route::get('/', 'AdminController@index')->name('dashboard');
+    
+    Route::post('delete-jurusan/{id}', 'AdminController@deleteJurusan')->name('delete-jurusan');
+    Route::get('status-jurusan/{id}', 'AdminController@statusJurusan')->name('ganti-status-jurusan');
+    Route::post('update-jurusan', 'AdminController@updateJurusan')->name('update-jurusan');
 
     Route::get('jurusan', 'AdminController@indexJurusan')->name('jurusan');
     Route::get('jurusan/json', 'AdminController@getJurusan')->name('get-jurusan');

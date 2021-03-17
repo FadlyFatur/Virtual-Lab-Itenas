@@ -22,8 +22,27 @@
 
     </div>
 </div>
+@if (!Auth::check())   
+        <div class="card-block-content-2-1">
+            <div class="card-content-2-1">
+                <div class="d-flex flex-lg-row flex-column align-items-center">
+                    <div class="me-lg-3">
+                        <img src="http://api.elements.buildwithangga.com/storage/files/2/assets/Content/Content2/Content-2-1%20(1).png" alt="">          
+                    </div>
+                    <div class="flex-grow-1 text-lg-start text-center card-text-content-2-1">
+                        <h3 class="card-content-2-1-title">Akses Materi tak Terbatas Selamanya</h3>
+                        <p class="d-none d-lg-block card-content-2-1-caption">Itenas menyediakan berbagai macam materi pembelajaran <br>laboratorium yang mudah diakses</p>
+                        <p class="d-block d-lg-none card-content-2-1-caption">Segera Daftarkan diri</p>
+                    </div>
+                    <div class="card-btn-space-content-2-1">
+                        <a href="{{ route('register') }}"><button class="btn btn-card-content-2-1">Daftar</button></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
 
- <div class="text-center title-text-content-2-1">
+ <div class="text-center ">
     <h1 class="text-title-content-2-1">Statistik</h1>
     <p class="text-caption-content-2-1" style="  margin-left: 3rem; margin-right: 3rem;">Lihat perkembangan Virtual Laboratorium Itenas</p>
   </div>
@@ -54,25 +73,7 @@
     </div>
   </div>
 
-    @if (!Auth::check())   
-    <div class="card-block-content-2-1">
-        <div class="card-content-2-1">
-            <div class="d-flex flex-lg-row flex-column align-items-center">
-                <div class="me-lg-3">
-                    <img src="http://api.elements.buildwithangga.com/storage/files/2/assets/Content/Content2/Content-2-1%20(1).png" alt="">          
-                </div>
-                <div class="flex-grow-1 text-lg-start text-center card-text-content-2-1">
-                    <h3 class="card-content-2-1-title">Akses Materi tak Terbatas Selamanya</h3>
-                    <p class="d-none d-lg-block card-content-2-1-caption">Itenas menyediakan berbagai macam materi pembelajaran <br>laboratorium yang mudah diakses</p>
-                    <p class="d-block d-lg-none card-content-2-1-caption">Segera Daftarkan diri</p>
-                </div>
-                <div class="card-btn-space-content-2-1">
-                    <a href="{{ route('register') }}"><button class="btn btn-card-content-2-1">Daftar</button></a>
-                </div>
-            </div>
-        </div>
-    </div>
-    @endif
+    
 
 <!-- ======= Services Section ======= -->
 <section id="lab" class="lab">
@@ -112,7 +113,7 @@
 </section><!-- End Services Section -->
 
 <!-- ======= Team Section ======= -->
-<section id="pengajar" class="pengajar">
+{{-- <section id="pengajar" class="pengajar">
 
     <div class="text-center title-text-content-2-1">
         <h1 class="text-title-content-2-1">Pengajar</h1>
@@ -178,7 +179,8 @@
             </a>
         </div>
     </div>
-</section><!-- End Team Section -->
+</section> --}}
+<!-- End Team Section -->
 
 <!-- ======= berita Section ======= -->
 <section id="berita" class="berita">

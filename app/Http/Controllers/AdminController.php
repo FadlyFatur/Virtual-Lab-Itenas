@@ -90,7 +90,6 @@ class AdminController extends Controller
 
     public function postJurusan(Request $request)
     {   
-        // dd($request->all());
         if ($request->has('thumb')){
             Validator::make($request->all(), [
                 'nama_jurusan' => 'string | max:100',
@@ -98,7 +97,6 @@ class AdminController extends Controller
                 'thumb_photo' => 'required|mimes:jpg,png,jpeg|max:7000', // max 7MB
             ]);
             $name = "".Carbon::now()->format('YmdHs')."_".$request->file('thumb')->getClientOriginalName();
-            // dd($name);
             $path = Storage::putFileAs('images/thumbnail', $request->file('thumb'), $name);
             jurusan::create([
                 'nama' => $request->get('nama_jurusan'),
@@ -123,7 +121,7 @@ class AdminController extends Controller
         return Datatables::of($data)
             ->addIndexColumn()
             ->addColumn('opsi', function ($data){
-                return '<a target="_blank" href="'.asset($data->thumbnail_path).'" class="edit btn btn-info btn-sm"><i class="fas fa-eye"></i></a>';
+                return '<a target="_blank" href="'.asset($data->thumbnail_path).'" class="edit btn btn-info btn-sm"><i class="fas fa-eye"></i></a> <a title="Hapus" href="#" onclick="deleted('.$data->id.')" class="hapus btn btn-danger btn-sm"><i class="fa fa-trash"></i></a>';
             })
             ->rawColumns(['opsi'])
             ->make(true);
@@ -245,7 +243,6 @@ class AdminController extends Controller
     }
 
     public function postPrak(Request $request, $id){
-        // dd($request->all(), $id);
         Validator::make($request->all(), [
             'nama_praktikum' => 'required | string | max:100',
             'deskripsi' => 'string | max:1000',
@@ -411,4 +408,49 @@ class AdminController extends Controller
                 ->withErrors("Data gagal di submit, lengkapi form input data");
         }
     }
+
+    public function deleteJurusan($id)
+    {
+        $delete = jurusan::where('id',$id)->delete();
+
+        // check data deleted or not
+        if ($delete == 1) {
+            $success = true;
+            $message = "Materi berhasil dihapus";
+        } else {
+            $success = true;
+            $message = "Materi tidak ditemukan";
+        }
+
+        //  Return response
+        return response()->json([
+            'success' => $success,
+            'message' => $message,
+        ]);
+    }
+
+    public function statusJurusan($id)
+    {
+        $check = jurusan::find($id);
+        $field['status'] = !$check->status;
+        if($check){
+            $check->update($field);
+            $data['status']=true;
+            if($field['status'] == 1){
+                $data['message']="Jurusan telah diaktifkan.";
+            }else {
+                $data['message']="Jurusan dinonaktifkan.";
+            }
+        }else{
+            $data['status']=false;
+            $data['message']="Ops telah terjadi kesalahan pada saat mengupdate data";
+        }
+        return response()->json($data, 200);
+    }
+
+    public function updateJurusan(Request $request)
+    {
+        
+    }
+
 }
