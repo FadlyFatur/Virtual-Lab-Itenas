@@ -18,26 +18,29 @@
         <div class="right">
 
             <div class="info">
-                <div class="data">
-                    <h4>Email</h4>
-                    <p>ilhamadvntr27@gmail.com</p>
-                </div>
-                <div class="data">
-                    <h4>Phone</h4>
-                    <p>087735292871</p>
+                <h3>INFORMATION</h3>
+                <div class="info_data">
+                    <div class="data">
+                        <h4>Email</h4>
+                        <p>ilhamadvntr27@gmail.com</p>
+                    </div>
+                    <div class="data">
+                        <h4>phone</h4>
+                        <p>087735292871</p>
+                    </div>
                 </div>
             </div>
-
-            <div class="project">
-                <h3>project</h3>
-                <div class="project_data">
+            <div class="Project">
+                <h3>PROJECTS</h3>
+                <div class="Project_data">
                     <div class="data">
                         <h4>Recent</h4>
-                        <p>Loream ipsum</p>
+                        <p>Loream ipsum blalalala</p>
                     </div>
-                <div class="data">
-                    <h4>Mostviwed</h4>
-                    <p>dolor sit amet.</p>
+                    <div class="data">
+                        <h4>Most viewed</h4>
+                        <p>Loream ipsum blalalala</p>
+                    </div>
                 </div>
             </div>
 

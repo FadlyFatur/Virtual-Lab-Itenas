@@ -38,12 +38,12 @@
     padding: 30px 25px;
 }
 
-.wrapper .right .info
+.wrapper .right .info,
 .wrapper .right .project{
     margin-bottom: 25px;
 }
 
-.wrapper .right .info h3
+.wrapper .right .info h3,
 .wrapper .right .project h3{
     margin-bottom: 15px;
     padding-bottom: 5px;
@@ -53,24 +53,24 @@
     letter-spacing: 5px;
 }
 
-.wrapper .right .info-data
+.wrapper .right .info_data,
 .wrapper .right .project_data{
     display: flex;
     justify-content: space-between;
 }
 
-.wrapper .right .info_data .data
+.wrapper .right .info_data .data,
 .wrapper .right .project_data .data{
-    width: 45%;
+    width: 25%;
 }
 
-.wrapper .right .info_data .data h4
+.wrapper .right .info_data .data h4,
 .wrapper .right .project_data .data h4{
     color: #353c4e;
     margin-bottom: 5px;
 }
 
-.wrapper .right .info_data .data p
+.wrapper .right .info_data .data p,
 .wrapper .right .project_data .data p{
     font-size: 13px;
     margin-bottom: 10px;
@@ -93,5 +93,6 @@
 
 .wrapper .socialmedia ul li a{
     color: #fff;
+    display: block;
     font-size: 18px;
 }
