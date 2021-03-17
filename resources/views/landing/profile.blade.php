@@ -6,11 +6,12 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
     <link href="{{ asset('css/profile.css') }}" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/32c1b9fee9.js" crossorigin="anonymous"></script>
 </head>
 <body>
     <div class="wrapper">
         <div class="left">
-            <img src="kak.img" alt="user" width="100">
+            <img src="onyet.jpg" alt="user" width="100">
             <h4>ilham muhammad haikal</h4>
             <p>Asisten Lab</p>
         </div>
@@ -38,6 +39,14 @@
                     <h4>Mostviwed</h4>
                     <p>dolor sit amet.</p>
                 </div>
+            </div>
+
+            <div class="socialmedia">
+                <ul>
+                    <li><a herf="#"><i class="fab fa-facebook-square"></i></a></li>
+                    <li><a herf="#"></a><i class="fab fa-twitter"></i></li>
+                    <li><a herf="#"><i class="fab fa-instagram"></i></a></li>
+                </ul>
             </div>
         </div>
     </div>
