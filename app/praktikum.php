@@ -29,4 +29,10 @@ class praktikum extends Model
     {
         return $this->belongsTo('App\kelas_praktikum', 'kelas');
     }
+
+    public function getRekrutmen()
+    {
+        return $this->hasMany('App\rekrutmen', 'praktikum_id', 'id');
+    }
+
 }

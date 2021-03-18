@@ -47,9 +47,9 @@ class landingController extends Controller
 
     public function indexRekrutmen()
     {
-        $jurusan = jurusan::all();
+        $lab = lab::all();
         
-        return view('landing.rekrut', compact('jurusan'));
+        return view('landing.rekrut', compact('lab'));
     }
 
     public function detailBerita()

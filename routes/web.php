@@ -21,6 +21,7 @@ Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/jurusan', 'landingController@indexJurusan')->name('jurusan');
 Route::get('/detail-berita', 'landingController@detailBerita')->name('detail-berita');
 
+
 Route::prefix('pengajar')->group(function () {
     Route::get('/', 'landingController@indexPengajar')->name('pengajar');
     Route::get('/detail-pengajar', 'landingController@indexPengajar')->name('pengajar');
@@ -45,10 +46,13 @@ Route::group(['prefix' => 'praktikum'], function () {
 
 route::get('get-materi/{id}','MateriController@getMateri')->name('getMateri');
 route::post('delete-materi/{id}','MateriController@deleteMateri')->name('deleteMateri');
+Route::get('get-praktikum/{id}', 'AdminController@getPrak')->name('get-lab');
+Route::get('get-rekrutmen/{id}', 'AdminController@getDetailrekrut')->name('get-detail-rekrut');
 
 Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function (){
     Route::get('/', 'AdminController@index')->name('dashboard');
     
+
     Route::post('delete-jurusan/{id}', 'AdminController@deleteJurusan')->name('delete-jurusan');
     Route::get('status-jurusan/{id}', 'AdminController@statusJurusan')->name('ganti-status-jurusan');
     Route::post('update-jurusan', 'AdminController@updateJurusan')->name('update-jurusan');
@@ -59,13 +63,13 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function 
     
     Route::prefix('laboratorium')->group(function (){
         Route::get('/', 'AdminController@indexLab')->name('laboratorium');
-        Route::get('json', 'AdminController@getLab')->name('get-Lab');
+        Route::get('json', 'AdminController@getTableLab')->name('get-Lab');
         Route::post('post-lab', 'AdminController@postLab')->name('post-Lab');
     });
 
     Route::prefix('praktikum')->group(function (){
         Route::get('{slug}', 'AdminController@indexPrak')->name('praktikum');
-        Route::get('get-data/{id}', 'AdminController@getPrak')->name('get-praktikum');
+        Route::get('get-data/{id}', 'AdminController@getTablePrak')->name('get-praktikum');
         Route::post('post-praktikum/{id}', 'AdminController@postPrak')->name('post-praktikum');
 
         Route::prefix('materi')->group(function (){
@@ -78,7 +82,11 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function 
         });
     });
 
-    Route::get('/rekrutmen', 'AdminController@indexRek')->name('rekrutmen');
+    Route::prefix('rekrutmen')->group(function (){
+        Route::get('/', 'AdminController@indexRek')->name('rekrutmen');
+        Route::get('get-rekrutmen', 'AdminController@getTableRek')->name('get-rekrutmen');
+        Route::post('/post-rekrutmen', 'AdminController@postRekrut')->name('post-rekrutmen');
+    });
     
     Route::get('/user', 'AdminController@indexUser')->name('user');
     Route::get('/user/json', 'AdminController@getUserData')->name('get-user');

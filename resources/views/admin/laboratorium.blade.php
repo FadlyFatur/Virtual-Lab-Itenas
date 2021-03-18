@@ -8,27 +8,27 @@
     .btn-file {
       position: relative;
       overflow: hidden;
-  }
-  .btn-file input[type=file] {
-      position: absolute;
-      top: 0;
-      right: 0;
-      min-width: 100%;
-      min-height: 100%;
-      font-size: 100px;
-      text-align: right;
-      filter: alpha(opacity=0);
-      opacity: 0;
-      outline: none;
-      background: white;
-      cursor: inherit;
-      display: block;
-  }
-  
-  #img-upload{
-    height: 300px;
-    width: 300px;
-  }
+    }
+    .btn-file input[type=file] {
+        position: absolute;
+        top: 0;
+        right: 0;
+        min-width: 100%;
+        min-height: 100%;
+        font-size: 100px;
+        text-align: right;
+        filter: alpha(opacity=0);
+        opacity: 0;
+        outline: none;
+        background: white;
+        cursor: inherit;
+        display: block;
+    }
+    
+    #img-upload{
+      height: 300px;
+      width: 300px;
+    }
   </style>
 @endsection
 
@@ -87,6 +87,12 @@
                   <label>Deskripsi</label>
                   <textarea class="form-control" rows="3" name="deskripsi_lab" placeholder="Masukan Deskripsi Jurusan" required autofocus></textarea>
                 </div>
+                <div class="form-group">
+                  <label>Pilih Kepala Laboratorium</label>
+                  <select name="klab" class="custom-select form-control">
+                    <option value="" selected>Pilih Kepala Laboratorium</option>
+                  </select>
+                </div>
               </div>
               
               <div class="col-sm-6">
@@ -120,7 +126,7 @@
           </div>
         </form>
       </div>
-
+      
       <div class="card">
         <div class="card-header">
           <h3 class="card-title">Data Laboratorium</h3>

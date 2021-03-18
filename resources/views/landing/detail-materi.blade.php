@@ -403,7 +403,6 @@
                                         </ul>
                                     </div><hr><br>`
                           }
-                        
                       });
                       $("#materi-area").append(body);
                     }else{

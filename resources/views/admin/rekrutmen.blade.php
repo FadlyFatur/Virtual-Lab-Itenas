@@ -20,9 +20,22 @@
     <!-- /.content-header -->
 
     <div class="container">
-      <div class="card card-warning collapsed-card">
+      @if(session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+      @endif
+  
+      @if(session('errors'))
+          <div class="alert alert-danger">
+            @foreach ($errors->all() as $message) {
+              {!! $message !!} <br> 
+            @endforeach
+          </div>
+      @endif
+      <div class="card card-warning">
         <div class="card-header">
-          <h5 class="card-title">Manajemen Rekrutmen</h5>
+          <h5 class="card-title">Buat Rekrutmen</h5>
 
           <div class="card-tools">
             <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -31,151 +44,174 @@
           </div>
         </div>
         <!-- /.card-header -->
-        <div class="card-body">
-          <form role="form">
+        <div class="card-body pb-0">
+          <form role="form" method="POST" action="{{route('post-rekrutmen')}}" enctype="multipart/form-data">
+            @csrf
             <div class="row">
               <div class="col-sm-6">
-                <!-- text input -->
-                <div class="form-group">
-                  <label>Text</label>
-                  <input type="text" class="form-control" placeholder="Enter ...">
-                </div>
-              </div>
-              <div class="col-sm-6">
-                <div class="form-group">
-                  <label>Text Disabled</label>
-                  <input type="text" class="form-control" placeholder="Enter ..." disabled="">
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-sm-6">
-                <!-- textarea -->
-                <div class="form-group">
-                  <label>Textarea</label>
-                  <textarea class="form-control" rows="3" placeholder="Enter ..."></textarea>
-                </div>
-              </div>
-              <div class="col-sm-6">
-                <div class="form-group">
-                  <label>Textarea Disabled</label>
-                  <textarea class="form-control" rows="3" placeholder="Enter ..." disabled=""></textarea>
-                </div>
-              </div>
-            </div>
 
-            <!-- input states -->
-            <div class="form-group">
-              <label class="col-form-label" for="inputSuccess"><i class="fas fa-check"></i> Input with
-                success</label>
-              <input type="text" class="form-control is-valid" id="inputSuccess" placeholder="Enter ...">
-            </div>
-            <div class="form-group">
-              <label class="col-form-label" for="inputWarning"><i class="far fa-bell"></i> Input with
-                warning</label>
-              <input type="text" class="form-control is-warning" id="inputWarning" placeholder="Enter ...">
-            </div>
-            <div class="form-group">
-              <label class="col-form-label" for="inputError"><i class="far fa-times-circle"></i> Input with
-                error</label>
-              <input type="text" class="form-control is-invalid" id="inputError" placeholder="Enter ...">
-            </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Pilih Laboratorium</label>
+                      <select name="kode" id="kodeJurusan" onchange="getPraktikum(this.value)" class="custom-select form-control">
+                        <option selected>Wajib dipilih</option>
+                        @foreach ($data as $d)
+                          <option value="{{$d->id}}">{{$d->nama}}</option>
+                        @endforeach
+                      </select>
+                    </div>
+                    
+                    <div class="form-group">
+                      <label>Tanggal Deadline:</label>
+                        <div class="input-group date" id="deadlineDate" data-target-input="nearest">
+                            <input type="text" class="form-control datetimepicker-input" name="deadline" data-target="#deadlineDate"/>
+                            <div class="input-group-append" data-target="#deadlineDate" data-toggle="datetimepicker">
+                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                  </div>
 
-            <div class="row">
-              <div class="col-sm-6">
-                <!-- checkbox -->
-                <div class="form-group">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox">
-                    <label class="form-check-label">Checkbox</label>
-                  </div>
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" checked="">
-                    <label class="form-check-label">Checkbox checked</label>
-                  </div>
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" disabled="">
-                    <label class="form-check-label">Checkbox disabled</label>
-                  </div>
-                </div>
-              </div> 
-              <div class="col-sm-6">
-                <!-- radio -->
-                <div class="form-group">
-                  <div class="form-check">
-                    <input class="form-check-input" type="radio" name="radio1">
-                    <label class="form-check-label">Radio</label>
-                  </div>
-                  <div class="form-check">
-                    <input class="form-check-input" type="radio" name="radio1" checked="">
-                    <label class="form-check-label">Radio checked</label>
-                  </div>
-                  <div class="form-check">
-                    <input class="form-check-input" type="radio" disabled="">
-                    <label class="form-check-label">Radio disabled</label>
-                  </div>
-                </div>
-              </div>
-            </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Pilih Praktikum</label>
+                      <select name="kode_praktikum" id="praktikum" class="custom-select form-control">
+                        <option selected>pilih jurusan dahulu</option>
+                      </select>
+                    </div>
 
-            <div class="row">
-              <div class="col-sm-6">
-                <!-- select -->
-                <div class="form-group">
-                  <label>Select</label>
-                  <select class="form-control">
-                    <option>option 1</option>
-                    <option>option 2</option>
-                    <option>option 3</option>
-                    <option>option 4</option>
-                    <option>option 5</option>
-                  </select>
+                    <div class="form-group">
+                      <label>Kuota</label>
+                      <select name="kuota" class="custom-select form-control">
+                        <option selected>Wajib dipilih</option>
+                        <option value"3">3</option>
+                        <option value"4">4</option>
+                        <option value"5">5</option>
+                        <option value"0">> 5</option>
+                      </select>
+                    </div>
+                    
+                  </div>
                 </div>
-              </div>
-              <div class="col-sm-6">
-                <div class="form-group">
-                  <label>Select Disabled</label>
-                  <select class="form-control" disabled="">
-                    <option>option 1</option>
-                    <option>option 2</option>
-                    <option>option 3</option>
-                    <option>option 4</option>
-                    <option>option 5</option>
-                  </select>
-                </div>
-              </div>
-            </div>
 
-            <div class="row">
-              <div class="col-sm-6">
-                <!-- Select multiple-->
                 <div class="form-group">
-                  <label>Select Multiple</label>
-                  <select multiple="" class="form-control">
-                    <option>option 1</option>
-                    <option>option 2</option>
-                    <option>option 3</option>
-                    <option>option 4</option>
-                    <option>option 5</option>
-                  </select>
+                  <label for="fileSyarat">File Persyaratan (*rar/zip)</label>
+
+                  <div class="custom-file">
+                    <input type="file" class="custom-file-input" name="fileSyarat" id="fileSyarat">
+                    <label class="custom-file-label" for="fileSyarat">Pilih file</label>
+                  </div>
                 </div>
+
               </div>
+              
               <div class="col-sm-6">
                 <div class="form-group">
-                  <label>Select Multiple Disabled</label>
-                  <select multiple="" class="form-control" disabled="">
-                    <option>option 1</option>
-                    <option>option 2</option>
-                    <option>option 3</option>
-                    <option>option 4</option>
-                    <option>option 5</option>
-                  </select>
+                  <label>Nama Rekrutmen (*Opsional)</label>
+                  <input type="text" class="form-control" name="nama_rekrutmen" placeholder="Nama Jurusan Lengkap"> 
+                </div>
+                <div class="form-group">
+                  <label>Deskripsi</label>
+                  <textarea class="form-control" rows="5" name="deskripsi" placeholder="Masukan Deskripsi Jurusan" required autofocus></textarea>
                 </div>
               </div>
             </div>
-          </form>
+          </div>
+          <!-- /.card-body -->
+          <div class="card-footer">
+            <button type="submit" class="btn btn-primary">Simpan</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Data Rekrutmen</h3>
         </div>
-        <!-- /.card-body -->
-      </div>  
+        <div class="card-body">
+          <table class="table table-bordered data-table">
+            <thead>
+                <tr>
+                    <th>Status</th>
+                    <th>Praktikum</th>
+                    <th>Nama</th>
+                    <th>Deskripsi</th>
+                    <th>Kuota</th>
+                    <th>Deadline</th>
+                    <th>File</th>
+                    <th>Opsi</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+        </div>
+      </div>
+
     </div>
+@endsection
+
+@section('js')
+<!-- bs-custom-file-input -->
+<script src="{{asset('plugins/bs-custom-file-input/bs-custom-file-input.min.js')}}"></script>
+<script>
+  $(function(){
+    //Date range picker
+    $('#deadlineDate').datetimepicker({
+      format: 'L'
+    });  
+
+    bsCustomFileInput.init();
+
+    var table = $('.data-table').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: "{{ route('get-rekrutmen') }}",
+        columns: [
+            {data: 'status', 
+              render: function (data, type, row) {
+                  if (data == 1) {
+                      return `<div class="custom-control custom-switch">
+                                <input type="checkbox" class="custom-control-input" id="switch`+row.id+`" checked>
+                                <label class="custom-control-label" for="switch`+row.id+`"></label>
+                              </div>`;
+                  }
+                  if (data == 0) {
+                      return `<div class="custom-control custom-switch">
+                                <input type="checkbox" class="custom-control-input" id="switch`+row.id+`">
+                                <label class="custom-control-label" for="switch`+row.id+`"></label>
+                              </div>`;
+                  }
+              },
+              orderable: false, 
+              searchable: false
+            },
+            {data: 'praktikum_id'},
+            {data: 'nama'},
+            {data: 'deskripsi'},
+            {data: 'kuota'},
+            {data: 'deadline'},
+            {data: 'file', orderable: false, searchable: false},
+            {data: 'opsi', orderable: false, searchable: false}
+        ]
+    });
+  });
+
+function getPraktikum(id){
+    $.ajax({
+      type:'GET',
+      url:"get-praktikum/"+id,
+      success:function (resp) {
+        $('#praktikum').empty();
+        var body = "";
+        $.each(resp,function(index,value){
+          console.log(value);
+          body += `<option value="`+value.id+`">`+value.nama+`</option>`
+        });
+        $("#praktikum").append(body);
+      }
+    })
+}
+</script> 
 @endsection

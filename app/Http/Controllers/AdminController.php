@@ -11,6 +11,7 @@ use App\jurusan;
 use App\lab;
 use App\Materi;
 use App\praktikum;
+use App\rekrutmen;
 use App\kelas_praktikum as kelas;
 use App\file_materi as fmateri;
 use Illuminate\Support\Facades\Validator;
@@ -45,7 +46,8 @@ class AdminController extends Controller
 
     public function indexRek()
     {
-        return view('admin.rekrutmen');
+        $data = lab::orderBy('nama', 'asc')->get();
+        return view('admin.rekrutmen', compact('data'));
     }
 
     public function indexUser()
@@ -127,8 +129,8 @@ class AdminController extends Controller
             ->make(true);
     }
 
-    public function postLab(Request $request)
-    {
+    public function postLab(Request $request){
+        // dd($request->all());
         if ($request->has('thumb')){
             Validator::make($request->all(), [
                 'nama_lab' => 'required | string | max:100',
@@ -139,13 +141,25 @@ class AdminController extends Controller
 
             $name = "".Carbon::now()->format('YmdHs')."_".$request->file('thumb')->getClientOriginalName();
             $path = Storage::putFileAs('images/thumbnail', $request->file('thumb'), $name);
-            lab::create([
-                'nama' => $request->get('nama_lab'),
-                'slug' => Str::slug($request->get('nama_lab'),'-'),
-                'deskripsi' => $request->get('deskripsi_lab'),
-                'thumbnail' => $path,
-                'jurusan'=>$request->get('kode'),
-            ]);
+
+            if ($request->get('klab') != null) {
+                lab::create([
+                    'nama' => $request->get('nama_lab'),
+                    'slug' => Str::slug($request->get('nama_lab'),'-'),
+                    'deskripsi' => $request->get('deskripsi_lab'),
+                    'thumbnail' => $path,
+                    'jurusan'=>$request->get('kode'),
+                    'kepala_lab'=>$request->get('klab')
+                ]);
+            }else {
+                lab::create([
+                    'nama' => $request->get('nama_lab'),
+                    'slug' => Str::slug($request->get('nama_lab'),'-'),
+                    'deskripsi' => $request->get('deskripsi_lab'),
+                    'thumbnail' => $path,
+                    'jurusan'=>$request->get('kode'),
+                ]);
+            }
             return redirect()
                 ->back()
                 ->withSuccess("Data berhasil di submit");
@@ -155,8 +169,7 @@ class AdminController extends Controller
                 ->withError("Data gagal di submit");
     }
 
-    public function getLab()
-    {
+    public function getTableLab(){
         $data = lab::all();
         return Datatables::of($data)
             ->addIndexColumn()
@@ -251,7 +264,6 @@ class AdminController extends Controller
         ]);
 
         if ($request->get('kelas') != null) {
-            // dd('ada kelas');
             praktikum::create([
                 'nama' => $request->get('nama_praktikum'),
                 'slug' => Str::slug($request->get('nama_praktikum'),'-'),
@@ -262,7 +274,6 @@ class AdminController extends Controller
                 'kelas' => $request->get('kelas')
             ]);
         }else {
-            // dd('tidak ada kelas');
             praktikum::create([
                 'nama' => $request->get('nama_praktikum'),
                 'slug' => Str::slug($request->get('nama_praktikum'),'-'),
@@ -278,7 +289,7 @@ class AdminController extends Controller
             ->withSuccess("Data berhasil di submit");
     }
 
-    public function getPrak($id){
+    public function getTablePrak($id){
         $data = praktikum::where('laboratorium',$id)->get();
         return Datatables::of($data)
             ->addIndexColumn()
@@ -289,11 +300,8 @@ class AdminController extends Controller
             ->make(true);
     }
 
-    public function postDetailMateri(Request $request)
-    {
-        // dd($request->all());
+    public function postDetailMateri(Request $request){
         if ($request->get('tipe') == '1' && $request->get('materi') != null) {
-            // dd('masuk tipe 1');
             $validator = Validator::make($request->all(), [
                 'materi' => 'required | string | max:2000',
                 'pilih_materi' => 'required',
@@ -409,8 +417,7 @@ class AdminController extends Controller
         }
     }
 
-    public function deleteJurusan($id)
-    {
+    public function deleteJurusan($id){
         $delete = jurusan::where('id',$id)->delete();
 
         // check data deleted or not
@@ -429,8 +436,7 @@ class AdminController extends Controller
         ]);
     }
 
-    public function statusJurusan($id)
-    {
+    public function statusJurusan($id){
         $check = jurusan::find($id);
         $field['status'] = !$check->status;
         if($check){
@@ -448,9 +454,71 @@ class AdminController extends Controller
         return response()->json($data, 200);
     }
 
-    public function updateJurusan(Request $request)
-    {
+    public function updateJurusan(Request $request){
         
     }
 
+    public function postRekrut(Request $request){
+        // dd(date("Y-m-d", strtotime($request->get('deadline'))) );
+        $validator = Validator::make($request->all(), [
+            'nama_rekrutmen' => ' string | max:100',
+            'deskripsi' => 'string | max:1000',
+            'kuota' => 'required',
+            'deadline' => 'required',
+            'kode_praktikum' => 'required',
+            'fileSyarat' => 'required | mimes:pdf,zip,rar | max:10000'
+        ]);
+        if ($validator->fails()) { 
+            return redirect()
+            ->back()
+            ->withErrors($validator)
+            ->withInput();
+        };
+
+        $name = Carbon::now()->format('YmdHs')."_".$request->file('fileSyarat')->getClientOriginalName();
+        $path_file = Storage::putFileAs('public/file', $request->file('fileSyarat'), $name);
+
+        rekrutmen::create([
+            'nama' => $request->get('nama_rekrutmen'),
+            'deskripsi' => $request->get('deskripsi'),
+            'kuota' => $request->get('kuota'),
+            'deadline' => date("Y-m-d", strtotime($request->get('deadline'))), 
+            'praktikum_id'=>$request->get('kode_praktikum'),
+            'file'=> $path_file
+        ]);
+
+        return redirect()
+                ->back()
+                ->withSuccess("Data berhasil di simpan");
+    }
+
+    public function getPrak($id)
+    {
+        $data = praktikum::where('laboratorium',$id)->get();
+        return response()->json($data);
+    }
+
+    public function getTableRek()
+    {
+        $data = rekrutmen::orderBy('created_at','desc')->get();
+        return Datatables::of($data)
+            ->editColumn('praktikum_id', function ($data){
+                return $data->getPrak->nama;
+            })
+            ->addIndexColumn()
+            ->addColumn('opsi', function ($data){
+                return '<a title="Hapus" href="#" onclick="deleted('.$data->id.')" class="hapus btn btn-danger btn-sm"><i class="fa fa-trash"></i></a>';
+            })
+            ->addColumn('file', function ($data){
+                return '<a download title="download" href="#" class="btn btn-info btn-sm">Download File</a>';
+            })
+            ->rawColumns(['opsi','file'])
+            ->make(true);
+    }
+
+    public function getDetailrekrut($id)
+    {
+        $data = rekrutmen::where('id', $id)->orderBy('created_at')->first();
+        return response()->json($data);
+    }
 }

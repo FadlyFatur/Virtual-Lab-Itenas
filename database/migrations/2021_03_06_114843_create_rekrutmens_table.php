@@ -19,7 +19,7 @@ class CreateRekrutmensTable extends Migration
             $table->integer('kuota')->default(3);
             $table->date('deadline');
             $table->text('deskripsi');
-            $table->string('nama');
+            $table->string('nama')->nullable();
             $table->string('file');
             $table->foreignId('praktikum_id')
                 ->constrained('praktikums')
