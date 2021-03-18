@@ -82,17 +82,17 @@
 }
 
 .wrapper .socialmedia ul li{
-    width: 45px;
-    height: 45px;
-    background: linear-gradient(to right, #01a9ac, #01dbdf);
-    margin-right: 10px;
-    border-radius: 5px;
-    line-height: 45px;
+    width: 35px;
+    height: 35px;
+    
+    margin-right: 15px;
+    border-radius: 10px;
+    line-height: 40px;
     text-align: center;
 }
 
 .wrapper .socialmedia ul li a{
-    color: #fff;
+    color: black;
     display: block;
     font-size: 18px;
 }

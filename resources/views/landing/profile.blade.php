@@ -48,7 +48,7 @@
                 <ul>
                     <li><a herf="#"><i class="fab fa-facebook-square"></i></a></li>
                     <li><a herf="#"></a><i class="fab fa-twitter"></i></li>
-                    <li><a herf="#"><i class="fab fa-instagram"></i></a></li>
+                    <li><a herf="#"><i class="fab fa-instagram-square"></i></a></li>
                 </ul>
             </div>
         </div>
