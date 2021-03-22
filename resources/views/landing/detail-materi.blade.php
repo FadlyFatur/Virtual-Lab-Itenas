@@ -115,7 +115,7 @@
         <div class="row">
             <div class="col-md-3">
                 <ul class="list-group">
-                    @if ($role != 1 &&  $role != 2)
+                    @if ($role == 0 || $assisten->where('praktikum_id', $id)->count() > 0 )
                       <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#exampleModal"><i class="fa fa-plus"></i> Tambah Materi</button>
                       <button class="btn btn-primary" data-toggle="modal" data-target="#TambahAbsen"><i class="fa fa-plus"></i> Tambah Absen</button>
                     @endif
@@ -130,7 +130,7 @@
                           <div id="materi-list" class="pull-left">
                             <button onclick="materiClick( {{$d->id}} )" class="btn btn-light" id="{{$d->id}}"><i class="fa fa-chevron-circle-right" aria-hidden="true"></i> {{$d->nama}}</button>
                           </div>
-                            @if ( $role != 1 &&  $role != 2)
+                            @if ( $role == 0 || $assisten->where('praktikum_id', $id)->count() > 0 )
                               <div id="edit-materi" class="pull-right">
                                 <a onclick="hapusMateri( {{$d->id}} )" class="btn btn-danger">
                                   <i class="fa fa-trash" aria-hidden="true"></i>
@@ -143,7 +143,7 @@
             </div>
 
             <div class="col-md-8 side-line">
-                @if ($role != 1 &&  $role != 2)
+                @if ($role == 0 || $assisten->where('praktikum_id', $id)->count() > 0 )
                   <div class="pull-left" id="input_area">
                       <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#input_materi">Input Materi</button>
                   </div><br><hr>
@@ -366,7 +366,7 @@
                     var header = ` <div class="text-center">
                     <h1 class="text-center" id="judul-materi">`+resp.materi['nama']+`</h1><br>
                     <p style="font-size:24px;">`+resp.materi['deskripsi']+`</p>
-                    </div><br><br>`;
+                    </div><br><hr>`;
                     $("#materi-area").append(header);
                     var body = "";
                     if (resp.file_materi != 'null') {

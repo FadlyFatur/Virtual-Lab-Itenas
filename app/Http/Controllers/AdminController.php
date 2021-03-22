@@ -15,6 +15,7 @@ use App\rekrutmen;
 use App\user_rekrutmen as rekrut;
 use App\kelas_praktikum as kelas;
 use App\file_materi as fmateri;
+use App\assisten;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
@@ -537,19 +538,24 @@ class AdminController extends Controller
         $userRekrut = rekrut::where('user_id', Auth::id())->where('rekrut_id',$id)->exists();
         $user = Auth::user();
 
-        $data = [
-            'nama' => $rekrut->nama,
-            'deskripsi' => $rekrut->deskripsi,
-            'kuota' => $rekrut->kuota,
-            'deadline' => $rekrut->deadline,
-            'file' => $rekrut->file,
-            'praktikum' => $rekrut->getPrak->nama,
-            'user' => $user,
-            'rekrut' => $id,
-            'cek' => $userRekrut
-        ];
-
-        return response()->json($data);
+        if (!empty($rekrut)) {
+            $data = [
+                'nama' => $rekrut->nama,
+                'deskripsi' => $rekrut->deskripsi,
+                'kuota' => $rekrut->kuota,
+                'deadline' => $rekrut->deadline,
+                'file' => $rekrut->file,
+                'praktikum' => $rekrut->getPrak->nama,
+                'user' => $user,
+                'rekrut' => $id,
+                'cek' => $userRekrut
+            ];
+    
+            return response()->json($data);
+        }else{
+            $data = "Belum ada rekrutmen";
+            return response()->json($data); // Status code here
+        }
     }
 
     public function postDetailrekrut(Request $request){
@@ -635,12 +641,24 @@ class AdminController extends Controller
 
     public function acceptRekrut($id, $userId)
     {
-        $resp = rekrut::where('user_id', $userId)
+        rekrut::where('user_id', $userId)
                 ->where('rekrut_id',$id)
                 ->first()
                 ->update(['status' => 1]);
+        
+        User::where('id', $userId)
+                ->first()
+                ->update(['roles_id' => 3]);
 
-        return response()->json($resp);
+        $rekrut = rekrutmen::where('id',$id)->first();
+
+        assisten::create([
+                'jabatan' => 1,
+                'user_id' => $userId,
+                'praktikum_id' => $rekrut->getPrak->id,
+                ]);
+        $data = ['message' => 'Sukses!'];
+        return response()->json($data, 200);
     }
 
     public function deniedRekrut($id, $userId)
@@ -651,5 +669,14 @@ class AdminController extends Controller
                 ->update(['status' => 2]);
 
         return response()->json($resp);
+    }
+
+    public function getRekrut($id)
+    {
+        $data = rekrutmen::where('praktikum_id',$id)
+        ->where('status', 1)
+        ->get();
+
+        return response()->json($data);
     }
 }

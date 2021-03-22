@@ -103,14 +103,16 @@
         </div>
     </div>
         <section id="tabs" class="project-tab mt-5">
-            @if (Auth::user()->roles_id == 2 || Auth::user()->roles_id == 1 || Auth::user()->roles_id == 0)
+            
             <div class="row">
                 <div class="col-md-12">
                     {{-- <h2>Informasi Saya</h2> --}}
                     <nav>
                         <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
                             <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Laboratorium</a>
-                            <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Rekrutmen</a>
+                            @if (Auth::user()->roles_id != 1 )
+                                <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Rekrutmen</a>
+                            @endif
                         </div>
                     </nav>
                     <div class="tab-content" id="nav-tabContent">
@@ -138,46 +140,47 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
-                            <table class="table" cellspacing="0">
-                                <thead>
-                                    <tr>
-                                        <th>Rekrutmen</th>
-                                        <th>Laboratorium</th>
-                                        <th>Praktikum</th>
-                                        <th>Tanggal Pengajuan</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @if (count($rekrut)>0)
-                                        @foreach ($rekrut as $r)
-                                            <tr>
-                                                <td>{{$r->getRekrut->nama}}</td>
-                                                <td>{{$r->getRekrut->getPrak->lab->nama}}</td>
-                                                <td>{{$r->getRekrut->getPrak->nama}}</td>
-                                                <td>{{$r->created_at->format('d, M Y')}}</td>
-                                                @if ($r->status == 0)
-                                                    <td><span class="badge badge-secondary">Pending</span></td>
-                                                @elseif($r->status == 1)
-                                                    <td><span class="badge badge-success">Diterima</span></td>
-                                                @else
-                                                    <td><span class="badge badge-danger">Ditolak</span></td>
-                                                @endif
-                                            </tr>
-                                        @endforeach
-                                    @else
-                                    <tr>
-                                        <td>Belum ada data</td>
-                                    </tr>
-                                    @endif
-                                </tbody>
-                            </table>
-                        </div>
+                        @if (Auth::user()->roles_id != 1 )
+                            <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                                <table class="table" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>Rekrutmen</th>
+                                            <th>Laboratorium</th>
+                                            <th>Praktikum</th>
+                                            <th>Tanggal Pengajuan</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (count($rekrut)>0)
+                                            @foreach ($rekrut as $r)
+                                                <tr>
+                                                    <td>{{$r->getRekrut->nama}}</td>
+                                                    <td>{{$r->getRekrut->getPrak->lab->nama}}</td>
+                                                    <td>{{$r->getRekrut->getPrak->nama}}</td>
+                                                    <td>{{$r->created_at->format('d, M Y')}}</td>
+                                                    @if ($r->status == 0)
+                                                        <td><span class="badge badge-secondary">Pending</span></td>
+                                                    @elseif($r->status == 1)
+                                                        <td><span class="badge badge-success">Diterima</span></td>
+                                                    @else
+                                                        <td><span class="badge badge-danger">Ditolak</span></td>
+                                                    @endif
+                                                </tr>
+                                            @endforeach
+                                        @else
+                                        <tr>
+                                            <td>Belum ada data</td>
+                                        </tr>
+                                        @endif
+                                    </tbody>
+                                </table>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
-            @endif
         </section>
 </div>
 @endsection

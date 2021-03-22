@@ -200,7 +200,7 @@
             </div>
           </div>
           @if (Auth::check())
-              @if ($role != 1 &&  $role != 2)
+              @if ($role == 0 && $role == 4)
                 <button class="btn btn-info" data-toggle="modal" data-target="#tambah" style="margin-left: 32px">Tambah Praktikum</button>
                 <button class="btn btn-info" data-toggle="modal" data-target="#tambah-kelas" style="margin-left: 32px">Tambah Kelas</button>
               @endif
@@ -234,7 +234,7 @@
                           <p class="card-text"><small class="text-muted">Tanggal Dibuat : {{$d->created_at->format('d F Y')}}</small></p>
                         </div>
                         <div class="card-footer d-flex justify-content-center">
-                          @if ($enroll->where('praktikum_id', $d->id)->count() > 0 || $role == 0)
+                          @if ($enroll->where('praktikum_id', $d->id)->count() > 0 || $assisten->where('praktikum_id', $d->id)->count() > 0 ||$role == 0)
                             <a href="{{route('detail-materi',$d->id)}}"><button class="btn btn-info" style="color: #fff;">Masuk</button></a>
                           @else
                             <a href="{{route('daftar-prak',$d->id)}}"><button class="btn btn-success">Daftar</button></a>

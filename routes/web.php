@@ -48,7 +48,8 @@ route::get('get-materi/{id}','MateriController@getMateri')->name('getMateri');
 route::post('delete-materi/{id}','MateriController@deleteMateri')->name('deleteMateri');
 Route::get('get-rekrutmen/{id}', 'AdminController@getDetailrekrut')->name('get-detail-rekrut');
 Route::post('post-rekrutmen', 'AdminController@postDetailrekrut')->name('post-detail-rekrut');
-Route::get('get-list-rekrut/{id}', 'AdminController@getPrak')->name('get-list-rekrut');
+Route::get('get-list-prak/{id}', 'AdminController@getPrak')->name('get-list-prak');
+Route::get('get-list-rekrut/{id}', 'AdminController@getRekrut')->name('get-list-rekrut');
 
 // admin controller 
 Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function (){

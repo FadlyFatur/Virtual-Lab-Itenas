@@ -335,27 +335,77 @@ function showRekrut(id) {
 }
 
 function accept(id, userId) {
-  $.ajax({
-    type:'GET',
-    url:"rekrutmen/"+id+"/rekrutmen-accept/"+userId,
-    success:function (resp) {
-      console.log('berhasil');
-    },error:function(resp){
-      console.log('gagal');
-    }
-  })
+
+  swal({
+      title: "Apakah Yakin?",
+      text: "Proses ini tidak bisa diulang!",
+      icon: "warning",
+      buttons: [
+        'Batal',
+        'Terima!'
+      ],
+      dangerMode: true,
+    }).then(function(isConfirm) {
+      if (isConfirm) {
+        swal({
+          title: 'Asisten Diterima!',
+          text: 'Assisten berhasil ditambahkan',
+          icon: 'success'
+        }).then(function() {
+          $.ajax({
+            type:'GET',
+            url:"rekrutmen/"+id+"/rekrutmen-accept/"+userId,
+            success:function (resp) {
+              console.log('berhasil');
+              $('#card-rekrutmen').empty();
+              $(".list-rekrut").dataTable().fnDestroy();
+              getList(id);
+            },error:function(resp){
+              console.log('gagal');
+            }
+          });
+        });
+      } else {
+        swal("Batal", "Silahkan pilih lagi", "error");
+      }
+    })
 }
 
 function denied(id, userId) {
-  $.ajax({
-    type:'GET',
-    url:"rekrutmen/"+id+"/rekrutmen-denied/"+userId,
-    success:function (resp) {
-      console.log('berhasil');
-    },error:function(resp){
-      console.log('gagal');
-    }
-  })
+  swal({
+      title: "Apakah Yakin?",
+      text: "Proses ini tidak bisa diulang!",
+      icon: "warning",
+      buttons: [
+        'Batal',
+        'Terima!'
+      ],
+      dangerMode: true,
+    }).then(function(isConfirm) {
+      if (isConfirm) {
+        swal({
+          title: 'Asisten Ditolak!',
+          text: 'Assisten berhasil ditolak',
+          icon: 'info'
+        }).then(function() {
+          $.ajax({
+            type:'GET',
+            url:"rekrutmen/"+id+"/rekrutmen-denied/"+userId,
+            success:function (resp) {
+              console.log('berhasil');
+              $('#card-rekrutmen').empty();
+              $(".list-rekrut").dataTable().fnDestroy();
+              getList(id);
+            },error:function(resp){
+              console.log('gagal');
+            }
+          })
+        });
+      } else {
+        swal("Batal", "Silahkan pilih lagi", "error");
+      }
+    })
+  
 }
 </script> 
 @endsection

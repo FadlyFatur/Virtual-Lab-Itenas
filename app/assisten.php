@@ -7,6 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class assisten extends Model
 {
     protected $fillable = [
-        'jabatan', 'mahasiswa_id'
+        'status', 'jabatan', 'foto', 'user_id', 'praktikum_id'
     ];
 }

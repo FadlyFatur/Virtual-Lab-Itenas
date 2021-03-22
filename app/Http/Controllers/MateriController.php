@@ -8,6 +8,7 @@ use App\enroll;
 use App\lab;
 use App\praktikum;
 use App\file_materi;
+use App\assisten;
 Use Alert;
 use Auth;
 use Carbon\Carbon;
@@ -32,15 +33,18 @@ class MateriController extends Controller
         }
         // dd($filter);
         $enroll = enroll::where('user_id', Auth::user()->id)->get();
-        return view('landing.praktikum', compact('lab', 'data', 'enroll', 'role', 'filter'));
+        $assisten = assisten::where('user_id', Auth::user()->id)->get();
+        return view('landing.praktikum', compact('lab', 'data', 'enroll', 'role', 'filter', 'assisten'));
     }
 
     public function indexMateri($id)
     {
+        
         $role = Auth::user()->roles_id;
         $prak = praktikum::where('id',$id)->first();
         $data = Materi::where('praktikum_id',$id)->get();
-        return view('landing.detail-materi',compact('data','prak', 'role'));
+        $assisten = assisten::where('user_id', Auth::user()->id)->get();
+        return view('landing.detail-materi',compact('data','prak', 'role','assisten', 'id'));
     }
 
     public function daftarPrak($id)
@@ -54,7 +58,8 @@ class MateriController extends Controller
             $data = Materi::where('praktikum_id',$id)->get();
             $prak = praktikum::where('id',$id)->first();
             $role = Auth::user()->roles_id;
-            return view('landing.detail-materi',compact('data','prak', 'role'));
+            $assisten = assisten::where('user_id', Auth::user()->id)->get();
+            return view('landing.detail-materi',compact('data','prak', 'role','assisten', 'id'));
         }
         return redirect()->back();
     }
