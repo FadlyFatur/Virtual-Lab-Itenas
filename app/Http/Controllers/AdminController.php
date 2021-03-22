@@ -12,6 +12,7 @@ use App\lab;
 use App\Materi;
 use App\praktikum;
 use App\rekrutmen;
+use App\user_rekrutmen as rekrut;
 use App\kelas_praktikum as kelas;
 use App\file_materi as fmateri;
 use Illuminate\Support\Facades\Validator;
@@ -19,6 +20,7 @@ use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 Use Alert;
+use Auth;
 
 class AdminController extends Controller
 {
@@ -77,7 +79,7 @@ class AdminController extends Controller
     
     public function getMahasiswa()
     {
-        return Datatables::collection(mahasiswa::all())->make(true);
+        return Datatables::collection(user::where('roles_id',2)->get())->make(true);
     }
 
     public function indexDosen()
@@ -174,7 +176,7 @@ class AdminController extends Controller
         return Datatables::of($data)
             ->addIndexColumn()
             ->addColumn('opsi', function ($data){
-                return '<a target="_blank" href="'.asset($data->thumbnail).'" class="edit btn btn-info btn-sm"><i class="fas fa-eye"></i></a> <a target="_blank" href="'.route('praktikum', $data->slug).'" class="edit btn btn-info btn-sm"><i class="fas fa-book-open"></i>';
+                return '<a target="_blank" href="'.asset($data->thumbnail).'" class="edit btn btn-info btn-sm"><i class="fas fa-eye"></i></a> <a target="_blank" href="'.route('praktikumAdmin', $data->slug).'" class="edit btn btn-info btn-sm"><i class="fas fa-book-open"></i>';
             })
             ->addColumn('jurusan', function ($data){
                 $jur = $data->jurusan()->first()->nama;
@@ -252,7 +254,9 @@ class AdminController extends Controller
 
     public function indexPrak($slug){
         $lab = lab::where('slug',$slug)->first();
-        return view('admin.praktikum', compact('lab'));
+        $data = praktikum::where('laboratorium',$lab->id)->get();
+        $role = Auth::user()->roles_id;
+        return view('admin.praktikum', compact('lab','data','role'));
     }
 
     public function postPrak(Request $request, $id){
@@ -294,9 +298,12 @@ class AdminController extends Controller
         return Datatables::of($data)
             ->addIndexColumn()
             ->addColumn('opsi', function ($data){
-                return '<a target="_blank" href="#" class="edit btn btn-info btn-sm"><i class="fas fa-eye"></i></a>  <a target="_blank" href="'.route('materi', $data->id).'" class="edit btn btn-info btn-sm"><i class="fas fa-book-open"></i>';
+                return '<a target="_blank" href="'.route('materi', $data->id).'" class="edit btn btn-info btn-sm"><i class="fas fa-book-open"></i>';
             })
-            ->rawColumns(['opsi'])
+            ->addColumn('th', function ($data){
+                return $data->semester.'/'.$data->tahun_ajaran;
+            })
+            ->rawColumns(['opsi','th'])
             ->make(true);
     }
 
@@ -494,31 +501,155 @@ class AdminController extends Controller
 
     public function getPrak($id)
     {
-        $data = praktikum::where('laboratorium',$id)->get();
-        return response()->json($data);
+        $data = praktikum::where('laboratorium',$id)
+                ->where('status', 1)
+                ->get();
+        
+            return response()->json($data);
     }
 
     public function getTableRek()
     {
         $data = rekrutmen::orderBy('created_at','desc')->get();
         return Datatables::of($data)
-            ->editColumn('praktikum_id', function ($data){
-                return $data->getPrak->nama;
-            })
-            ->addIndexColumn()
-            ->addColumn('opsi', function ($data){
-                return '<a title="Hapus" href="#" onclick="deleted('.$data->id.')" class="hapus btn btn-danger btn-sm"><i class="fa fa-trash"></i></a>';
-            })
-            ->addColumn('file', function ($data){
-                return '<a download title="download" href="#" class="btn btn-info btn-sm">Download File</a>';
-            })
-            ->rawColumns(['opsi','file'])
-            ->make(true);
+                ->editColumn('praktikum_id', function ($data){
+                    return $data->getPrak->nama;
+                })
+                ->addIndexColumn()
+                ->addColumn('opsi', function ($data){
+                    return '<button title="Hapus" onclick="deleted('.$data->id.')" class="hapus btn btn-danger btn-sm"><i class="fa fa-trash"></i></button> <button title="list" onclick="getList('.$data->id.')" class="hapus btn btn-danger btn-sm"><i class="fa fa-eye"></i></button>';
+                    
+                })
+                ->addColumn('file', function ($data){
+                    return '<a download title="download" href="#" class="btn btn-info btn-sm">Download File</a>';
+                })
+                ->addColumn('total', function ($data){
+                    return rekrut::where('rekrut_id', $data->id)->count();
+                    
+                })
+                ->rawColumns(['opsi','file'])
+                ->make(true);
     }
 
     public function getDetailrekrut($id)
     {
-        $data = rekrutmen::where('id', $id)->orderBy('created_at')->first();
+        $rekrut = rekrutmen::where('id', $id)->orderBy('created_at')->first();
+        $userRekrut = rekrut::where('user_id', Auth::id())->where('rekrut_id',$id)->exists();
+        $user = Auth::user();
+
+        $data = [
+            'nama' => $rekrut->nama,
+            'deskripsi' => $rekrut->deskripsi,
+            'kuota' => $rekrut->kuota,
+            'deadline' => $rekrut->deadline,
+            'file' => $rekrut->file,
+            'praktikum' => $rekrut->getPrak->nama,
+            'user' => $user,
+            'rekrut' => $id,
+            'cek' => $userRekrut
+        ];
+
         return response()->json($data);
+    }
+
+    public function postDetailrekrut(Request $request){
+        $validator = Validator::make($request->all(), [
+            'userId' => ' required',
+            'biodata' => 'required|mimes:pdf|max:5000',
+            'transkip' => 'required|mimes:pdf|max:5000',
+            'file' => 'required | mimes:pdf,zip,rar | max:10000'
+        ]);
+        if ($validator->fails()) { 
+            return redirect()
+            ->back()
+            ->withErrors($validator)
+            ->withInput();
+        };
+        $bio = Carbon::now()->format('YmdHs')."_".$request->file('biodata')->getClientOriginalName();
+        $nilai = Carbon::now()->format('YmdHs')."_".$request->file('transkip')->getClientOriginalName();
+        $file = Carbon::now()->format('YmdHs')."_".$request->file('file')->getClientOriginalName();
+
+        $path_bio = Storage::putFileAs('public/rekrut', $request->file('biodata'), $bio);
+        $path_nilai = Storage::putFileAs('public/rekrut', $request->file('transkip'), $nilai);
+        $path_file = Storage::putFileAs('public/rekrut', $request->file('file'), $file);
+        
+        rekrut::create([
+            'biodata' => $path_bio,
+            'transkip' => $path_nilai,
+            'file' => $path_file,
+            'rekrut_id'=>$request->get('rekrutId'),
+            'user_id'=>$request->get('userId')
+        ]);
+
+        return redirect()
+                ->back()
+                ->withSuccess("Data berhasil di simpan");
+    }
+
+    public function getListRekrut($id){
+        $data = rekrut::where('rekrut_id',$id)->get();
+        return Datatables::of($data)
+                ->editColumn('nama', function ($data){
+                    return $data->getUser->name;
+                })
+                ->editColumn('nrp', function ($data){
+                    return $data->getUser->nomer_id;
+                })
+                ->editColumn('email', function ($data){
+                    return $data->getUser->email;
+                })
+                ->addIndexColumn()
+                ->addColumn('opsi', function ($data){
+                    return '<button title="Lihat" onclick="showRekrut('.$data->id.')" class="btn btn-info btn-sm"><i class="fa fa-eye"></i></button>'; 
+                })
+                ->addColumn('status', function ($data){
+                    if ($data->status == 0) {
+                        return '<span class="badge badge-secondary">Pending</span>';
+                    }elseif ($data->status == 1) {
+                        return '<span class="badge badge-success">Diterima</span>';
+                    }else{
+                        return '<span class="badge badge-danger">Ditolak</span>';
+                    }
+                })
+                ->rawColumns(['opsi','status'])
+                ->make(true);
+    }
+
+    public function getUserRekrut($id)
+    {
+        $rekrut = rekrut::where('id',$id)->first();
+
+        $data = [
+            'id' => $rekrut->rekrut_id,
+            'user_id' => $rekrut->user_id,
+            'nama' => $rekrut->getUser->name,
+            'nrp' => $rekrut->getUser->nomer_id,
+            'email' => $rekrut->getUser->email,
+            'bio' => $rekrut->biodata,
+            'transkip' => $rekrut->transkip,
+            'file' => $rekrut->file,
+            'tanggal' => $rekrut->created_at->format('d/m/Y')
+        ];
+        return response()->json($data);
+    }
+
+    public function acceptRekrut($id, $userId)
+    {
+        $resp = rekrut::where('user_id', $userId)
+                ->where('rekrut_id',$id)
+                ->first()
+                ->update(['status' => 1]);
+
+        return response()->json($resp);
+    }
+
+    public function deniedRekrut($id, $userId)
+    {
+        $resp = rekrut::where('user_id', $userId)
+                ->where('rekrut_id',$id)
+                ->first()
+                ->update(['status' => 2]);
+
+        return response()->json($resp);
     }
 }

@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\rekrutmen;
+use App\enroll;
+use Auth;
+use App\user_rekrutmen as rekrut;
 
 class HomeController extends Controller
 {
@@ -24,6 +28,9 @@ class HomeController extends Controller
     
     public function index()
     {
-        return view('home');
+        $kelas = enroll::where('user_id',Auth::id())->get();
+        $rekrut = rekrut::where('user_id',Auth::id())->orderBy('created_at', 'DESC')->get();
+        $kelas_baru = enroll::where('user_id',Auth::id())->latest('created_at')->first();
+        return view('home', compact('kelas', 'rekrut', 'kelas_baru'));
     }
 }

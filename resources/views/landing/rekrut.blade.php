@@ -3,6 +3,19 @@
 @section('content')
     <div class="container margin-top" data-aos="fade-up">
         <h1>Rekrutmen Assisten Laboratorium</h1><hr><br><br>
+        @if(session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
+    
+        @if(session('errors'))
+            <div class="alert alert-danger">
+                @foreach ($errors->all() as $message)
+                {!! $message !!} <br> 
+                @endforeach
+            </div>
+        @endif
         <div class="row">
             <div class="col-md-4">
                 <label for="jurusan">Pilih Laboratorium</label>
@@ -18,11 +31,12 @@
                     
                 </ul>
             </div>
-            <div class="col md-8 ml-5" style="border-left: 1px solid black; padding-left:40px;" id="rekrut-area">
-                <h1>Silahkan pilih laboratorium dan praktikum</h1>
+            <div class="col md-8 ml-3 pl-3" style="border-left: 1px solid black;" id="rekrut-area">
+                <h2>Silahkan pilih laboratorium dan praktikum</h2>
             </div>
         </div>
     </div>
+    
 @endsection
 
 @section('js')
@@ -30,7 +44,7 @@
 function getPraktikum(id){
     $.ajax({
       type:'GET',
-      url:"get-praktikum/"+id,
+      url:"get-list-rekrut/"+id,
       success:function (resp) {
         $('#list-praktikum').empty();
         var body = "";
@@ -55,55 +69,79 @@ function getRekrut(id) {
       type:'GET',
       url:"get-rekrutmen/"+id,
       success:function (resp) {
-        console.log(resp.nama);
+        console.log(resp);
+        var csrf_token = "{{ csrf_token() }}"
         $('#rekrut-area').empty();
         var body = "";
         if (resp.length != 0) {
+            if(resp.cek == true){
+                body += `<h2 style="font-size:3rem;"><span class="badge badge-primary">`+resp.nama+`</span></h2>
+                        <p><b>Info :</b> Sudah mendaftar, harap tunggu info lebih lanjut</p>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                <th scope="col">Nama</th>
+                                <th scope="col">NRP</th>
+                                <th scope="col">Email</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                <td>`+resp.user.name+`</td>
+                                <td>`+resp.user.nomer_id+`</td>
+                                <td>`+resp.user.email+`</td>
+                                </tr>
+                            </tbody>
+                        </table>`
+            }else{
             body += `<h2 style="font-size:3rem;"><span class="badge badge-primary">`+resp.nama+`</span></h2>
                     <h3>Deadline : `+resp.deadline+`</h3>
                     <br>
                     <p>`+resp.deskripsi+`</p>
-                    <a href="`+resp.file+`" download><p><span class="badge badge-success">Download Persyaratan <i class="fa fa-download"></i></span></p></a>
+                    <a href="`+resp.file+`" download><h4><span class="badge badge-success">Download Persyaratan <i class="fa fa-download"></i></span></h4></a>
                     <hr>
-                    <p><span class="badge badge-warning">Form Kelengkapan</span></p>
-                    <form>
-                    <div class="form-group">
-                        <label for="exampleInputPassword1">Nama</label>
-                        <input type="text" class="form-control" id="" placeholder="Password">
-                    </div>
-                    <div class="form-group">
-                      <label for="exampleInputEmail1">Email</label>
-                      <input type="email" class="form-control" id="" aria-describedby="" placeholder="Enter email">
-                      <small id="" class="form-text text-muted">We'll never share your email with anyone else.</small>
-                    </div>
-                    <div class="form-group">
-                      <label for="exampleInputPassword1">NRP</label>
-                      <input type="number" class="form-control" id="" placeholder="Password">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="exampleFormControlFile1">Form Data Diri</label>
-                        <input type="file" class="form-control-file" id="">
-                    </div>
+                    <h4>Form Kelengkapan Rekrutmen</h4><br>
+                    <form method="post"  action="/post-rekrutmen" enctype="multipart/form-data">
+                        <input name="_token" value="`+csrf_token+`" type="hidden">
+                        <input name="userId" value="`+resp.user.id+`" type="hidden">
+                        <input name="rekrutId" value="`+resp.rekrut+`" type="hidden">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                <th scope="col">Nama</th>
+                                <th scope="col">NRP</th>
+                                <th scope="col">Email</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                <td>`+resp.user.name+`</td>
+                                <td>`+resp.user.nomer_id+`</td>
+                                <td>`+resp.user.email+`</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <div class="form-group">
+                            <label for="biodata">Lembar Biodata *pdf</label>
+                            <input type="file" class="form-control-file" id="file-data-diri" name="biodata">
+                        </div>
 
-                    <div class="form-group">
-                        <label for="exampleFormControlFile1">Transkip Nilai</label>
-                        <input type="file" class="form-control-file" id="">
-                    </div>
+                        <div class="form-group">
+                            <label for="transkip">Transkip Nilai *pdf</label>
+                            <input type="file" class="form-control-file" id="transkip" name="transkip">
+                        </div>
 
-                    <div class="form-group">
-                        <label for="exampleFormControlFile1">Surat A</label>
-                        <input type="file" class="form-control-file" id="">
-                    </div>
+                        <div class="form-group">
+                            <label for="file">File Kelengkapan lain *zip</label>
+                            <input type="file" class="form-control-file" id="file-lain" name="file">
+                        </div>
 
-                    <div class="form-group">
-                        <label for="exampleFormControlFile1">Surat B</label>
-                        <input type="file" class="form-control-file" id="">
-                    </div>
-                    <br>
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                    <br>
-                  </form>`
+                        <br>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <br>
+                    </form>`;
+            }
 
             $("#rekrut-area").append(body);
         }else{

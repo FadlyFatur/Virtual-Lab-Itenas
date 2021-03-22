@@ -14,13 +14,25 @@ use Carbon\Carbon;
 
 class MateriController extends Controller
 {
-    public function listPraktikum($slug)
+    public function listPraktikum(Request $request, $slug)
     {
+        // dd($request->all());
         $lab = lab::where('slug',$slug)->first();
         $role = Auth::user()->roles_id;
-        $data = praktikum::where('laboratorium',$lab->id)->get();
+        $filter = praktikum::select('tahun_ajaran')
+                            ->where('laboratorium',$lab->id)
+                            ->groupBy('tahun_ajaran')
+                            ->get();
+        if($request->has('filter') && $request->get('filter') != '0'){
+            $data = praktikum::where('laboratorium',$lab->id)
+                            ->where('tahun_ajaran',$request->get('filter'))        
+                            ->get();
+        }else {
+            $data = praktikum::where('laboratorium',$lab->id)->get();
+        }
+        // dd($filter);
         $enroll = enroll::where('user_id', Auth::user()->id)->get();
-        return view('landing.praktikum', compact('lab', 'data', 'enroll', 'role'));
+        return view('landing.praktikum', compact('lab', 'data', 'enroll', 'role', 'filter'));
     }
 
     public function indexMateri($id)

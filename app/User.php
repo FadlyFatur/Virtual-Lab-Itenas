@@ -36,4 +36,9 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function getUserRekrut()
+    {
+        return $this->hasMany('App\user_rekrutmen', 'user_id', 'id');
+    }
 }

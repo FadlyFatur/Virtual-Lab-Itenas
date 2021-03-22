@@ -73,19 +73,25 @@
                   </div>
                   <div class="form-group">
                     <label>Semester</label>
-                    <select name="semester" class="custom-select form-control">
-                      <option selected>Open this select menu</option>
-                      <option value="genap">Genap</option>
-                      <option value="ganjil">Ganjil</option>
+                    <select name="semester" class="custom-select form-control" required>
+                      <option selected>Pilih salah satu</option>
+                      <option value="Genap">Genap</option>
+                      <option value="Ganjil">Ganjil</option>
                     </select>
                   </div>
                   <div class="form-group">
-                    <label>Tahun Ajaran (*2019-2020)</label>
-                    <input type="text" class="form-control" name="tahun_ajaran" placeholder="Tahun Ajaran" required autofocus>
+                    <label>Tahun Ajaran</label>
+                    <select name="tahun_ajaran" class="custom-select form-control" required>
+                      <option selected>Pilih salah satu</option>
+                      <option value="2019-2020">2019-2020</option>
+                      <option value="2020-2021">2020-2021</option>
+                      <option value="2021-2022">2021-2022</option>
+                      <option value="2022-2023">2022-2023</option>
+                    </select>
                   </div>
                 </div>
               </div>
-            </div>
+          </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
             <button type="submit" class="btn btn-primary">Simpan</button>
@@ -180,15 +186,17 @@
         <div class="container d-flex justify-content-center">
           <div class="row">
             <div class="col pr-0">
-              <select class="form-select mr-2" aria-label="Default select example" style="width: 500px">
-                <option selected>Pilih Semester</option>
-                <option value="1">One</option>
-                <option value="2">Two</option>
-                <option value="3">Three</option>
-              </select>
-            </div>
-            <div class="col pl-0">
-              <button class="btn btn-primary">Cek</button>
+              <form action="{{route('praktikum-list',$lab->slug)}}" method="get">
+                <select class="form-select mr-2" name="filter" aria-label="Default select example" style="width: 500px">
+                  <option value = '0' >Semua</option>
+                  @foreach ($filter as $f => $item)
+                    <option value="{{$item->tahun_ajaran}}">{{$item->tahun_ajaran}}</option>  
+                  @endforeach
+                </select>
+              </div>
+              <div class="col pl-0">
+                <button class="btn btn-primary">Submit</button>
+              </form>
             </div>
           </div>
           @if (Auth::check())
@@ -209,10 +217,14 @@
                         <div class="jadwal-materi text-center">
                             <h2 style="color:#230b50;">Jadwal</h2>
                             <hr>
-                            <h5>{{$d->getKelas->nama}}</h5>
-                            <p>{{Carbon\Carbon::parse($d->getKelas->jadwal_mulai)->format('H:i')}} - {{Carbon\Carbon::parse($d->getKelas->jadwal_akhir)->format('H:i')}}</p><br>
+                            <h5>{{ ($d->kelas)? $d->getKelas->nama : '-' }}</h5>
+                            @if ($d->kelas)
+                              <p>{{Carbon\Carbon::parse($d->getKelas->jadwal_mulai)->format('H:i')}} - {{Carbon\Carbon::parse($d->getKelas->jadwal_akhir)->format('H:i')}}</p><br>
+                            @else
+                              <p>-</p>
+                            @endif
                             <p>Koor Lab</p><hr>
-                            <p>Semester {{$d->Semester}} <br> {{$d->tahun_ajaran}}</p>
+                            <p>Semester {{$d->semester}} <br> {{$d->tahun_ajaran}}</p>
                         </div>
                       </div>
                       <div class="col-md-8">

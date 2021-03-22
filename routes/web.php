@@ -46,11 +46,14 @@ Route::group(['prefix' => 'praktikum'], function () {
 
 route::get('get-materi/{id}','MateriController@getMateri')->name('getMateri');
 route::post('delete-materi/{id}','MateriController@deleteMateri')->name('deleteMateri');
-Route::get('get-praktikum/{id}', 'AdminController@getPrak')->name('get-lab');
 Route::get('get-rekrutmen/{id}', 'AdminController@getDetailrekrut')->name('get-detail-rekrut');
+Route::post('post-rekrutmen', 'AdminController@postDetailrekrut')->name('post-detail-rekrut');
+Route::get('get-list-rekrut/{id}', 'AdminController@getPrak')->name('get-list-rekrut');
 
+// admin controller 
 Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function (){
     Route::get('/', 'AdminController@index')->name('dashboard');
+    Route::get('get-prak-rekrut/{id}', 'AdminController@getPrak')->name('get-prak-rekrut');
     
 
     Route::post('delete-jurusan/{id}', 'AdminController@deleteJurusan')->name('delete-jurusan');
@@ -68,7 +71,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function 
     });
 
     Route::prefix('praktikum')->group(function (){
-        Route::get('{slug}', 'AdminController@indexPrak')->name('praktikum');
+        Route::get('{slug}', 'AdminController@indexPrak')->name('praktikumAdmin');
         Route::get('get-data/{id}', 'AdminController@getTablePrak')->name('get-praktikum');
         Route::post('post-praktikum/{id}', 'AdminController@postPrak')->name('post-praktikum');
 
@@ -86,6 +89,10 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function 
         Route::get('/', 'AdminController@indexRek')->name('rekrutmen');
         Route::get('get-rekrutmen', 'AdminController@getTableRek')->name('get-rekrutmen');
         Route::post('/post-rekrutmen', 'AdminController@postRekrut')->name('post-rekrutmen');
+        Route::get('/list-rekrutmen/{id}', 'AdminController@getListRekrut')->name('get-list-rekrutmen');
+        Route::get('/get-detail-rekrutmen/{id}', 'AdminController@getUserRekrut')->name('get-user-rekrutmen');
+        Route::get('{id}/rekrutmen-accept/{userId}', 'AdminController@acceptRekrut')->name('rekrutmen-accept');
+        Route::get('{id}/rekrutmen-denied/{userId}', 'AdminController@deniedRekrut')->name('rekrutmen-denied');
     });
     
     Route::get('/user', 'AdminController@indexUser')->name('user');

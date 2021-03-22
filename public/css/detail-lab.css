@@ -38,6 +38,12 @@
     border: 4px solid #2db6fa;
 }
 
+.card-img-top {
+    width: 100%;
+    height: 15vw;
+    object-fit: cover;
+}
+
 
 
 

@@ -16,6 +16,10 @@ class CreateUserRekrutmensTable extends Migration
         Schema::create('user_rekrutmens', function (Blueprint $table) {
             $table->id();
             $table->integer('status')->default(0);
+            $table->string('biodata')->nullable();
+            $table->string('transkip')->nullable();
+            $table->string('file')->nullable();
+            $table->string('foto')->nullable();
             $table->foreignId('rekrut_id')
                 ->constrained('rekrutmens')
                 ->onDelete('cascade')

@@ -14,4 +14,9 @@ class rekrutmen extends Model
     {
         return $this->belongsTo('App\praktikum', 'praktikum_id');
     }
+
+    public function getUserRekrut()
+    {
+        return $this->hasMany('App\user_rekrutmen', 'rekrut_id', 'id');
+    }
 }

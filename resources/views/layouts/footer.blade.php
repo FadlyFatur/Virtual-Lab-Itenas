@@ -1,7 +1,5 @@
-<section style="height: 100%; width: 100%; box-sizing: border-box; background-color: #FFFFFF;">
-  <style>
-   
-  </style>
+<section  style="height: 100%; width: 100%; box-sizing: border-box; background-color: #FFFFFF;">
+  <hr class="mt-5">
   <div  style="font-family: 'Poppins', sans-serif;">
   <div class="list-footer-footer-2-1">
     <div class="row">

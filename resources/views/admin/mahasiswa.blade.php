@@ -208,8 +208,8 @@
         serverSide: true,
         ajax: "{{ route('get-mahasiswa') }}",
         columns: [
-            {data: 'nama', name: 'nama'},
-            {data: 'nrp', name: 'nrp'},
+            {data: 'name', name: 'nama'},
+            {data: 'nomer_id', name: 'nrp'},
         ]
     });
     

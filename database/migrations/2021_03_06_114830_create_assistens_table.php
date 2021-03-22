@@ -16,10 +16,14 @@ class CreateAssistensTable extends Migration
         Schema::create('assistens', function (Blueprint $table) {
             $table->id();
             $table->boolean('status')->default(1);
-            $table->integer('jabatan');
-            $table->foreignId('mahasiswa_id')
-                ->nullable()
-                ->constrained('mahasiswas')
+            $table->integer('jabatan')->default(1);
+            $table->string('foto')->nullable();
+            $table->foreignId('user_id')
+                ->constrained('users')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
+            $table->foreignId('praktikum_id')
+                ->constrained('praktikums')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
             $table->timestamps();

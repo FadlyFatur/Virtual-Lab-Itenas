@@ -39,6 +39,7 @@ class UserSeeder extends Seeder
         $mahasiswa = [
             'name' => "mahasiswa",
             'email' => "mahasiswa@test.com",
+            'nomer_id' => "12345678",
             'roles_id' => 2,
             'email_verified_at' => now(),
             'password' => bcrypt('12345'),

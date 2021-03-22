@@ -28,14 +28,14 @@
   
       @if(session('errors'))
           <div class="alert alert-danger">
-            @foreach ($errors->all() as $message) {
-              {!! $message !!} <br> 
+            @foreach ($errors->all() as $message)
+              {{ $message }}<br> 
             @endforeach
           </div>
       @endif
-      <div class="card card-warning">
+      <div class="card card-info collapsed-card">
         <div class="card-header">
-          <h5 class="card-title">Buat Rekrutmen</h5>
+          <a href="#buat-rekrutmen" data-card-widget="collapse"><h5 class="card-title">Buat Rekrutmen</h5></a>
 
           <div class="card-tools">
             <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -85,10 +85,10 @@
                       <label>Kuota</label>
                       <select name="kuota" class="custom-select form-control">
                         <option selected>Wajib dipilih</option>
-                        <option value"3">3</option>
-                        <option value"4">4</option>
-                        <option value"5">5</option>
-                        <option value"0">> 5</option>
+                        <option value"3">6</option>
+                        <option value"4">8</option>
+                        <option value"5">10</option>
+                        <option value"0">> 10</option>
                       </select>
                     </div>
                     
@@ -108,12 +108,12 @@
               
               <div class="col-sm-6">
                 <div class="form-group">
-                  <label>Nama Rekrutmen (*Opsional)</label>
+                  <label>Nama Rekrutmen</label>
                   <input type="text" class="form-control" name="nama_rekrutmen" placeholder="Nama Jurusan Lengkap"> 
                 </div>
                 <div class="form-group">
                   <label>Deskripsi</label>
-                  <textarea class="form-control" rows="5" name="deskripsi" placeholder="Masukan Deskripsi Jurusan" required autofocus></textarea>
+                  <textarea class="form-control" rows="5" name="deskripsi" id="deskripsi" placeholder="Masukan Deskripsi Jurusan" required autofocus></textarea>
                 </div>
               </div>
             </div>
@@ -136,9 +136,9 @@
                     <th>Status</th>
                     <th>Praktikum</th>
                     <th>Nama</th>
-                    <th>Deskripsi</th>
                     <th>Kuota</th>
                     <th>Deadline</th>
+                    <th>Total Rekrutmen</th>
                     <th>File</th>
                     <th>Opsi</th>
                 </tr>
@@ -148,6 +148,34 @@
         </table>
         </div>
       </div>
+
+      <section id="detail-rekrut">
+        <div class="card card-primary">
+          <div class="card-header">
+            <h3 class="card-title judul-rekrutmen">List Pendaftaran Rekrutmen</h3>
+          </div>
+          <div class="card-body">
+            <table class="table table-bordered list-rekrut">
+              <thead>
+                  <tr>
+                      <th>Nama</th>
+                      <th>NRP</th>
+                      <th>Email</th>
+                      <th>Status</th>
+                      <th>Opsi</th>
+                  </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+
+            {{-- detail  --}}
+            <div class="card card-primary card-outline mt-5" id="card-rekrutmen">
+
+            </div>
+          </div>
+        </div>
+      </section>
 
     </div>
 @endsection
@@ -163,6 +191,20 @@
     });  
 
     bsCustomFileInput.init();
+    $("#detail-rekrut").hide();
+    $('#deskripsi').summernote({
+      height: 150,
+      toolbar: [
+        // [groupName, [list of button]]
+        ['style', ['bold', 'italic', 'underline', 'clear']],
+        ['font', ['strikethrough', 'superscript', 'subscript']],
+        ['fontsize', ['fontsize']],
+        ['color', ['color']],
+        ['para', ['ul', 'ol', 'paragraph']],
+        ['insert', ['link']],
+        ['view', ['fullscreen', 'codeview']],
+      ]
+    });
 
     var table = $('.data-table').DataTable({
         processing: true,
@@ -189,9 +231,9 @@
             },
             {data: 'praktikum_id'},
             {data: 'nama'},
-            {data: 'deskripsi'},
             {data: 'kuota'},
             {data: 'deadline'},
+            {data: 'total'},
             {data: 'file', orderable: false, searchable: false},
             {data: 'opsi', orderable: false, searchable: false}
         ]
@@ -201,7 +243,7 @@
 function getPraktikum(id){
     $.ajax({
       type:'GET',
-      url:"get-praktikum/"+id,
+      url:"get-prak-rekrut/"+id,
       success:function (resp) {
         $('#praktikum').empty();
         var body = "";
@@ -212,6 +254,108 @@ function getPraktikum(id){
         $("#praktikum").append(body);
       }
     })
+}
+
+function getList(id) {
+  $("#detail-rekrut").show();
+  $('.list-rekrut').DataTable({
+      processing: true,
+      serverSide: true,
+      ajax: "rekrutmen/list-rekrutmen/"+id,
+      columns: [
+          {data: 'nama'},
+          {data: 'nrp'},
+          {data: 'email'},
+          {data: 'status', orderable: false, searchable: false},
+          {data: 'opsi', orderable: false, searchable: false}
+      ]
+  });
+}
+
+function showRekrut(id) {
+    $.ajax({
+      type:'GET',
+      url:"rekrutmen/get-detail-rekrutmen/"+id,
+      success:function (resp) {
+       console.log(resp);
+       $('#card-rekrutmen').empty();
+       var body = "";
+       body +=`<div class="card-header">
+                <h3 class="card-title">Detail Rekrutmen</h3>
+              </div>
+              <div class="card-body p-0">
+                <div class="mailbox-read-info">
+                  <h5>`+resp.nama+` | `+resp.nrp+`</h5>
+                  <h6>`+resp.email+`
+                    <span class="mailbox-read-time float-right">`+resp.tanggal+`</span></h6>
+                </div>
+                <ul class="mailbox-attachments d-flex align-items-stretch clearfix m-3">
+                  <li>
+                    <span class="mailbox-attachment-icon"><i class="far fa-file-pdf"></i></span>
+  
+                    <div class="mailbox-attachment-info">
+                      <a href="`+resp.bio+`" class="mailbox-attachment-name"><i class="fas fa-paperclip"></i>Biodata</a>
+                          <span class="mailbox-attachment-size clearfix mt-1">
+                            <a href="#" class="btn btn-default btn-sm float-right"><i class="fas fa-cloud-download-alt"></i></a>
+                          </span>
+                    </div>
+                  </li>
+                  <li>
+                    <span class="mailbox-attachment-icon"><i class="far fa-file-pdf"></i></span>
+  
+                    <div class="mailbox-attachment-info">
+                      <a href="`+resp.transkip+`" class="mailbox-attachment-name"><i class="fas fa-paperclip"></i> Transkip Nilai</a>
+                          <span class="mailbox-attachment-size clearfix mt-1">
+                            <a href="#" class="btn btn-default btn-sm float-right"><i class="fas fa-cloud-download-alt"></i></a>
+                          </span>
+                    </div>
+                  </li>
+                  <li>
+                    <span class="mailbox-attachment-icon"><i class="fas fa-file-archive"></i></span>
+  
+                    <div class="mailbox-attachment-info">
+                      <a href="`+resp.file+`" class="mailbox-attachment-name"><i class="fas fa-paperclip"></i> File Kelengkapan</a>
+                          <span class="mailbox-attachment-size clearfix mt-1">
+                            <a href="#" class="btn btn-default btn-sm float-right"><i class="fas fa-cloud-download-alt"></i></a>
+                          </span>
+                    </div>
+                  </li>
+                 
+                </ul>
+              </div>
+
+              <div class="card-footer">
+                <button onclick="accept(`+resp.id+`,`+resp.user_id+`)" type="button" class="btn btn-danger"><i class="fa fa-check"></i> Diterima</button>
+                <button onclick="denied(`+resp.id+`,`+resp.user_id+`)" type="button" class="btn btn-success"><i class="fa fa-ban"></i> Ditolak</button>
+              </div>`;
+          
+        $("#card-rekrutmen").append(body);
+      }
+    })
+}
+
+function accept(id, userId) {
+  $.ajax({
+    type:'GET',
+    url:"rekrutmen/"+id+"/rekrutmen-accept/"+userId,
+    success:function (resp) {
+      console.log('berhasil');
+    },error:function(resp){
+      console.log('gagal');
+    }
+  })
+}
+
+function denied(id, userId) {
+  $.ajax({
+    type:'GET',
+    url:"rekrutmen/"+id+"/rekrutmen-denied/"+userId,
+    success:function (resp) {
+      console.log('berhasil');
+    },error:function(resp){
+      console.log('gagal');
+    }
+  })
 }
 </script> 
 @endsection

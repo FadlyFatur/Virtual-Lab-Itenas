@@ -10,7 +10,7 @@
             <div class="group-jurusan">
                 <div class="row gy-4">
                     @foreach ($jurusan as $j)
-                        <div class="col-lg-6 col-sm-12 d-flex align-items-stretch mb-3">
+                        <div class="col-lg-4 col-sm-6 d-flex align-items-stretch mb-3">
                             <div class="card">
                                 <div class="card-header">
                                     <img src="{{asset($j->thumbnail_path)}}" class="card-img-top" alt="{{$j->nama}}">

@@ -32,7 +32,7 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1 class="m-0 text-dark">Praktikum Lab.{{$lab->nama}}</h1>
+              <h1 class="m-0 text-dark">{{$lab->nama}}</h1>
             </div><!-- /.col -->
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
@@ -58,9 +58,9 @@
           </div>
       @endif
 
-      <div class="card card-warning collapsed-card">
+      <div class="card card-info collapsed-card">
         <div class="card-header">
-          <h5 class="card-title">Input Praktikum Lab.{{$lab->nama}}</h5>
+          <h5 class="card-title">Input Praktikum</h5>
 
           <div class="card-tools">
             <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -75,7 +75,7 @@
             <div class="row">
               <div class="col-sm-6">
                 <div class="form-group">
-                  <label>Nama Materi</label>
+                  <label>Nama Praktikum</label>
                   <input type="text" class="form-control" name="nama_praktikum" placeholder="Nama Praktikum" required autofocus> 
                 </div>
                 <div class="form-group">
@@ -87,26 +87,32 @@
                 <div class="form-group">
                   <label>Kelas</label>
                   @php
-                      $kelas = App\kelas_praktikum::all();
+                    $kelas = App\kelas_praktikum::all();
                   @endphp
                   <select name="kelas" class="custom-select form-control">
                     <option value= "" selected>Pilih salah satu</option>
-                    @foreach ($data as $d)
+                    @foreach ($kelas as $d)
                       <option value= "{{$d->id}}">{{$d->nama}}</option>
                     @endforeach
                   </select>
                 </div>
                 <div class="form-group">
                   <label>Semester</label>
-                  <select name="semester" class="custom-select form-control">
-                    <option selected>Open this select menu</option>
-                    <option value="genap">Genap</option>
-                    <option value="ganjil">Ganjil</option>
+                  <select name="semester" class="custom-select form-control" required>
+                    <option selected>Pilih salah satu</option>
+                    <option value="Genap">Genap</option>
+                    <option value="Ganjil">Ganjil</option>
                   </select>
                 </div>
                 <div class="form-group">
-                  <label>Tahun Ajaran (*2019-2020)</label>
-                  <input type="text" class="form-control" name="tahun_ajaran" placeholder="Tahun Ajaran" required autofocus>
+                  <label>Tahun Ajaran</label>
+                  <select name="tahun_ajaran" class="custom-select form-control" required>
+                    <option selected>Pilih salah satu</option>
+                    <option value="2019-2020">2019-2020</option>
+                    <option value="2020-2021">2020-2021</option>
+                    <option value="2021-2022">2021-2022</option>
+                    <option value="2022-2023">2022-2023</option>
+                  </select>
                 </div>
               </div>
             </div>
@@ -120,7 +126,7 @@
 
       <div class="card">
         <div class="card-header">
-          <h3 class="card-title">Data Praktikum Lab.{{$lab->nama}}</h3>
+          <h3 class="card-title">Data Praktikum {{$lab->nama}}</h3>
         </div>
         <div class="card-body">
           <table class="table table-bordered data-table">
@@ -129,7 +135,6 @@
                     <th>Status</th>
                     <th>Nama</th>
                     <th>Deskripsi</th>
-                    <th>Semester</th>
                     <th>Tahun Ajaran</th>
                     <th>Kelas</th>
                     <th>Opsi</th>
@@ -209,8 +214,7 @@
               },
               {data: 'nama'},
               {data: 'deskripsi'},
-              {data: 'Semester'},
-              {data: 'tahun_ajaran'},
+              {data: 'th'},
               {data: 'kelas'},
               {data: 'opsi', orderable: false, searchable: false}
           ]
