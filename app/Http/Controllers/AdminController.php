@@ -223,7 +223,7 @@ class AdminController extends Controller
     }
 
     public function postDataMateri(Request $request){
-        dd($request->all());
+        // dd($request->all());
     }
 
     public function postKelas(Request $request){
@@ -376,13 +376,17 @@ class AdminController extends Controller
                 ->back()
                 ->withErrors($validator);
             }
-
-            $name = Carbon::now()->format('YmdHs')."_".$request->file('file')->getClientOriginalName();
-            $path_file = Storage::putFileAs('public/file_materi', $request->file('file'), $name);
-
+            $path = public_path('files');
+            $nameFile = Carbon::now()->format('YmdHs')."_".$request->file('file')->getClientOriginalName();
+            $request->file('file')->move($path,$nameFile);
+            // $path = $request->file('file')->storeAs('public/materi', $name);
+            // $path_file = Storage::disk('local')->put('public/file_materi'.$request->file('file')->getClientOriginalName(), $request->file('file'));
+            // $path_file = Storage::disk('materi')->putFileAs('materi', $request->file('file'), $name);
+            // $url = $request->image->storeAs('public', $nameFile);
+            // \File::put(public_path('storage/img/payment/'.$nameFile), $file->get());
             fmateri::create([
                 'nama' => $request->get('nama_materi'),
-                'file' => $path_file,
+                'file' => $nameFile,
                 'type' => $request->get('tipe'),
                 'materi_id' => $request->get('pilih_materi'),
                 'urutan' =>  $request->get('urutan')

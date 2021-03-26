@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder
         $this->call(UserSeeder::class);
         // $data = factory(mahasiswa::class, 100)->create();
         // $data = factory(dosen::class, 100)->create();
-        // $data = factory(jurusan::class, 1)->create();
-        // $data = factory(kelas_praktikum::class, 1)->create();
+        $data = factory(jurusan::class, 1)->create();
+        $data = factory(kelas_praktikum::class, 1)->create();
     }
 }

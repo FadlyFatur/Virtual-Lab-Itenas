@@ -2,6 +2,7 @@
 @section('style')
     @parent
     <link href="{{ asset('css/welcome.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" integrity="sha512-tS3S5qG0BlhnQROyJXvNjeEM4UpMXHrQfTGmbQ1gKmelCxlSEBUaxhRBj/EFTzpbP4RVSrpEikbmdJobCvhE3g==" crossorigin="anonymous" />
 @endsection
 @section('content')
 <div>
@@ -83,12 +84,12 @@
         <p class="text-caption-content-2-1" style="  margin-left: 3rem; margin-right: 3rem;">Silahkan Pilih salah satu untuk bisa <b>Akses Virtual Laboratorium</b> yang Tersedia</p>
     </div>
 
-    <div class="container mb-5">
+    <div class="container">
         <div class="row">
             @foreach ($jurusan as $j)
                 <div class="col-lg-3 col-md-6 d-flex align-items-stretch">
                     <div class="card" style="width: 18rem;">
-                        <img src="{{asset($j->thumbnail_path)}}" class="card-img-top" alt="...">
+                        <img src="{{asset($j->thumbnail_path)}}" class="card-img-top" alt="..." style="background-image: url('{{asset('Logo-Itenas.jpg')}}'); object-fit: cover; background-size: cover;">
                         <div class="card-body">
                             <h5 class="card-title">{{$j->nama}}</h5>
                             {{-- <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p> --}}
@@ -111,76 +112,6 @@
     </div>
 
 </section><!-- End Services Section -->
-
-<!-- ======= Team Section ======= -->
-{{-- <section id="pengajar" class="pengajar">
-
-    <div class="text-center title-text-content-2-1">
-        <h1 class="text-title-content-2-1">Pengajar</h1>
-        <p class="text-caption-content-2-1" style="margin-left: 3rem; margin-right: 3rem;">Menyiapkan para pendidik dari bidangnya</p>
-    </div>
-    
-    <div class="container">
-        <div class="row text-center">
-
-            <div class="col-lg-3 col-md-6 d-flex align-items-stretch">
-                <div class="member">
-                    <div class="member-img">
-                        <img src="" class="img-fluid" alt="">
-                    </div>
-                    <div class="member-info mt-2">
-                    <h4>Walter White</h4>
-                    <span>Chief Executive Officer</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-3 col-md-6 d-flex align-items-stretch">
-                <div class="member">
-                    <div class="member-img">
-                    <img src="" class="img-fluid" alt="">
-                    </div>
-                    <div class="member-info mt-2">
-                    <h4>Walter White</h4>
-                    <span>Chief Executive Officer</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-3 col-md-6 d-flex align-items-stretch">
-                <div class="member">
-                    <div class="member-img">
-                    <img src="" class="img-fluid" alt="">
-                    </div>
-                    <div class="member-info mt-2">
-                    <h4>Walter White</h4>
-                    <span>Chief Executive Officer</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-3 col-md-6 d-flex align-items-stretch">
-                <div class="member">
-                    <div class="member-img">
-                    <img src="" class="img-fluid" alt="">
-                    </div>
-                    <div class="member-info mt-2">
-                    <h4>Walter White</h4>
-                    <span>Chief Executive Officer</span>
-                    </div>
-                </div>
-            </div>
-            
-        </div>
-        <hr>
-        <div class="text-center text-lg-start d-flex justify-content-center">
-            <a href="{{ url('/pengajar') }}" class="btn btn-primary d-inline-flex align-items-center justify-content-center align-self-center">
-                <span>Lihat Lebih Banyak</span>
-            </a>
-        </div>
-    </div>
-</section> --}}
-<!-- End Team Section -->
 
 <!-- ======= berita Section ======= -->
 <section id="berita" class="berita">
@@ -242,4 +173,8 @@
     </div>
 </section><!-- End Team Section -->
 
+@endsection
+
+@section('js')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js" integrity="sha512-bPs7Ae6pVvhOSiIcyUClR7/q2OAsRiovw4vAkX+zJbw3ShAeeqezq50RIIcIURq7Oa20rW2n2q+fyXBNcU9lrw==" crossorigin="anonymous"></script>
 @endsection

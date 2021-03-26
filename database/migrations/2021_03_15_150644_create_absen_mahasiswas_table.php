@@ -15,8 +15,7 @@ class CreateAbsenMahasiswasTable extends Migration
     {
         Schema::create('absen_mahasiswas', function (Blueprint $table) {
             $table->id();
-            $table->boolean('status')->default(1);
-            $table->integer('tipe');
+            $table->integer('status')->default(0);
             $table->foreignId('absen_id')
                 ->nullable()
                 ->constrained('absens')

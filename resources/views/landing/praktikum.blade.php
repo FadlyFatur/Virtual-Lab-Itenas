@@ -101,6 +101,7 @@
       </div>
     </div>
 
+    {{-- modal Tambah Kelas --}}
     <div class="modal fade" id="tambah-kelas" tabindex="-1" role="dialog" aria-labelledby="tambah-kelasLabel" aria-hidden="true">
       <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -200,7 +201,7 @@
             </div>
           </div>
           @if (Auth::check())
-              @if ($role == 0 && $role == 4)
+              @if ($role == 0 || $role == 4)
                 <button class="btn btn-info" data-toggle="modal" data-target="#tambah" style="margin-left: 32px">Tambah Praktikum</button>
                 <button class="btn btn-info" data-toggle="modal" data-target="#tambah-kelas" style="margin-left: 32px">Tambah Kelas</button>
               @endif

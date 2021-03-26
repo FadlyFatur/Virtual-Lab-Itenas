@@ -9,9 +9,15 @@ use App\lab;
 use App\praktikum;
 use App\file_materi;
 use App\assisten;
+use App\Absen;
+use App\absen_mahasiswa;
 Use Alert;
 use Auth;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
+use App\Exports\AbsenExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class MateriController extends Controller
 {
@@ -44,7 +50,16 @@ class MateriController extends Controller
         $prak = praktikum::where('id',$id)->first();
         $data = Materi::where('praktikum_id',$id)->get();
         $assisten = assisten::where('user_id', Auth::user()->id)->get();
-        return view('landing.detail-materi',compact('data','prak', 'role','assisten', 'id'));
+        $Cekabsen = Absen::where('praktikum_id',$id)->get();
+        $absen = absen_mahasiswa::where('user_id',Auth::id())->orderBy('absen_id','asc')->get();
+        if (count($absen) > 0) {
+            foreach ($absen as $a ) {
+                $dataAbsen_mhs []= $a->absen_id;
+            }
+        }else{
+            $dataAbsen_mhs = [];
+        }
+        return view('landing.detail-materi',compact('data','prak', 'role','assisten', 'id','Cekabsen','absen','dataAbsen_mhs'));
     }
 
     public function daftarPrak($id)
@@ -59,7 +74,16 @@ class MateriController extends Controller
             $prak = praktikum::where('id',$id)->first();
             $role = Auth::user()->roles_id;
             $assisten = assisten::where('user_id', Auth::user()->id)->get();
-            return view('landing.detail-materi',compact('data','prak', 'role','assisten', 'id'));
+            $Cekabsen = Absen::where('praktikum_id',$id)->get();
+            $absen = absen_mahasiswa::where('user_id',Auth::id())->orderBy('absen_id','asc')->get();
+            if (count($absen) > 0) {
+                foreach ($absen as $a ) {
+                    $dataAbsen_mhs []= $a->absen_id;
+                }
+            }else{
+                $dataAbsen_mhs = [];
+            }
+            return view('landing.detail-materi',compact('data','prak', 'role','assisten', 'id','Cekabsen','absen','dataAbsen_mhs'));
         }
         return redirect()->back();
     }
@@ -76,18 +100,18 @@ class MateriController extends Controller
                     $img = NULL;
                 }
     
-                if ($d->file != NULL) {
-                    $file = asset($d->file);
-                }else {
-                    $file = NULL;
-                }
+                // if ($d->file != NULL) {
+                //     $file = Storage::disk('local')->get($d->file);
+                //     // $file = $d->file;
+                // }else {
+                //     $file = NULL;
+                // }
             
                 $data[] = [
                     'nama' => $d->nama,
                     'materi' => $d->materi,
-                    'file' => asset($d->file),
                     'img' => $img,
-                    'file' => $file,
+                    'file' => $d->file,
                     'link' => $d->link,
                     'tipe' => $d->type,
                     'tanggal' => Carbon::createFromFormat('Y-m-d H:i:s', $d->created_at)->format('Y/m/d')
@@ -128,6 +152,68 @@ class MateriController extends Controller
             'success' => $success,
             'message' => $message,
         ]);
+    }
+
+    public function addAbsen(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'nama_absen' => ' string | max:100 | required | unique:absens,nama',
+            'tgl_absen' => 'required',
+            'prak_id' => 'required',
+        ]);
+        if ($validator->fails()) { 
+            return redirect()
+            ->back()
+            ->withErrors($validator)
+            ->withInput();
+        };
+        // dd($request->get('tgl_absen'));
+        $createdAt = Carbon::parse($request->get('tgl_absen'));
+        $createdAt->format('Y-m-d H:i:s');
+        // dd($createdAt);
+        Absen::create([
+            'nama' => $request->get('nama_absen'),
+            'tanggal_absen' => $createdAt,
+            'praktikum_id' => $request->get('prak_id'),
+            'status' => 1
+        ]);
+        return redirect()
+                ->back()
+                ->withSuccess("Data Absen berhasil di simpan");
+
+    }
+
+    public function absen(Request $request)
+    {
+        // dd($request->all());
+
+        $validator = Validator::make($request->all(), [
+            'absen' => 'required',
+        ]);
+        if ($validator->fails()) { 
+            return redirect()
+            ->back()
+            ->withErrors($validator)
+            ->withInput();
+        };
+
+        absen_mahasiswa::create([
+            'status' => $request->get('absen'),
+            'absen_id' => $request->get('absen_id'),
+            'user_id' => Auth::id()
+        ]);
+        return redirect()
+                ->back()
+                ->withSuccess("Data Absen berhasil di simpan");
+    }
+
+    public function downloadFile($file)
+    {
+        if(Storage::disk('materi')->exists($file)){
+            return Storage::disk('materi')->download($file);;
+        }else{
+            abort(404);
+        }
     }
     
 }

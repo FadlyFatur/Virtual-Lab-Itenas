@@ -5,6 +5,7 @@
     <link href="{{ asset('css/detail-materi.css') }}" rel="stylesheet">
     <!-- summernote -->
     <link rel="stylesheet" href="{{asset('plugins/summernote/summernote-bs4.css')}}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/css/tempusdominus-bootstrap-4.min.css" />
       
 @endsection
 
@@ -56,46 +57,112 @@
         </div>
         <div class="modal-body">
           <h4>Praktikum : {{$prak->nama}}</h4>
-          <h5>Absen Tanggal : {{Carbon\Carbon::now()->toFormattedDateString()}}</h5>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
-            <label class="form-check-label" for="inlineRadio1">Masuk</label>
+          <h5>Absen Tanggal : {{Carbon\Carbon::now()->toFormattedDateString()}}</h5><br>
+          
+          @foreach ($Cekabsen as $d)
+            <hr>
+            @php
+              $tgl_absen = Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $d->tanggal_absen)->format('M d,Y - H:i');
+              $now = Carbon\Carbon::now();
+              $then = new Carbon\Carbon($d->tanggal_absen);
+              $diff = $now->diffInMinutes($then);
+            @endphp
+            <h5>{{$d->nama}} - Tanggal : {{$tgl_absen}}</h5>
+            <div class="form-group clearfix">
+              @if (in_array($d->id, $dataAbsen_mhs))
+                <p>Absen sudah disimpan</p>
+              @else
+                @if ($now->gte($then))
+                  <form action="{{route('absen')}}" method="post">
+                    @csrf
+                    <input type="hidden" id="absen_id" name="absen_id" value="{{$d->id}}">
+                    <div class="form-check form-check-inline">
+                      @if ($diff >= 15)
+                        <input class="form-check-input" type="radio" name="absen" id="inlineRadio1" value="1" disabled>
+                      @else
+                        <input class="form-check-input" type="radio" name="absen" id="inlineRadio1" value="1">
+                      @endif
+                      <label class="form-check-label" for="inlineRadio1">Masuk</label>
+                    </div>
+                    @if ($diff >= 1440)
+                      <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="absen" id="inlineRadio2" value="2" disabled>
+                        <label class="form-check-label" for="inlineRadio2">Telat</label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="absen" id="inlineRadio2" value="2" checked>
+                        <label class="form-check-label" for="inlineRadio2">Absen</label>
+                      </div>
+                    @else
+                      <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="absen" id="inlineRadio2" value="2">
+                        <label class="form-check-label" for="inlineRadio2">Telat</label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="absen" id="inlineRadio2" value="3">
+                        <label class="form-check-label" for="inlineRadio2">Absen</label>
+                      </div>
+                    @endif
+                    <button type="submit" class="btn btn-primary float-right">Simpan</button>
+                  </form>
+                @else
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="masuk" id="inlineRadio1" value="1" disabled>
+                    <label class="form-check-label" for="inlineRadio1">Masuk</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="telat" id="inlineRadio2" value="2" disabled>
+                    <label class="form-check-label" for="inlineRadio2">Telat</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="absen" id="inlineRadio2" value="3" disabled>
+                    <label class="form-check-label" for="inlineRadio2">Absen</label>
+                  </div>
+                @endif
+              @endif
             </div>
-            <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
-            <label class="form-check-label" for="inlineRadio2">Telat</label>
-            </div>
-            <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
-            <label class="form-check-label" for="inlineRadio2">Absen</label>
-            </div>
-        
+          @endforeach
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Modal absen-->
+  <!-- Modal input absen-->
   <div class="modal fade" id="TambahAbsen" tabindex="-1" role="dialog" aria-labelledby="TambahAbsenLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="TambahAbsenLabel">Absen</h5>
+          <h5 class="modal-title" id="TambahAbsenLabel">Tambah Absen</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <div class="modal-body">
-         
+         <form action="{{route('addAbsen')}}" method="post">
+          @csrf
+          <input type="hidden" class="form-control" name="prak_id" value="{{$prak->id}}"> 
+          <div class="form-group">
+            <label>Nama Absen</label>
+            <input type="text" class="form-control" name="nama_absen" placeholder="Absensi Daskom 1" required> 
+          </div>
+          <div class="form-group">
+            <label>Waktu Mulai</label>
+            <div class="input-group date" id="datetimepicker3" data-target-input="nearest">
+              <input type="text" class="form-control datetimepicker-input" data-target="#datetimepicker3" name="tgl_absen" required/>
+              <div class="input-group-append" data-target="#datetimepicker3" data-toggle="datetimepicker">
+                  <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+          <button type="submit" class="btn btn-primary">Simpan</button>
         </div>
+      </form>
       </div>
     </div>
   </div>
@@ -121,9 +188,11 @@
                     @endif
                     <br>
                     @if ($role != 1)
-                      <li class="list-group-item">
-                          <a href="#" id="absen" data-toggle="modal" data-target="#absen"><i class="fa fa-list" aria-hidden="true"></i> Absen</a>
-                      </li>
+                      @if (count($Cekabsen) > 0)
+                        <li class="list-group-item">
+                            <a href="#" id="absen" data-toggle="modal" data-target="#absen"><i class="fa fa-list" aria-hidden="true"></i> Absen</a>
+                        </li>
+                      @endif
                     @endif
                     @foreach ($data as $d)
                         <li class="list-group-item">
@@ -146,6 +215,9 @@
                 @if ($role == 0 || $assisten->where('praktikum_id', $id)->count() > 0 )
                   <div class="pull-left" id="input_area">
                       <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#input_materi">Input Materi</button>
+                      <a href="route('rekapAbsen')" class="btn btn-primary">Rekap Absensi</a>
+                      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#input_materi">Rekap Nilai</button>
+                      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#input_materi">Rekap Tugas</button>
                   </div><br><hr>
                 @endif
                 <div id="materi-area">
@@ -249,6 +321,8 @@
     <link href="{{ asset('js/detail-materi.js') }}">
     <!-- Summernote -->
     <script src="{{asset('plugins/summernote/summernote-bs4.min.js')}}"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/js/tempusdominus-bootstrap-4.min.js"></script>
 
     <script>
     $(document).ready(function () {
@@ -346,6 +420,12 @@
             ['view', ['fullscreen', 'codeview']],
           ]
         });
+
+        $('#datetimepicker3').datetimepicker({
+          format: 'DD-MM-YYYY, HH:mm',
+        });
+
+        $
     });
 
     function materiClick(id) {
@@ -375,7 +455,7 @@
                           if (value.img != null) {
                             body += `<div class=" container multimedia-area d-flex justify-content-center">
                               <img class="img-fluid" src="`+value.img+`" alt="">
-                              </div><br><hr>`
+                              </div><hr><br>`
                           }
 
                           if (value.materi != null) {
@@ -385,13 +465,13 @@
 
                           if (value.file != null) {
                             body += `<div class="file-area">
-                                        <h2>Materi Download</h2>
+                                        <h2>`+value.nama+`</h2>
                                         <ul class="list-group">
                                             <li class="list-group-item">
-                                                <a href="`+value.file+`" download>File Materi 1 <i class="fa fa-download"></i></a>
+                                                <a href="download/`+value.file+`" class="btn btn-primary"><i class="fa fa-download"></i>  Download File </a>
                                             </li>
                                         </ul>
-                                    </div>`
+                                    </div><br>`
                           }
 
                           if (value.link != null){
@@ -401,7 +481,7 @@
                                                 <a target="_blank" href="`+value.link+`">Link Materi 1 <i class="fa fa-globe"></i></a>
                                             </li>
                                         </ul>
-                                    </div><hr><br>`
+                                    </div><br>`
                           }
                       });
                       $("#materi-area").append(body);
@@ -454,6 +534,22 @@
           }
         });
     }
+
+    function download(path) {
+      $.ajax({
+            url: '/get-materi/'+id,
+            type: 'get',
+            dataType: 'json',
+            success: function (resp) {
+              console.log('suskses download');
+            },
+            error: function (resp) {
+                alert('error! file tidak bisa dibuka/ditemukan')
+                console.log('error');
+            }
+        });
+    }
+
 
     </script>
 @endsection

@@ -16,12 +16,12 @@ class CreateAbsensTable extends Migration
         Schema::create('absens', function (Blueprint $table) {
             $table->id();
             $table->string('nama');
-            $table->date('tanggal_absen')->nullable();
+            $table->timestamp('tanggal_absen');
             $table->foreignId('praktikum_id')
                 ->constrained('praktikums')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
-            $table->boolean('status');
+            $table->boolean('status')->default(1);
             $table->timestamps();
         });
     }
