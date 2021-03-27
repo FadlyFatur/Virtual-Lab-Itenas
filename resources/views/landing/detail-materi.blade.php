@@ -355,8 +355,8 @@
                 @if ($role == 0 || $assisten->where('praktikum_id', $id)->count() > 0 )
                   <div class="pull-left" id="input_area">
                       <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#input_materi">Input Materi</button>
-                      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#rekapAbsen">RekapAbsen</button>
-                      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#input_materi">Nilai Tugas</button>
+                      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#rekapAbsen">Rekap Absen</button>
+                      <a href="{{route('Tugas',$prak->id)}}" class="btn btn-primary">Penilaian Tugas</a>
                       <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#input_materi">Rekap Nilai</button>
                   </div><br><hr>
                 @endif
@@ -584,7 +584,7 @@
                                     </div><hr><br>`
                             
                             modal +=` <input type="hidden" name="user_id" value="`+value.user_id+`">
-                                      <input type="hidden" name="materi_id" value="`+value.materi_id+`">
+                                      <input type="hidden" name="materi_id" value="`+value.filemateri_id+`">
                                       <div class="form-group">
                                         <label for="tugas">Tugas <b>`+resp.materi['nama']+`</b></label>
                                         <input type="file" class="form-control-file" name="tugas" id="tugas">

@@ -17,6 +17,7 @@
                 @endforeach
             </div>
         @endif
+        
         <div class="row">
             <div class="col-md-4">
                 <label for="lab">Pilih Laboratorium</label>

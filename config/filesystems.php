@@ -63,12 +63,6 @@ return [
             'bucket' => env('AWS_BUCKET'),
             'url' => env('AWS_URL'),
         ],
-
-        'materi' => [
-            'driver' => 'local',
-            'root' => storage_path('app/files'),
-        ],
-
     ],
 
     /*
@@ -85,7 +79,8 @@ return [
     'links' => [
         public_path('storage') => storage_path('app/public'),
         public_path('images') => storage_path('app/images'),
-        public_path('files') => storage_path('app/files'),
+        public_path('tugas') => storage_path('app/tugas'),
+        public_path('materi') => storage_path('app/materi'),
     ],
 
 ];

@@ -372,7 +372,7 @@ class AdminController extends Controller
                 ->back()
                 ->withErrors($validator);
             }
-            $path = public_path('files');
+            $path = public_path('materi');
             $nameFile = Carbon::now()->format('YmdHs')."_".$request->file('file')->getClientOriginalName();
             $request->file('file')->move($path,$nameFile);
             fmateri::create([
@@ -415,7 +415,7 @@ class AdminController extends Controller
             $validator = Validator::make($request->all(), [
                 'tugas' => 'required | max:2000',
                 'pilih_materi' => 'required',
-                'nama_materi' => 'required | string',
+                'nama_materi' => 'required | string | unique:materis,nama',
             ]);
     
             if ($validator->fails()) { 
@@ -423,6 +423,13 @@ class AdminController extends Controller
                 ->back()
                 ->withErrors($validator);
             }
+
+            if ( fmateri::where('type', 5)->where('materi_id',$request->get('pilih_materi'))->exists() ) {
+                return redirect()
+                ->back()
+                ->withErrors("Sudah ada tugas pada materi ini.");
+            }
+
             $data = $request->get('tugas');
             fmateri::create([
                 'nama' => $request->get('nama_materi'),

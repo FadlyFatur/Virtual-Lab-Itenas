@@ -49,8 +49,11 @@ route::post('delete-materi/{id}','MateriController@deleteMateri')->name('deleteM
 route::post('add-absen','MateriController@addAbsen')->name('addAbsen');
 route::post('absen','MateriController@absen')->name('absen');
 route::get('praktikum/kelas/download/{file}','MateriController@downloadFile')->name('downloadFile');
+route::get('download-tugas/{file}','MateriController@downloadTugas')->name('downloadTugas');
 route::get('absen','MateriController@ExportAbsen')->name('rekapAbsen');
 route::post('tugas','MateriController@inputTugas')->name('inputTugas');
+route::get('list-tugas/{id}','MateriController@indexTugas')->name('Tugas');
+route::get('list-tugas/get-list-tugas/{id}','MateriController@getTugas')->name('get-tugas');
 
 
 Route::get('get-rekrutmen/{id}', 'AdminController@getDetailrekrut')->name('get-detail-rekrut');

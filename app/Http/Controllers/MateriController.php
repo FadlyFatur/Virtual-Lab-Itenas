@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
 use App\Exports\AbsenExport;
 use Maatwebsite\Excel\Facades\Excel;
+use DataTables;
 
 class MateriController extends Controller
 {
@@ -102,12 +103,12 @@ class MateriController extends Controller
                     $img = NULL;
                 }
     
-                // if ($d->file != NULL) {
-                //     $file = Storage::disk('local')->get($d->file);
-                //     // $file = $d->file;
-                // }else {
-                //     $file = NULL;
-                // }
+                $tugas = $fdata->where('type', 5)->first();
+                if($tugas->exists()){
+                    $tugas_data = $tugas->id;
+                }else {
+                    $tugas_data = null;
+                }
             
                 $data[] = [
                     'nama' => $d->nama,
@@ -120,7 +121,7 @@ class MateriController extends Controller
                     'tanggal' => Carbon::createFromFormat('Y-m-d H:i:s', $d->created_at)->format('Y/m/d'),
                     'role' => Auth::user()->roles_id,
                     'user_id' => Auth::id(),
-                    'materi_id' => $id
+                    'filemateri_id' => $tugas_data
                 ];
             }
         }else {
@@ -215,11 +216,8 @@ class MateriController extends Controller
 
     public function downloadFile($file)
     {
-        if(Storage::disk('materi')->exists($file)){
-            return Storage::disk('materi')->download($file);;
-        }else{
-            abort(404);
-        }
+        $file= public_path('materi').'/'.$file;
+        return response()->download($file);
     }
 
     public function ExportAbsen(Request $request)
@@ -243,18 +241,68 @@ class MateriController extends Controller
             ->withErrors($validator);
         }
 
-        $path = public_path('files');
+        $path = public_path('tugas');
         $nameFile = "t_".Carbon::now()->format('YmdHs').$request->file('tugas')->getClientOriginalName();
         $request->file('tugas')->move($path,$nameFile);
         tugas::create([
             'file_tugas' => $nameFile,
             'user_id' => $request->get('user_id'),
-            'materi_id' => $request->get('materi_id'),
+            'file_materi' => $request->get('materi_id'),
         ]);
         Alert::success('Sukses', 'Materi Berhasil ditambah');
         return redirect()
             ->back()
             ->withSuccess("Data berhasil di simpan");
+    }
+
+    public function indexTugas($id)
+    {
+        $materi = Materi::where('praktikum_id',$id)->get();
+        foreach ($materi as $m) {
+            $tugas = file_materi::where('materi_id',$m->id)->where('type', 5)->first();
+            
+            $data [] = [
+                'id' => $tugas->id,
+                'nama' => $tugas->nama
+            ];
+        }
+
+        // dd($data);
+        return view('landing.tugas', compact('data'));
+    }
+
+    public function getTugas($id)
+    {
+        $tugas = tugas::where('file_materi',$id);
+        return Datatables::of($tugas)
+                        ->editColumn('user_id', function ($tugas) {
+                            return $tugas->getUser->name;
+                        })
+                        ->editColumn('status', function ($tugas) {
+                            if ($tugas->status == 1) {
+                                return '<p><span class="badge badge-warning">Pending</span></p>';
+                            }else{
+                                return '<p><span class="badge badge-success">Dinilai</span></p>';
+                            }
+                        })
+                        ->editColumn('nilai', function ($tugas){
+                            if ($tugas->nilai == null) {
+                                return '<input type="text" name="nilai" id="nilai">';
+                            }else {
+                                return $tugas->nilai;
+                            }
+                        })
+                        ->editColumn('file_tugas', function ($tugas){
+                            return '<a href="'.route('downloadTugas',$tugas->file_tugas).'" class="btn btn-sm btn-info"><i class="fa fa-download"></i> Download Tugas</a>';
+                        })
+                        ->rawColumns(['status', 'nilai', 'file_tugas'])
+                        ->make(true);
+    }
+
+    public function downloadTugas($file)
+    {
+        $file= public_path('tugas').'/'.$file;
+        return response()->download($file);
     }
     
 }
