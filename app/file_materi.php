@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class file_materi extends Model
 {
     protected $fillable = [
-        'nama','urutan','materi', 'img', 'file', 'link', 'type', 'materi_id'
+        'nama','urutan','materi', 'img', 'file', 'link', 'tugas', 'type', 'materi_id'
     ];
 
     public function getMateri()

@@ -11,6 +11,7 @@ use App\file_materi;
 use App\assisten;
 use App\Absen;
 use App\absen_mahasiswa;
+use App\tugas;
 Use Alert;
 use Auth;
 use Carbon\Carbon;
@@ -48,6 +49,7 @@ class MateriController extends Controller
         
         $role = Auth::user()->roles_id;
         $prak = praktikum::where('id',$id)->first();
+        // dd($prak->id);
         $data = Materi::where('praktikum_id',$id)->get();
         $assisten = assisten::where('user_id', Auth::user()->id)->get();
         $Cekabsen = Absen::where('praktikum_id',$id)->get();
@@ -89,7 +91,7 @@ class MateriController extends Controller
     }
 
     public function getMateri($id){
-        $fdata = file_materi::where('materi_id',$id)->orderBy('urutan','ASC')->get();
+        $fdata = file_materi::where('materi_id',$id)->orderBy('type','ASC')->get();
         
         $fmateri = Materi::where('id',$id)->first();
         if (!$fdata->isEmpty()) {
@@ -113,8 +115,12 @@ class MateriController extends Controller
                     'img' => $img,
                     'file' => $d->file,
                     'link' => $d->link,
+                    'tugas' => $d->tugas,
                     'tipe' => $d->type,
-                    'tanggal' => Carbon::createFromFormat('Y-m-d H:i:s', $d->created_at)->format('Y/m/d')
+                    'tanggal' => Carbon::createFromFormat('Y-m-d H:i:s', $d->created_at)->format('Y/m/d'),
+                    'role' => Auth::user()->roles_id,
+                    'user_id' => Auth::id(),
+                    'materi_id' => $id
                 ];
             }
         }else {
@@ -214,6 +220,41 @@ class MateriController extends Controller
         }else{
             abort(404);
         }
+    }
+
+    public function ExportAbsen(Request $request)
+    {
+        // dd($request->get('absen_id'));
+        return Excel::download(new AbsenExport($request->get('absen_id')), 'Absen.xlsx');
+    }
+
+    public function inputTugas(Request $request)
+    {
+        // dd($request->all());
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required',
+            'materi_id' => 'required',
+            'tugas' => 'required|max:10000|mimes:doc,docx,xlsx,zip,rar,ppt,pptx,pdf,xls',
+        ]);
+
+        if ($validator->fails()) { 
+            return redirect()
+            ->back()
+            ->withErrors($validator);
+        }
+
+        $path = public_path('files');
+        $nameFile = "t_".Carbon::now()->format('YmdHs').$request->file('tugas')->getClientOriginalName();
+        $request->file('tugas')->move($path,$nameFile);
+        tugas::create([
+            'file_tugas' => $nameFile,
+            'user_id' => $request->get('user_id'),
+            'materi_id' => $request->get('materi_id'),
+        ]);
+        Alert::success('Sukses', 'Materi Berhasil ditambah');
+        return redirect()
+            ->back()
+            ->withSuccess("Data berhasil di simpan");
     }
     
 }

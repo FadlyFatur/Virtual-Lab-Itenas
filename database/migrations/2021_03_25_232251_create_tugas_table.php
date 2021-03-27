@@ -15,6 +15,18 @@ class CreateTugasTable extends Migration
     {
         Schema::create('tugas', function (Blueprint $table) {
             $table->id();
+            $table->integer('status')->default(1);
+            $table->string('file_tugas');
+            $table->foreignId('user_id')
+                ->nullable()
+                ->constrained('users')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
+            $table->foreignId('materi_id')
+                ->nullable()
+                ->constrained('materis')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
             $table->timestamps();
         });
     }

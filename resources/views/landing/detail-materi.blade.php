@@ -10,7 +10,7 @@
 @endsection
 
 @section('content')
-<!-- Modal materi -->
+  <!-- Modal materi -->
   <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -167,6 +167,146 @@
     </div>
   </div>
 
+  {{-- modal rekap absen  --}}
+  <div class="modal fade" id="rekapAbsen" tabindex="-1" role="dialog" aria-labelledby="rekapAbsen" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="rekapAbsen">Rekap Absen</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form action="{{route('rekapAbsen')}}" method="GET">
+            <label for="tipe-absen">Pilih Absen</label>
+            <select name="absen_id" id="tipe-absen" class="form-select" aria-label="type materi">
+              <option selected>Pilih Absen</option>
+              @foreach ($Cekabsen as $d)
+                <option value="{{$d->id}}">{{$d->nama}}</option>
+              @endforeach
+            </select><br>
+            <button type="submit" class="btn btn-primary">Download</button>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {{-- modal input tugas  --}}
+  <div class="modal fade" id="inputTugas" tabindex="-1" role="dialog" aria-labelledby="inputTugas" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="inputTugas">Input tugas</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form action="{{route('inputTugas')}}" method="POST" enctype="multipart/form-data">
+            @csrf
+            <div id="tugas-input"></div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-info">Simpan</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {{-- modal materi  --}}
+  <div class="modal fade" id="input_materi" tabindex="-1" role="dialog" aria-labelledby="input_materiTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="input_materiTitle">Input Materi</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <form role="form" method="POST" action="{{route('post-Detail-materi')}}" enctype="multipart/form-data">
+                @csrf
+                <label for="tipe">Pilih Tipe</label>
+                <select name="tipe" id="tipe" class="form-select" aria-label="type materi">
+                  <option selected>Pilih jenis file</option>
+                  <option value="1">Teks/Deskriptif</option>
+                  <option value="2">Gambar/Image</option>
+                  <option value="3">File</option>
+                  <option value="4">Link/URL</option>
+                  <option value="5">Tugas</option>
+                </select><br>
+                <label for="pilih_materi">Pilih Materi</label>
+                <select name="pilih_materi" id="pilih_materi" class="form-select" aria-label="type materi">
+                  <option value="" selected>Pilih Materi</option>
+                  @foreach ($data as $d)
+                    <option value="{{$d->id}}">{{$d->nama}}</option>
+                  @endforeach
+                </select><br>
+                <div class="form-group">
+                  <label for="nama_materi">Nama Materi</label>
+                  <input type="text" class="form-control" name="nama_materi" placeholder="Nama Materi (*Tipe Data, Function)" autofocus> 
+                </div>
+                {{-- <div class="form-group">
+                  <label for="urutan">Urutan Materi</label>
+                  <input type="number" class="form-control" name="urutan" placeholder="Urutan Materi (*1, 2, 3)" autofocus> 
+                </div> --}}
+                <hr>
+                <div class="tipe-materi">
+                  <div class="materi-input">
+                    <div class="form-group">
+                      <label>Materi</label>
+                      <textarea class="form-control" id="materi-praktikum" rows="7" name="materi" placeholder="Masukan materi"></textarea>
+                    </div>
+                  </div>
+                  <div class="gambar-input">
+                    <div class="form-group">
+                      <label>Thumbnail</label>
+                      <div class="input-group ">
+                          <span class="input-group-btn">
+                              <span class="btn btn-default btn-file">
+                                  Browse… <input type="file" name="thumb" id="imgInp">
+                              </span>
+                          </span>
+                          <input type="text" class="form-control" readonly>
+                      </div>
+                      <img id='img-upload'/>
+                    </div>
+                  </div>
+                  <div class="file-input">
+                    <div class="form-group">
+                        <label for="file">File/berkas praktikum</label>
+                        <input type="file" class="form-control-file" name="file" id="file">
+                    </div>
+                  </div>
+                  <div class="link-input">
+                    <div class="form-group">
+                      <label>Link Materi (*bentuk URL/Link)</label>
+                      <input type="text" class="form-control" name="link_materi" placeholder="Masukan link" > 
+                    </div>
+                  </div>
+                  <div class="tugas-input">
+                    <div class="form-group">
+                      <label>Deskripsi Tugas</label>
+                      <textarea class="form-control" id="tugas-praktikum" rows="7" name="tugas" placeholder="Masukan deskripsi tugas"></textarea>
+                    </div>
+                  </div>
+                </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Simpan</button>
+        </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
     <div class="container-fluid margin-top">
         @if(session('success'))
         <div class="alert alert-success">
@@ -215,9 +355,9 @@
                 @if ($role == 0 || $assisten->where('praktikum_id', $id)->count() > 0 )
                   <div class="pull-left" id="input_area">
                       <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#input_materi">Input Materi</button>
-                      <a href="route('rekapAbsen')" class="btn btn-primary">Rekap Absensi</a>
+                      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#rekapAbsen">RekapAbsen</button>
+                      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#input_materi">Nilai Tugas</button>
                       <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#input_materi">Rekap Nilai</button>
-                      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#input_materi">Rekap Tugas</button>
                   </div><br><hr>
                 @endif
                 <div id="materi-area">
@@ -234,86 +374,7 @@
 
     </div>
 
-    {{-- modal materi  --}}
-    <div class="modal fade" id="input_materi" tabindex="-1" role="dialog" aria-labelledby="input_materiTitle" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="input_materiTitle">Input Materi</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-                <form role="form" method="POST" action="{{route('post-Detail-materi')}}" enctype="multipart/form-data">
-                    @csrf
-                    <label for="tipe">Pilih Tipe</label>
-                    <select name="tipe" id="tipe" class="form-select" aria-label="type materi">
-                      <option selected>Pilih jenis file</option>
-                      <option value="1">Teks/Deskriptif</option>
-                      <option value="2">Gambar/Image</option>
-                      <option value="3">File</option>
-                      <option value="4">Link/URL</option>
-                    </select><br>
-                    <label for="pilih_materi">Pilih Materi</label>
-                    <select name="pilih_materi" id="pilih_materi" class="form-select" aria-label="type materi">
-                      <option value="" selected>Pilih Materi</option>
-                      @foreach ($data as $d)
-                        <option value="{{$d->id}}">{{$d->nama}}</option>
-                      @endforeach
-                    </select><br>
-                    <div class="form-group">
-                      <label for="nama_materi">Nama Materi</label>
-                      <input type="text" class="form-control" name="nama_materi" placeholder="Nama Materi (*Tipe Data, Function)" autofocus> 
-                    </div>
-                    <div class="form-group">
-                      <label for="urutan">Urutan Materi</label>
-                      <input type="number" class="form-control" name="urutan" placeholder="Urutan Materi (*1, 2, 3)" autofocus> 
-                    </div>
-                    <hr>
-                    <div class="tipe-materi">
-                      <div class="materi-input">
-                        <div class="form-group">
-                          <label>Materi</label>
-                          <textarea class="form-control" id="materi-praktikum" rows="7" name="materi" placeholder="Masukan materi"></textarea>
-                        </div>
-                      </div>
-                      <div class="gambar-input">
-                        <div class="form-group">
-                          <label>Thumbnail</label>
-                          <div class="input-group ">
-                              <span class="input-group-btn">
-                                  <span class="btn btn-default btn-file">
-                                      Browse… <input type="file" name="thumb" id="imgInp">
-                                  </span>
-                              </span>
-                              <input type="text" class="form-control" readonly>
-                          </div>
-                          <img id='img-upload'/>
-                        </div>
-                      </div>
-                      <div class="file-input">
-                        <div class="form-group">
-                            <label for="file">File/berkas praktikum</label>
-                            <input type="file" class="form-control-file" name="file" id="file">
-                        </div>
-                      </div>
-                      <div class="link-input">
-                        <div class="form-group">
-                          <label>Link Materi (*bentuk URL/Link)</label>
-                          <input type="text" class="form-control" name="link_materi" placeholder="Masukan link" > 
-                        </div>
-                      </div>
-                    </div>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-              <button type="submit" class="btn btn-primary">Simpan</button>
-            </div>
-            </form>
-          </div>
-        </div>
-      </div>
+    {{-- <form action="" method="get" enctype="multipart/form-data"></form> --}}
 @endsection
 
 @section('js')
@@ -331,31 +392,44 @@
         $(".gambar-input").hide();
         $(".file-input").hide();
         $(".link-input").hide();
+        $(".tugas-input").hide();
 
         $("#tipe").on('change', function() {
+          // console.log($(this).val());
             if ($(this).val() == '1'){
                 $(".materi-input").show();
                 $(".gambar-input").hide();
                 $(".file-input").hide();
                 $(".link-input").hide();
+                $(".tugas-input").hide();
             } if ($(this).val() == '2'){
                 console.log('foto');
                 $(".gambar-input").show();
                 $(".materi-input").hide();
                 $(".file-input").hide();
                 $(".link-input").hide();
+                $(".tugas-input").hide();
             } if ($(this).val() == '3'){
                 console.log('file');
                 $(".file-input").show();
                 $(".gambar-input").hide();
                 $(".materi-input").hide();
                 $(".link-input").hide();
+                $(".tugas-input").hide();
             } if ($(this).val() == '4'){
                 console.log('link');
                 $(".link-input").show();
                 $(".gambar-input").hide();
                 $(".file-input").hide();
                 $(".materi-input").hide();
+                $(".tugas-input").hide();
+            } if ($(this).val() == '5'){
+                console.log('link');
+                $(".link-input").hide();
+                $(".gambar-input").hide();
+                $(".file-input").hide();
+                $(".materi-input").hide();
+                $(".tugas-input").show();
             }
         });
 
@@ -421,11 +495,28 @@
           ]
         });
 
+        $('#tugas-praktikum').summernote({
+          height: 250,
+          toolbar: [
+            // [groupName, [list of button]]
+            ['style', ['bold', 'italic', 'underline', 'clear']],
+            ['font', ['strikethrough', 'superscript', 'subscript']],
+            ['fontsize', ['fontsize']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['insert', ['link']],
+            ['view', ['fullscreen', 'codeview']],
+          ]
+        });
+
         $('#datetimepicker3').datetimepicker({
           format: 'DD-MM-YYYY, HH:mm',
         });
 
-        $
+        $(".custom-file-input").on("change", function() {
+          var fileName = $(this).val().split("\\").pop();
+          $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+        });
     });
 
     function materiClick(id) {
@@ -434,21 +525,21 @@
             type: 'get',
             dataType: 'json',
             success: function (resp) {
-                // console.log('get', resp);
                 $('#materi-area').empty();
+                $('#tugas-input').empty();
                 if(resp.length == 0){
-                    console.log('tidak');
                     $('#materi-area').append(up_btn);
-                    alert('materi belum dimasukan');
+                    alert('materi Tidak ditemukan');
                     return;
                 }else{
                     console.log(resp);
                     var header = ` <div class="text-center">
-                    <h1 class="text-center" id="judul-materi">`+resp.materi['nama']+`</h1><br>
+                    <h1 class="text-center" id="judul-materi">`+resp.materi['nama']+`</h1>
                     <p style="font-size:24px;">`+resp.materi['deskripsi']+`</p>
                     </div><br><hr>`;
                     $("#materi-area").append(header);
                     var body = "";
+                    var modal = "";
                     if (resp.file_materi != 'null') {
                       $.each(resp.file_materi,function(index,value){
                         console.log(value);
@@ -483,8 +574,25 @@
                                         </ul>
                                     </div><br>`
                           }
+
+                          if (value.role != 1 && value.tugas != null) {
+                            body += `<div class="tugas-area">
+                                        <p><b>Tugas : </b> `+value.tugas+`</p>
+
+                                        <button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#inputTugas">Simpan</button>
+    
+                                    </div><hr><br>`
+                            
+                            modal +=` <input type="hidden" name="user_id" value="`+value.user_id+`">
+                                      <input type="hidden" name="materi_id" value="`+value.materi_id+`">
+                                      <div class="form-group">
+                                        <label for="tugas">Tugas <b>`+resp.materi['nama']+`</b></label>
+                                        <input type="file" class="form-control-file" name="tugas" id="tugas">
+                                      </div>`
+                          }
                       });
                       $("#materi-area").append(body);
+                      $("#tugas-input").append(modal);
                     }else{
                       body += `<h5>Materi tidak ditemukan</h5>`
                       $("#materi-area").append(body);

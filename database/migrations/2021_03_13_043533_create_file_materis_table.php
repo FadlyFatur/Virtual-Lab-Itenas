@@ -16,12 +16,12 @@ class CreateFileMaterisTable extends Migration
         Schema::create('file_materis', function (Blueprint $table) {
             $table->id();
             $table->string('nama',200);
-            $table->text('materi')->nullable();
+            $table->text('materi',2000)->nullable();
             $table->string('img')->nullable();
             $table->string('file')->nullable();
             $table->string('link')->nullable();
+            $table->text('tugas',2000)->nullable();
             $table->integer('type');
-            $table->integer('urutan')->nullable();
             $table->foreignId('materi_id')
                 ->nullable()
                 ->constrained('materis')
