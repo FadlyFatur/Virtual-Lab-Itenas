@@ -219,7 +219,7 @@
     </div>
   </div>
 
-  {{-- modal materi  --}}
+  {{-- modal materi cek --}}
   <div class="modal fade" id="input_materi" tabindex="-1" role="dialog" aria-labelledby="input_materiTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
       <div class="modal-content">
