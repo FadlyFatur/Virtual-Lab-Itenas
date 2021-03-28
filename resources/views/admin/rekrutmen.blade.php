@@ -77,7 +77,7 @@
                     <div class="form-group">
                       <label>Pilih Praktikum</label>
                       <select name="kode_praktikum" id="praktikum" class="custom-select form-control">
-                        <option selected>pilih jurusan dahulu</option>
+                        <option selected>Pilih jurusan dahulu</option>
                       </select>
                     </div>
 
@@ -170,9 +170,7 @@
             </table>
 
             {{-- detail  --}}
-            <div class="card card-primary card-outline mt-5" id="card-rekrutmen">
-
-            </div>
+            <div class="card card-primary card-outline mt-5" id="card-rekrutmen"></div>
           </div>
         </div>
       </section>
@@ -209,7 +207,7 @@
     var table = $('.data-table').DataTable({
         processing: true,
         serverSide: true,
-        ajax: "{{ route('get-rekrutmen') }}",
+        ajax: "{{ route('get-rekrutmen-admin') }}",
         columns: [
             {data: 'status', 
               render: function (data, type, row) {
@@ -294,9 +292,9 @@ function showRekrut(id) {
                     <span class="mailbox-attachment-icon"><i class="far fa-file-pdf"></i></span>
   
                     <div class="mailbox-attachment-info">
-                      <a href="`+resp.bio+`" class="mailbox-attachment-name"><i class="fas fa-paperclip"></i>Biodata</a>
+                      <a href="rekrutmen/download/`+resp.bio+`" class="mailbox-attachment-name"><i class="fas fa-paperclip"></i>Biodata</a>
                           <span class="mailbox-attachment-size clearfix mt-1">
-                            <a href="#" class="btn btn-default btn-sm float-right"><i class="fas fa-cloud-download-alt"></i></a>
+                            <a href="rekrutmen/download/`+resp.bio+`" class="btn btn-default btn-sm float-right"><i class="fas fa-cloud-download-alt"></i></a>
                           </span>
                     </div>
                   </li>
@@ -304,9 +302,9 @@ function showRekrut(id) {
                     <span class="mailbox-attachment-icon"><i class="far fa-file-pdf"></i></span>
   
                     <div class="mailbox-attachment-info">
-                      <a href="`+resp.transkip+`" class="mailbox-attachment-name"><i class="fas fa-paperclip"></i> Transkip Nilai</a>
+                      <a href="rekrutmen/download/`+resp.transkip+`" class="mailbox-attachment-name"><i class="fas fa-paperclip"></i> Transkip Nilai</a>
                           <span class="mailbox-attachment-size clearfix mt-1">
-                            <a href="#" class="btn btn-default btn-sm float-right"><i class="fas fa-cloud-download-alt"></i></a>
+                            <a href="rekrutmen/download/`+resp.transkip+`" class="btn btn-default btn-sm float-right"><i class="fas fa-cloud-download-alt"></i></a>
                           </span>
                     </div>
                   </li>
@@ -314,9 +312,9 @@ function showRekrut(id) {
                     <span class="mailbox-attachment-icon"><i class="fas fa-file-archive"></i></span>
   
                     <div class="mailbox-attachment-info">
-                      <a href="`+resp.file+`" class="mailbox-attachment-name"><i class="fas fa-paperclip"></i> File Kelengkapan</a>
+                      <a href="rekrutmen/download/`+resp.file+`" class="mailbox-attachment-name"><i class="fas fa-paperclip"></i> File Kelengkapan</a>
                           <span class="mailbox-attachment-size clearfix mt-1">
-                            <a href="#" class="btn btn-default btn-sm float-right"><i class="fas fa-cloud-download-alt"></i></a>
+                            <a href="rekrutmen/download/`+resp.file+`" class="btn btn-default btn-sm float-right"><i class="fas fa-cloud-download-alt"></i></a>
                           </span>
                     </div>
                   </li>

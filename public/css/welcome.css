@@ -7,8 +7,8 @@
 .post-img{
     background-image: url('https://cdn3.iconfinder.com/data/icons/ballicons-reloaded-free/512/icon-70-512.png');
     background-size: cover;
-    height:300px; 
-    width:300px;
+    height: fit-content;
+    width: auto;
 }
 
 button.btn-card-content-2-1{

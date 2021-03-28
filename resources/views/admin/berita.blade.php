@@ -1,6 +1,32 @@
 @extends('layouts.admin.app')
 
 @section('content')
+<style>
+  .btn-file {
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-file input[type=file] {
+      position: absolute;
+      top: 0;
+      right: 0;
+      min-width: 100%;
+      min-height: 100%;
+      font-size: 100px;
+      text-align: right;
+      filter: alpha(opacity=0);
+      opacity: 0;
+      outline: none;
+      background: white;
+      cursor: inherit;
+      display: block;
+  }
+
+  #img-upload{
+    height: 300px;
+    width: 300px;
+  }
+</style>
     <!-- Content Header (Page header) -->
     <div class="content-header">
         <div class="container-fluid">
@@ -20,162 +46,225 @@
     <!-- /.content-header -->
 
     <div class="container">
-      <div class="card card-warning collapsed-card">
-        <div class="card-header">
-          <h5 class="card-title">Input Info/Pengumuman</h5>
-
-          <div class="card-tools">
-            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-              <i class="fas fa-plus"></i>
-            </button>
-          </div>
+      @if(session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
         </div>
-        <!-- /.card-header -->
-        <div class="card-body">
-          <form role="form">
-            <div class="row">
-              <div class="col-sm-6">
-                <!-- text input -->
-                <div class="form-group">
-                  <label>Text</label>
-                  <input type="text" class="form-control" placeholder="Enter ...">
-                </div>
-              </div>
-              <div class="col-sm-6">
-                <div class="form-group">
-                  <label>Text Disabled</label>
-                  <input type="text" class="form-control" placeholder="Enter ..." disabled="">
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-sm-6">
-                <!-- textarea -->
-                <div class="form-group">
-                  <label>Textarea</label>
-                  <textarea class="form-control" rows="3" placeholder="Enter ..."></textarea>
-                </div>
-              </div>
-              <div class="col-sm-6">
-                <div class="form-group">
-                  <label>Textarea Disabled</label>
-                  <textarea class="form-control" rows="3" placeholder="Enter ..." disabled=""></textarea>
-                </div>
-              </div>
-            </div>
+      @endif
 
-            <!-- input states -->
-            <div class="form-group">
-              <label class="col-form-label" for="inputSuccess"><i class="fas fa-check"></i> Input with
-                success</label>
-              <input type="text" class="form-control is-valid" id="inputSuccess" placeholder="Enter ...">
-            </div>
-            <div class="form-group">
-              <label class="col-form-label" for="inputWarning"><i class="far fa-bell"></i> Input with
-                warning</label>
-              <input type="text" class="form-control is-warning" id="inputWarning" placeholder="Enter ...">
-            </div>
-            <div class="form-group">
-              <label class="col-form-label" for="inputError"><i class="far fa-times-circle"></i> Input with
-                error</label>
-              <input type="text" class="form-control is-invalid" id="inputError" placeholder="Enter ...">
-            </div>
+      @if(session('error'))
+          <div class="alert alert-danger">
+              {{ session('error') }}
+          </div>
+      @endif
+      <div class="container">
+        <div class="card card-info collapsed-card">
+          <div class="card-header">
+            <h5 class="card-title">Input Berita</h5>
 
-            <div class="row">
-              <div class="col-sm-6">
-                <!-- checkbox -->
-                <div class="form-group">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox">
-                    <label class="form-check-label">Checkbox</label>
+            <div class="card-tools">
+              <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                <i class="fas fa-plus"></i>
+              </button>
+            </div>
+          </div>
+          <!-- /.card-header -->
+          <div class="card-body pb-0">
+            <form role="form" method="POST" action="{{route('post-berita')}}" enctype="multipart/form-data">
+              @csrf
+              <div class="row">
+                <div class="col-sm-12">
+                  <div class="form-group">
+                    <label>Judul Berita</label>
+                    <input type="text" class="form-control" name="judul" placeholder="Judul berita yang akan ditampilkna" required autofocus> 
                   </div>
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" checked="">
-                    <label class="form-check-label">Checkbox checked</label>
-                  </div>
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" disabled="">
-                    <label class="form-check-label">Checkbox disabled</label>
-                  </div>
-                </div>
-              </div> 
-              <div class="col-sm-6">
-                <!-- radio -->
-                <div class="form-group">
-                  <div class="form-check">
-                    <input class="form-check-input" type="radio" name="radio1">
-                    <label class="form-check-label">Radio</label>
-                  </div>
-                  <div class="form-check">
-                    <input class="form-check-input" type="radio" name="radio1" checked="">
-                    <label class="form-check-label">Radio checked</label>
-                  </div>
-                  <div class="form-check">
-                    <input class="form-check-input" type="radio" disabled="">
-                    <label class="form-check-label">Radio disabled</label>
+                  <div class="form-group">
+                    <label>Deskripsi</label>
+                    <textarea class="form-control" id="isi_berita" name="isi_berita" placeholder="Masukan Naraso" required autofocus></textarea>
                   </div>
                 </div>
+                  <div class="form-group">
+                    <label>Thumbnail</label>
+                    <div class="input-group">
+                        <span class="input-group-btn">
+                            <span class="btn btn-default btn-file">
+                                Browse… <input type="file" name="thumb" id="imgInp">
+                            </span>
+                        </span>
+                        <input type="text" class="form-control" readonly>
+                    </div>
+                    <img id='img-upload'/>
+                  </div>
               </div>
             </div>
-
-            <div class="row">
-              <div class="col-sm-6">
-                <!-- select -->
-                <div class="form-group">
-                  <label>Select</label>
-                  <select class="form-control">
-                    <option>option 1</option>
-                    <option>option 2</option>
-                    <option>option 3</option>
-                    <option>option 4</option>
-                    <option>option 5</option>
-                  </select>
-                </div>
-              </div>
-              <div class="col-sm-6">
-                <div class="form-group">
-                  <label>Select Disabled</label>
-                  <select class="form-control" disabled="">
-                    <option>option 1</option>
-                    <option>option 2</option>
-                    <option>option 3</option>
-                    <option>option 4</option>
-                    <option>option 5</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col-sm-6">
-                <!-- Select multiple-->
-                <div class="form-group">
-                  <label>Select Multiple</label>
-                  <select multiple="" class="form-control">
-                    <option>option 1</option>
-                    <option>option 2</option>
-                    <option>option 3</option>
-                    <option>option 4</option>
-                    <option>option 5</option>
-                  </select>
-                </div>
-              </div>
-              <div class="col-sm-6">
-                <div class="form-group">
-                  <label>Select Multiple Disabled</label>
-                  <select multiple="" class="form-control" disabled="">
-                    <option>option 1</option>
-                    <option>option 2</option>
-                    <option>option 3</option>
-                    <option>option 4</option>
-                    <option>option 5</option>
-                  </select>
-                </div>
-              </div>
+            <!-- /.card-body -->
+            <div class="card-footer">
+              <button type="submit" class="btn btn-primary">Simpan</button>
             </div>
           </form>
         </div>
-        <!-- /.card-body -->
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Data Semua User</h3>
+          </div>
+          <div class="card-body">
+            <table class="table table-bordered data-table">
+              <thead>
+                  <tr>
+                      <th>Status</th>
+                      <th>Judul</th>
+                      <th>Deskripsi</th>
+                      <th>Opsi</th>
+                  </tr>
+              </thead>
+              <tbody>
+              </tbody>
+          </table>
+          </div>
+        </div>
+  
       </div>
+
     </div>
+@endsection
+
+@section('js')
+  <script>
+    $(document).ready( function() {
+        $(document).on('change', '.btn-file :file', function() {
+          var input = $(this),
+          label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+          input.trigger('fileselect', [label]);
+        });
+
+        $('.btn-file :file').on('fileselect', function(event, label) {
+            
+            var input = $(this).parents('.input-group').find(':text'),
+                log = label;
+            
+            if( input.length ) {
+                input.val(log);
+            } else {
+                if( log ) alert(log);
+            }
+          
+        });
+        
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                
+                reader.onload = function (e) {
+                    $('#img-upload').attr('src', e.target.result);
+                }
+                
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        $("#imgInp").change(function(){
+            readURL(this);
+        }); 	
+
+        $('#isi_berita').summernote({
+          height: 150,
+          toolbar: [
+            // [groupName, [list of button]]
+            ['style', ['bold', 'italic', 'underline', 'clear']],
+            ['font', ['strikethrough', 'superscript', 'subscript']],
+            ['fontsize', ['fontsize']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['insert', ['link']],
+            ['view', ['fullscreen', 'codeview']],
+          ]
+        });
+
+          $(function () {
+    
+    var table = $('.data-table').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: "{{ route('get-Berita') }}",
+        columns: [
+            {data: 'status', 
+              render: function (data, type, row) {
+                  let checked = null;
+                  if(data == 1){
+                      checked = "checked";
+                  }
+                  return `<div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" onchange="" id="switch`+row.id+`" `+checked+`>
+                            <label class="custom-control-label" for="switch`+row.id+`"></label>
+                          </div>`
+              },
+              orderable: false, 
+              searchable: false
+            },
+            {data: 'judul'},
+            {data: 'deskripsi'},
+            
+        ]
+    });
+    
+  });
+    });
+
+    function changeStatus(id){
+      // $.ajax({
+      //     type:'GET',
+      //     url:"status-jurusan/"+id,
+      //     success:function(data){
+      //         if(data.status === true){
+      //             swal({
+      //                 title: "Success!",
+      //                 text: data.message,
+      //                 icon: "success",
+      //             });
+      //         }else{
+      //             let message = data.message;
+      //             swal({
+      //             title: "Ups!",
+      //                 text: data.message,
+      //                 icon: "error",
+      //             });
+      //         }
+      //     }
+      // });
+    }
+
+    function deleted(id){
+      // swal({
+      //       title: "Apakah yakin?",
+      //       text: "Jurusan yang dihapus tidak dapat dikembalikan!",
+      //       icon: "warning",
+      //       buttons: true,
+      //       dangerMode: true,
+      //   })
+      //   .then((willDelete) => {
+      //     if (willDelete) {
+      //       $.ajax({
+      //           type: 'POST',
+      //           url: "{{url('admin/delete-jurusan')}}/" + id,
+      //           dataType: 'JSON',
+      //           success: function (results) {
+      //               if (results.success === true) {
+      //                 swal("Oke! Jurusan telah dihapus", {
+      //                   icon: "success",
+      //                 });
+      //                 location.reload();
+      //               } else {
+      //                 swal("Gagal!", results.message, "error");
+      //                 location.reload();
+      //               }
+      //           }
+      //       });
+      //       swal("Jurusan telah terhapus!", {
+      //         icon: "success",
+      //       });
+      //     } 
+      // });
+    }
+  </script>   
 @endsection

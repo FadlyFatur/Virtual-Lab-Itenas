@@ -19,7 +19,6 @@ Route::get('/profil', 'landingController@profil')->name('profil');
 
 Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/jurusan', 'landingController@indexJurusan')->name('jurusan');
-Route::get('/detail-berita', 'landingController@detailBerita')->name('detail-berita');
 
 
 Route::prefix('pengajar')->group(function () {
@@ -29,11 +28,12 @@ Route::prefix('pengajar')->group(function () {
 
 Route::prefix('berita')->group(function () {
     Route::get('/', 'landingController@indexBerita')->name('berita');
-    Route::get('/detail-berita', 'landingController@indexBerita')->name('berita');
+    Route::get('/{slug}', 'landingController@detailBerita')->name('detailBerita');
 });
 
 Route::group(['middleware' => 'auth', 'verified'], function () {
-    Route::get('/rekrutmen', 'landingController@indexRekrutmen')->name('rekrutmen');
+    Route::get('rekrutmen', 'landingController@indexRekrutmen')->name('rekrutmen');
+    Route::get('rekrutmen/download/{file}','landingController@downloadFileSyarat')->name('downloadFileSyarat');
 });
 
 Route::get('laboratorium/{slug}', 'landingController@indexlaboratorium')->name('lab');
@@ -44,20 +44,21 @@ Route::group(['prefix' => 'praktikum'], function () {
     Route::get('/daftar/{id}', 'MateriController@daftarPrak')->name('daftar-prak')->middleware('auth');
 });
 
-route::get('get-materi/{id}','MateriController@getMateri')->name('getMateri');
-route::post('delete-materi/{id}','MateriController@deleteMateri')->name('deleteMateri');
-route::post('add-absen','MateriController@addAbsen')->name('addAbsen');
-route::post('absen','MateriController@absen')->name('absen');
-route::get('praktikum/kelas/download/{file}','MateriController@downloadFile')->name('downloadFile');
-route::get('download-tugas/{file}','MateriController@downloadTugas')->name('downloadTugas');
-route::get('absen','MateriController@ExportAbsen')->name('rekapAbsen');
-route::post('tugas','MateriController@inputTugas')->name('inputTugas');
-route::get('list-tugas/{id}','MateriController@indexTugas')->name('Tugas');
-route::get('list-tugas/get-list-tugas/{id}','MateriController@getTugas')->name('get-tugas');
+Route::get('get-materi/{id}','MateriController@getMateri')->name('getMateri');
+Route::post('delete-materi/{id}','MateriController@deleteMateri')->name('deleteMateri');
+Route::post('add-absen','MateriController@addAbsen')->name('addAbsen');
+Route::post('absen','MateriController@absen')->name('absen');
+Route::get('praktikum/kelas/download/{file}','MateriController@downloadFile')->name('downloadFile');
+Route::get('download-tugas/{file}','MateriController@downloadTugas')->name('downloadTugas');
+Route::get('absen','MateriController@ExportAbsen')->name('rekapAbsen');
+Route::post('tugas','MateriController@inputTugas')->name('inputTugas');
+Route::get('list-tugas/{id}','MateriController@indexTugas')->name('Tugas');
+Route::get('list-tugas/get-list-tugas/{id}','MateriController@getTugas')->name('get-tugas');
+Route::get('list-tugas/updateNilai/{id}','MateriController@updateNilai')->name('update-nilai');
 
 
 Route::get('get-rekrutmen/{id}', 'AdminController@getDetailrekrut')->name('get-detail-rekrut');
-Route::post('post-rekrutmen', 'AdminController@postDetailrekrut')->name('post-detail-rekrut');
+Route::post('post-rekrutmen-user', 'AdminController@postDetailrekrut')->name('post-detail-rekrut');
 Route::get('get-list-prak/{id}', 'AdminController@getPrak')->name('get-list-prak');
 Route::get('get-list-rekrut/{id}', 'AdminController@getRekrut')->name('get-list-rekrut');
 
@@ -65,11 +66,12 @@ Route::get('get-list-rekrut/{id}', 'AdminController@getRekrut')->name('get-list-
 Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function (){
     Route::get('/', 'AdminController@index')->name('dashboard');
     Route::get('get-prak-rekrut/{id}', 'AdminController@getPrak')->name('get-prak-rekrut');
-    
+    Route::get('rekrutmen/download/{file}','AdminController@downloadFileRekrut')->name('downloadFileRekrut');
 
     Route::post('delete-jurusan/{id}', 'AdminController@deleteJurusan')->name('delete-jurusan');
     Route::get('status-jurusan/{id}', 'AdminController@statusJurusan')->name('ganti-status-jurusan');
-    Route::post('update-jurusan', 'AdminController@updateJurusan')->name('update-jurusan');
+    
+    Route::post('post-berita', 'AdminController@postBerita')->name('post-berita');
 
     Route::get('jurusan', 'AdminController@indexJurusan')->name('jurusan');
     Route::get('jurusan/json', 'AdminController@getJurusan')->name('get-jurusan');
@@ -80,6 +82,8 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function 
         Route::get('json', 'AdminController@getTableLab')->name('get-Lab');
         Route::post('post-lab', 'AdminController@postLab')->name('post-Lab');
     });
+    
+    Route::post('delete-lab/{id}', 'AdminController@deleteLab')->name('delete-Lab');
 
     Route::prefix('praktikum')->group(function (){
         Route::get('{slug}', 'AdminController@indexPrak')->name('praktikumAdmin');
@@ -90,7 +94,6 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function 
             Route::get('{id}', 'AdminController@indexMateri')->name('materi');
             Route::get('get-data/{id}', 'AdminController@getMateri')->name('get-materi');
             Route::post('post-materi/{id}', 'AdminController@postMateri')->name('post-materi');
-            Route::post('post-data-materi', 'AdminController@postDataMateri')->name('post-data-materi');
             Route::post('post-detail-materi', 'AdminController@postDetailMateri')->name('post-Detail-materi');
             Route::post('post-kelas', 'AdminController@postKelas')->name('post-kelas');
         });
@@ -98,7 +101,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function 
 
     Route::prefix('rekrutmen')->group(function (){
         Route::get('/', 'AdminController@indexRek')->name('rekrutmen');
-        Route::get('get-rekrutmen', 'AdminController@getTableRek')->name('get-rekrutmen');
+        Route::get('get-rekrutmen-admin', 'AdminController@getTableRek')->name('get-rekrutmen-admin');
         Route::post('/post-rekrutmen', 'AdminController@postRekrut')->name('post-rekrutmen');
         Route::get('/list-rekrutmen/{id}', 'AdminController@getListRekrut')->name('get-list-rekrutmen');
         Route::get('/get-detail-rekrutmen/{id}', 'AdminController@getUserRekrut')->name('get-user-rekrutmen');
@@ -111,11 +114,14 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function 
 
     Route::get('/mahasiswa', 'AdminController@indexMahasiswa')->name('mahasiswa');
     Route::get('/mahasiswa/json', 'AdminController@getMahasiswa')->name('get-mahasiswa');
+    Route::post('/mahasiswa/import_excel', 'AdminController@impotMahasiswa')->name('import-mahasiswa');
 
     Route::get('/dosen', 'AdminController@indexDosen')->name('dosen');
     Route::get('/dosen/json', 'AdminController@getDosen')->name('get-dosen');
+    Route::post('/dosen/import_excel', 'AdminController@impotDosen')->name('import-dosen');
 
     Route::get('/berita', 'AdminController@indexBerita')->name('Berita');
+    Route::get('/berita/get-berita', 'AdminController@getBerita')->name('get-Berita');
     Route::get('/asisten', 'AdminController@indexAsisten')->name('asisten');
 
 });

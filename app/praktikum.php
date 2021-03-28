@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class praktikum extends Model
 {
     protected $fillable = [
-        'status', 'nama', 'slug', 'deskripsi', 'semester', 'tahun_ajaran', 'laboratorium', 'kelas', 'koor_lab', 'koor_asisten'
+        'status', 'nama', 'slug', 'deskripsi', 'semester', 'tahun_ajaran', 'laboratorium', 'kelas', 'koor_lab'
     ];
 
     public function lab()

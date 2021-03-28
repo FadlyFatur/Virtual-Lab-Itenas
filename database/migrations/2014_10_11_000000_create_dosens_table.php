@@ -14,15 +14,9 @@ class CreateDosensTable extends Migration
     public function up()
     {
         Schema::create('dosens', function (Blueprint $table) {
-            $table->id();
+            $table->string('nomer_id',15)->primary();
             $table->string('nama');
-            $table->string('nomer_id');
-            $table->boolean('status')->default(1);
-            $table->foreignId('user_id')
-                ->nullable()
-                ->constrained('users')
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
+            $table->boolean('status')->default(0);
             $table->timestamps();
         });
     }

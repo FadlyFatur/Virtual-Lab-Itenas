@@ -20,174 +20,19 @@
     <!-- /.content-header -->
 
     <div class="container">
-      <div class="card card-warning collapsed-card">
-        <div class="card-header">
-          <h5 class="card-title">Input Mahasiswa</h5>
-
-          <div class="card-tools">
-            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-              <i class="fas fa-plus"></i>
-            </button>
-          </div>
-      </div>
-        <!-- /.card-header -->
-        <div class="card-body">
-          <form role="form">
-            <div class="row">
-              <div class="col-sm-6">
-                <!-- text input -->
-                <div class="form-group">
-                  <label>Text</label>
-                  <input type="text" class="form-control" placeholder="Enter ...">
-                </div>
-              </div>
-              <div class="col-sm-6">
-                <div class="form-group">
-                  <label>Text Disabled</label>
-                  <input type="text" class="form-control" placeholder="Enter ..." disabled="">
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-sm-6">
-                <!-- textarea -->
-                <div class="form-group">
-                  <label>Textarea</label>
-                  <textarea class="form-control" rows="3" placeholder="Enter ..."></textarea>
-                </div>
-              </div>
-              <div class="col-sm-6">
-                <div class="form-group">
-                  <label>Textarea Disabled</label>
-                  <textarea class="form-control" rows="3" placeholder="Enter ..." disabled=""></textarea>
-                </div>
-              </div>
-            </div>
-
-            <!-- input states -->
-            <div class="form-group">
-              <label class="col-form-label" for="inputSuccess"><i class="fas fa-check"></i> Input with
-                success</label>
-              <input type="text" class="form-control is-valid" id="inputSuccess" placeholder="Enter ...">
-            </div>
-            <div class="form-group">
-              <label class="col-form-label" for="inputWarning"><i class="far fa-bell"></i> Input with
-                warning</label>
-              <input type="text" class="form-control is-warning" id="inputWarning" placeholder="Enter ...">
-            </div>
-            <div class="form-group">
-              <label class="col-form-label" for="inputError"><i class="far fa-times-circle"></i> Input with
-                error</label>
-              <input type="text" class="form-control is-invalid" id="inputError" placeholder="Enter ...">
-            </div>
-
-            <div class="row">
-              <div class="col-sm-6">
-                <!-- checkbox -->
-                <div class="form-group">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox">
-                    <label class="form-check-label">Checkbox</label>
-                  </div>
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" checked="">
-                    <label class="form-check-label">Checkbox checked</label>
-                  </div>
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" disabled="">
-                    <label class="form-check-label">Checkbox disabled</label>
-                  </div>
-                </div>
-              </div> 
-              <div class="col-sm-6">
-                <!-- radio -->
-                <div class="form-group">
-                  <div class="form-check">
-                    <input class="form-check-input" type="radio" name="radio1">
-                    <label class="form-check-label">Radio</label>
-                  </div>
-                  <div class="form-check">
-                    <input class="form-check-input" type="radio" name="radio1" checked="">
-                    <label class="form-check-label">Radio checked</label>
-                  </div>
-                  <div class="form-check">
-                    <input class="form-check-input" type="radio" disabled="">
-                    <label class="form-check-label">Radio disabled</label>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col-sm-6">
-                <!-- select -->
-                <div class="form-group">
-                  <label>Select</label>
-                  <select class="form-control">
-                    <option>option 1</option>
-                    <option>option 2</option>
-                    <option>option 3</option>
-                    <option>option 4</option>
-                    <option>option 5</option>
-                  </select>
-                </div>
-              </div>
-              <div class="col-sm-6">
-                <div class="form-group">
-                  <label>Select Disabled</label>
-                  <select class="form-control" disabled="">
-                    <option>option 1</option>
-                    <option>option 2</option>
-                    <option>option 3</option>
-                    <option>option 4</option>
-                    <option>option 5</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col-sm-6">
-                <!-- Select multiple-->
-                <div class="form-group">
-                  <label>Select Multiple</label>
-                  <select multiple="" class="form-control">
-                    <option>option 1</option>
-                    <option>option 2</option>
-                    <option>option 3</option>
-                    <option>option 4</option>
-                    <option>option 5</option>
-                  </select>
-                </div>
-              </div>
-              <div class="col-sm-6">
-                <div class="form-group">
-                  <label>Select Multiple Disabled</label>
-                  <select multiple="" class="form-control" disabled="">
-                    <option>option 1</option>
-                    <option>option 2</option>
-                    <option>option 3</option>
-                    <option>option 4</option>
-                    <option>option 5</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-          </form>
-        </div>
-        <!-- /.card-body -->
-      </div>
-
       <div class="card">
         <div class="card-header">
           <h3 class="card-title">Data Semua User</h3>
+          <button type="button" class="btn btn-sm btn-primary ml-3" data-toggle="modal" data-target="#importExcel">
+            Import Excel
+          </button>
         </div>
         <div class="card-body">
           <table class="table table-bordered data-table">
             <thead>
                 <tr>
-                    <th>Nama</th>
                     <th>NRP</th>
+                    <th>Nama</th>
                 </tr>
             </thead>
             <tbody>
@@ -195,8 +40,34 @@
         </table>
         </div>
       </div>
-  
     </div>
+
+    <!-- Import Excel -->
+		<div class="modal fade" id="importExcel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			<div class="modal-dialog" role="document">
+				<form method="post" action="mahasiswa/import_excel" enctype="multipart/form-data">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="exampleModalLabel">Import Excel</h5>
+						</div>
+						<div class="modal-body">
+ 
+							{{ csrf_field() }}
+ 
+							<label>Pilih file excel</label>
+							<div class="form-group">
+								<input type="file" name="file" required="required">
+							</div>
+ 
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+							<button type="submit" class="btn btn-primary">Import</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
 @endsection
 
 @section('js')
@@ -208,8 +79,8 @@
         serverSide: true,
         ajax: "{{ route('get-mahasiswa') }}",
         columns: [
-            {data: 'name', name: 'nama'},
-            {data: 'nomer_id', name: 'nrp'},
+            {data: 'nrp', name: 'nrp'},
+            {data: 'nama', name: 'nama'},
         ]
     });
     

@@ -223,5 +223,41 @@
     });
     
   });
+
+  function hapusLab(id) {
+        swal({
+            title: "Apakah yakin?",
+            text: "Data yang dihapus tidak dapat dikembalikan!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+        .then((willDelete) => {
+          if (willDelete) {
+            $.ajax({
+                  type: 'POST',
+                  url: "delete-lab/"+id ,
+                  // data: {_token: CSRF_TOKEN},
+                  dataType: 'JSON',
+                  success: function (results) {
+                      if (results.success === true) {
+                        swal("Oke! Materi telah dihapus", {
+                          icon: "success",
+                        });
+                        location.reload();
+                      } else {
+                          swal("Gagal!", results.message, "error");
+                          location.reload();
+                      }
+                  }
+              });
+            swal("Materi telah terhapus!", {
+              icon: "success",
+            });
+          } else {
+            swal("Materi Aman!");
+          }
+        });
+    }
 </script>   
 @endsection

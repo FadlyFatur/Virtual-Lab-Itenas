@@ -6,6 +6,14 @@
 
 @section('content')
 <div class="container margin-top">
+    @if($errors->any())
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <strong>Gagal</strong>{!! implode('', $errors->all('<div>:message</div>')) !!}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    @endif
     <div class="row main-content bg-success text-center">
         <div class="col-md-4 text-center company__info">
             <span class="company__logo">
@@ -19,16 +27,26 @@
                     <h2>Daftar</h2>
                     <div class="d-flex justify-content-center mb-3 mt-2">
                         <button type="button" id="btn-umum" class="btn btn-light mr-3">Umum</button>
-                        <button type="button" id="btn-itenas" class="btn btn-light ml-3">Itenas</button>
+                        <button type="button" id="btn-Dosen" class="btn btn-light ml-3 mr-3">Dosen</button>
+                        <button type="button" id="btn-Maha" class="btn btn-light ml-3">Mahasiswa</button>
                     </div>
                 </div>
                 <div class="row">
                     <form method="POST" action="{{ route('register') }}" class="form-group">
                         @csrf
-                        <div class="row internal-input">
-                            <input id="nomor_id" type="number" class="form-control form__input @error('nomor_id') is-invalid @enderror" placeholder="NRP / Nomer Pegawai" name="nomor_id" value="{{ old('nomor_id') }}">
+                        <div class="row dosen-input">
+                            <input id="nomer_id" type="number" class="form-control form__input @error('nomor_id') is-invalid @enderror" placeholder="Nomer Pegawai" name="nomer_id" value="{{ old('nomor_id') }}">
 
-                            @error('nomor_id')
+                            @error('nomer_id')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                        <div class="row maha-input">
+                            <input id="nrp" type="number" class="form-control form__input @error('nrp') is-invalid @enderror" placeholder="NRP" name="nrp" value="{{ old('nrp') }}">
+
+                            @error('nrp')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>

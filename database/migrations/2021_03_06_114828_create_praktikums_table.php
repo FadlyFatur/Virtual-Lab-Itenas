@@ -31,9 +31,9 @@ class CreatePraktikumsTable extends Migration
                 ->constrained('kelas_praktikums')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
-            $table->foreignId('koor_lab')
+                $table->foreignId('koor_lab')
                 ->nullable()
-                ->constrained('dosens')
+                ->constrained('users')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
             $table->timestamps();

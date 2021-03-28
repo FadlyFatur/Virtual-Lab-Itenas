@@ -41,7 +41,7 @@ class MateriController extends Controller
         }
         // dd($filter);
         $enroll = enroll::where('user_id', Auth::user()->id)->get();
-        $assisten = assisten::where('user_id', Auth::user()->id)->get();
+        $assisten = assisten::where('id_mahasiswa', Auth::user()->id)->get();
         return view('landing.praktikum', compact('lab', 'data', 'enroll', 'role', 'filter', 'assisten'));
     }
 
@@ -52,7 +52,7 @@ class MateriController extends Controller
         $prak = praktikum::where('id',$id)->first();
         // dd($prak->id);
         $data = Materi::where('praktikum_id',$id)->get();
-        $assisten = assisten::where('user_id', Auth::user()->id)->get();
+        $assisten = assisten::where('id_mahasiswa', Auth::user()->id)->get();
         $Cekabsen = Absen::where('praktikum_id',$id)->get();
         $absen = absen_mahasiswa::where('user_id',Auth::id())->orderBy('absen_id','asc')->get();
         if (count($absen) > 0) {
@@ -76,7 +76,7 @@ class MateriController extends Controller
             $data = Materi::where('praktikum_id',$id)->get();
             $prak = praktikum::where('id',$id)->first();
             $role = Auth::user()->roles_id;
-            $assisten = assisten::where('user_id', Auth::user()->id)->get();
+            $assisten = assisten::where('id_mahasiswa', Auth::user()->id)->get();
             $Cekabsen = Absen::where('praktikum_id',$id)->get();
             $absen = absen_mahasiswa::where('user_id',Auth::id())->orderBy('absen_id','asc')->get();
             if (count($absen) > 0) {
@@ -93,8 +93,8 @@ class MateriController extends Controller
 
     public function getMateri($id){
         $fdata = file_materi::where('materi_id',$id)->orderBy('type','ASC')->get();
-        
         $fmateri = Materi::where('id',$id)->first();
+
         if (!$fdata->isEmpty()) {
             foreach ($fdata as $d) {
                 if ($d->img != null) {
@@ -104,7 +104,8 @@ class MateriController extends Controller
                 }
     
                 $tugas = $fdata->where('type', 5)->first();
-                if($tugas->exists()){
+                // var_dump($tugas);
+                if($tugas){
                     $tugas_data = $tugas->id;
                 }else {
                     $tugas_data = null;
@@ -241,7 +242,7 @@ class MateriController extends Controller
             ->withErrors($validator);
         }
 
-        $path = public_path('tugas');
+        $path = public_path('file_tugas');
         $nameFile = "t_".Carbon::now()->format('YmdHs').$request->file('tugas')->getClientOriginalName();
         $request->file('tugas')->move($path,$nameFile);
         tugas::create([
@@ -257,14 +258,17 @@ class MateriController extends Controller
 
     public function indexTugas($id)
     {
-        $materi = Materi::where('praktikum_id',$id)->get();
-        foreach ($materi as $m) {
-            $tugas = file_materi::where('materi_id',$m->id)->where('type', 5)->first();
-            
-            $data [] = [
-                'id' => $tugas->id,
-                'nama' => $tugas->nama
-            ];
+        if(Materi::where('praktikum_id',$id)->exists()){
+            $materi = Materi::where('praktikum_id',$id)->get();
+            foreach ($materi as $m) {
+                $tugas = file_materi::where('materi_id',$m->id)->where('type', 5)->first();
+                $data [] = [
+                    'id' => $tugas->id,
+                    'nama' => $tugas->nama
+                ];
+            }
+        }else{
+            $data = [];
         }
 
         // dd($data);
@@ -287,7 +291,7 @@ class MateriController extends Controller
                         })
                         ->editColumn('nilai', function ($tugas){
                             if ($tugas->nilai == null) {
-                                return '<input type="text" name="nilai" id="nilai">';
+                                return '<input type="number" name="nilai" id="nilai'.$tugas->id.'" onfocusout="updateNilai('.$tugas->id.')">';
                             }else {
                                 return $tugas->nilai;
                             }
@@ -301,8 +305,17 @@ class MateriController extends Controller
 
     public function downloadTugas($file)
     {
-        $file= public_path('tugas').'/'.$file;
+        $file= public_path('file_tugas').'/'.$file;
         return response()->download($file);
     }
     
+    public function updateNilai($id, Request $request)
+    {
+        tugas::where('id',$id)->update([
+            "nilai" => $request->get('nilai'),
+            "status" => 2
+        ]);
+        $msg = "Berhasil diupdate";
+        return response()->json(array('msg'=> $msg), 200);
+    }
 }

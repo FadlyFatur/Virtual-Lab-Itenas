@@ -102,7 +102,7 @@
         type:'GET',
         url:"get-rekrutmen/"+id,
         success:function (resp) {
-            console.log(resp);
+            // console.log(resp);
             var csrf_token = "{{ csrf_token() }}"
             $('#rekrut-area').empty();
             var body = "";
@@ -129,12 +129,11 @@
                 }else{
                 body += `<h2 style="font-size:3rem;"><span class="badge badge-primary">`+resp.nama+`</span></h2>
                         <h3>Deadline : `+resp.deadline+`</h3>
-                        <br>
                         <p>`+resp.deskripsi+`</p>
-                        <a href="`+resp.file+`" download><h4><span class="badge badge-success">Download Persyaratan <i class="fa fa-download"></i></span></h4></a>
+                        <a href="rekrutmen/download/`+resp.file+`"><h4><span class="badge badge-success">Download Persyaratan <i class="fa fa-download"></i></span></h4></a>
                         <hr>
                         <h4>Form Kelengkapan Rekrutmen</h4><br>
-                        <form method="post"  action="/post-rekrutmen" enctype="multipart/form-data">
+                        <form method="post"  action="/post-rekrutmen-user" enctype="multipart/form-data">
                             <input name="_token" value="`+csrf_token+`" type="hidden">
                             <input name="userId" value="`+resp.user.id+`" type="hidden">
                             <input name="rekrutId" value="`+resp.rekrut+`" type="hidden">

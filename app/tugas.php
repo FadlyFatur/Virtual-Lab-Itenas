@@ -14,4 +14,9 @@ class tugas extends Model
     {
         return $this->belongsTo('App\User', 'user_id');
     }
+
+    public function getDetailMateri()
+    {
+        return $this->belongsTo('App\file_materi', 'file_materi');
+    }
 }

@@ -7,7 +7,7 @@ use Faker\Generator as Faker;
 
 $factory->define(dosen::class, function (Faker $faker) {
     return [
-        'nama' => $faker->name,
-        'nomer_unik' => $faker->unique()->numberBetween(1, 1000),
+        'nama' => 'rohman',
+        'nomer_id' => '001',
     ];
 });

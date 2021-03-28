@@ -7,7 +7,7 @@ use Faker\Generator as Faker;
 
 $factory->define(mahasiswa::class, function (Faker $faker) {
     return [
-        'nama' => $faker->name,
-        'nomer_unik' => $faker->unique()->numberBetween(1, 1000),
+        'nama' => 'fadly',
+        'nrp' => '152017076',
     ];
 });

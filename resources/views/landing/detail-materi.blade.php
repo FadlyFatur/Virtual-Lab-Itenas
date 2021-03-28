@@ -357,7 +357,6 @@
                       <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#input_materi">Input Materi</button>
                       <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#rekapAbsen">Rekap Absen</button>
                       <a href="{{route('Tugas',$prak->id)}}" class="btn btn-primary">Penilaian Tugas</a>
-                      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#input_materi">Rekap Nilai</button>
                   </div><br><hr>
                 @endif
                 <div id="materi-area">
@@ -371,10 +370,7 @@
             </div>
         </div>
         <br>
-
     </div>
-
-    {{-- <form action="" method="get" enctype="multipart/form-data"></form> --}}
 @endsection
 
 @section('js')

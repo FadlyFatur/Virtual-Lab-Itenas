@@ -123,45 +123,20 @@
     
     <div class="container">
         <div class="row">
-
-            <div class="col-lg-4 col-md-6 d-flex align-items-stretch">
-                <div class="member">
-                    <div class="post-img">
-                    <img src="" class="img-fluid" alt="">
-                    </div>
-                    <div class="member-info mt-2">
-                        <span class="post-date">Tue, September 15</span>
-                        <h3 class="post-title">Eum ad dolor et. Autem aut fugiat debitis voluptatem consequuntur sit</h3>
-                        <a href="blog-singe.html" class="readmore stretched-link mt-auto"><span>Read More</span><i class="bi bi-arrow-right"></i></a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-4 col-md-6 d-flex align-items-stretch">
-                <div class="member">
-                    <div class="post-img">
-                    <img src="" class="img-fluid" alt="">
-                    </div>
-                    <div class="member-info mt-2">
-                        <span class="post-date">Tue, September 15</span>
-                        <h3 class="post-title">Eum ad dolor et. Autem aut fugiat debitis voluptatem consequuntur sit</h3>
-                        <a href="blog-singe.html" class="readmore stretched-link mt-auto"><span>Read More</span><i class="bi bi-arrow-right"></i></a>
+            @foreach ($berita as $b)
+                <div class="col-lg-4 col-md-6 d-flex align-items-stretch">
+                    <div class="member">
+                        <div class="post-img">
+                        <img src="{{asset($b->img)}}" class="img-fluid" alt="{{$b->judul}}" style="width: 100%; height: auto; object-fit: cover;">
+                        </div>
+                        <div class="member-info mt-2">
+                            <span class="post-date">{{$b->created_at->format('M d,Y - H:i')}}</span>
+                            <h3 class="post-title">{{$b->judul}}</h3>
+                            <a href="{{route('detailBerita',$b->slug)}}" class="readmore stretched-link mt-auto"><span>Read More</span><i class="bi bi-arrow-right"></i></a>
+                        </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="col-lg-4 col-md-6 d-flex align-items-stretch">
-                <div class="member">
-                    <div class="post-img">
-                    <img src="" class="img-fluid" alt="">
-                    </div>
-                    <div class="member-info mt-2">
-                        <span class="post-date">Tue, September 15</span>
-                        <h3 class="post-title">Eum ad dolor et. Autem aut fugiat debitis voluptatem consequuntur sit</h3>
-                        <a href="blog-singe.html" class="readmore stretched-link mt-auto"><span>Read More</span><i class="bi bi-arrow-right"></i></a>
-                    </div>
-                </div>
-            </div>
+            @endforeach
 
         </div>
         <hr>

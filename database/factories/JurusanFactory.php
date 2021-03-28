@@ -8,9 +8,9 @@ use Illuminate\Support\Str;
 // use Carbon;
 
 $factory->define(jurusan::class, function (Faker $faker) {
-    $nama = $faker->name;
+    $nama = 'Informatika';
     return [
-        'nama' => 'Informatika',
+        'nama' => $nama,
         'slug' => Str::slug($nama),
         'deskripsi' => $faker->sentence($nbWords = 50, $variableNbWords = true),
     ];

@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use App\User;
+use App\mahasiswa;
+use App\dosen;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -49,20 +51,44 @@ class RegisterController extends Controller
      */
     protected function validator(array $data)
     {   
-        if ( isset($data['nomor_id']) ) {
-            return Validator::make($data, [
+        // dd($data);
+        if ( isset($data['nomer_id']) ) {
+            $rules = [
                 'name' => ['required', 'string', 'max:255'],
-                'nomor_id' => ['required', 'integer', 'unique:users,nomer_id'],
+                'nomer_id' => ['required', 'exists:dosens,nomer_id', 'unique:users,nomer_id'],
                 'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
                 'password' => ['required', 'string', 'min:8', 'confirmed'],
-            ]);
+            ];
+
+            $messages = [
+                'nomer_id.exists' => 'Nomer Pegawai belum terdata, harap hubungi admin',
+                'nomer_id.unique' => 'Nomer Pegawai sudah ada digunakan, harap hubungi admin untuk mengubah.',
+            ];
+        }elseif ( isset($data['nrp']) ) {
+            $rules = [
+                'name' => ['required', 'string', 'max:255'],
+                'nrp' => ['required', 'exists:mahasiswas,nrp', 'unique:users,nrp'],
+                'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+                'password' => ['required', 'string', 'min:8', 'confirmed'],
+            ];
+
+            $messages = [
+                'nrp.exists' => 'NRP belum terdata, harap hubungi admin',
+                'nrp.unique' => 'NRP sudah ada digunakan, harap hubungi admin untuk mengubah',
+            ];
         }else{
-            return Validator::make($data, [
+            $rules = [
                 'name' => ['required', 'string', 'max:255'],
                 'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
                 'password' => ['required', 'string', 'min:8', 'confirmed'],
-            ]);
+            ];
+
+            $messages = [
+                'password.confirmed' => 'password tidak sesuai!'
+            ];
         }
+
+        return Validator::make($data, $rules, $messages);
     }
 
     /**
@@ -73,10 +99,18 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {   
-        if ( isset($data['nomor_id']) ){
+        if ( isset($data['nomer_id']) ){
             return User::create([
                 'name' => $data['name'],
-                'nomer_id' => $data['nomor_id'],
+                'nomer_id' => $data['nomer_id'],
+                'roles_id' => 3,
+                'email' => $data['email'],
+                'password' => Hash::make($data['password']),
+            ]);
+        }elseif ( isset($data['nrp']) ){
+            return User::create([
+                'name' => $data['name'],
+                'nrp' => $data['nrp'],
                 'roles_id' => 2,
                 'email' => $data['email'],
                 'password' => Hash::make($data['password']),

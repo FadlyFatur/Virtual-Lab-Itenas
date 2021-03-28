@@ -20,7 +20,8 @@
             {{ implode('', $errors->all(':message, ')) }}
           </div>
       @endif
-
+      
+      @if (count($data)>0)
         <div class="row">
             <div class="col-md-3">
                 <ul class="list-group" id="list-tugas">
@@ -34,10 +35,10 @@
 
             <div class="col-md-8 side-line">
                 
-                  <div class="pull-left" id="input_area">
-    
-                      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#input_materi">Rekap Nilai</button>
-                  </div><br><hr>
+                <div class="pull-left" id="input_area">
+                    <p id="notif">*Refresh halaman untuk menyimpan semua nilai</p>
+                    {{-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#input_materi">Rekap Nilai</button> --}}
+                <hr></div>
 
                 <div id="materi-area">
                   <table class="table table-bordered" id="users-table">
@@ -55,6 +56,9 @@
             </div>
         </div>
         <br>
+      @else
+        <h3>Belum ada tugas untuk praktikum ini</h3>
+      @endif
 
     </div>
 
@@ -76,8 +80,38 @@
     <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.print.min.js"></script>
     <script>
     $(document).ready(function () {
-
+      $("#input_area").hide();
     });
+
+      function updateNilai(id) {
+        var nilai = $('#nilai'+id).val();
+        nilai = parseInt(nilai);
+        // console.log(id, nilai);
+        if (isNaN(nilai)) {
+          alert('Masukan input berupa angka');
+          $('#nilai'+id).val("")
+        }else{
+          // console.log('no');
+          $.ajax({
+              url: "updateNilai/"+id,
+              type : 'get',
+              dataType: "json",
+              async: true,
+              cache: false,
+              data: {
+                  nilai: nilai,
+              },
+              success: function(data, status)
+              {
+                  console.log(status);
+                  $("#input_area").show();
+              },
+              error: function (data, status) {
+                  alert(status);
+              }
+          });
+        }
+      }
 
       function getTugas(id) {
         var table = $('.table').DataTable();

@@ -26,7 +26,7 @@ class CreateLabsTable extends Migration
                 ->onUpdate('cascade');
             $table->foreignId('kepala_lab')
                 ->nullable()
-                ->constrained('dosens')
+                ->constrained('users')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
             $table->timestamps();

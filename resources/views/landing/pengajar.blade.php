@@ -15,54 +15,23 @@
                 </div><br><hr>
     
             <div class="row gy-4 text-center">
-    
-                <div class="col-lg-3 col-md-6 d-flex align-items-stretch">
-                    <div class="member">
-                        <div class="member-img">
-                            <img src="" class="img-fluid" alt="">
-                        </div>
-                        <div class="member-info mt-2">
-                        <h4>Walter White</h4>
-                        <span>Chief Executive Officer</span>
-                        </div>
-                    </div>
-                </div>
-    
-                <div class="col-lg-3 col-md-6 d-flex align-items-stretch">
-                    <div class="member">
-                        <div class="member-img">
-                        <img src="" class="img-fluid" alt="">
-                        </div>
-                        <div class="member-info mt-2">
-                        <h4>Walter White</h4>
-                        <span>Chief Executive Officer</span>
+                @foreach ($data as $d)
+                    <div class="col-lg-3 col-md-6 d-flex align-items-stretch">
+                        <div class="member">
+                            <div class="member-img">
+                                <img src="" class="img-fluid" alt="">
+                            </div>
+                            <div class="member-info mt-2">
+                            <h4>{{$d->getUser->name}}</h4>
+                            @if ($d->getUser->roles == 3 || $d->getUser->roles == 0)
+                                <span>Assisten Laboratorium</span>
+                                <p><b>{{$d->praktikum->nama}}</b></p>
+                            @endif
+                            </div>
                         </div>
                     </div>
-                </div>
-    
-                <div class="col-lg-3 col-md-6 d-flex align-items-stretch">
-                    <div class="member">
-                        <div class="member-img">
-                        <img src="" class="img-fluid" alt="">
-                        </div>
-                        <div class="member-info mt-2">
-                        <h4>Walter White</h4>
-                        <span>Chief Executive Officer</span>
-                        </div>
-                    </div>
-                </div>
+                @endforeach
 
-                <div class="col-lg-3 col-md-6 d-flex align-items-stretch">
-                    <div class="member">
-                        <div class="member-img">
-                        <img src="" class="img-fluid" alt="">
-                        </div>
-                        <div class="member-info mt-2">
-                        <h4>Walter White</h4>
-                        <span>Chief Executive Officer</span>
-                        </div>
-                    </div>
-                </div>
     
             </div>
     

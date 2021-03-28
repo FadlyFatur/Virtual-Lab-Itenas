@@ -9,6 +9,8 @@ use App\User;
 use App\Materi;
 use App\praktikum;
 use App\enroll;
+use App\berita;
+use App\assisten;
 use Auth;
 
 class landingController extends Controller
@@ -19,7 +21,8 @@ class landingController extends Controller
         $totalLab = lab::all()->count();
         $totalUser = User::all()->count();
         $totalMateri = Materi::all()->count();
-        return view('welcome', compact('jurusan','totalLab','totalUser','totalMateri'));
+        $berita = berita::all()->sortByDesc('created_at')->take(3);
+        return view('welcome', compact('jurusan','totalLab','totalUser','totalMateri', 'berita'));
     }
 
     public function indexJurusan()
@@ -37,12 +40,14 @@ class landingController extends Controller
 
     public function indexPengajar()
     {
-        return view('landing.pengajar');
+        $data = assisten::all();
+        return view('landing.pengajar', compact('data'));
     }
 
     public function indexBerita()
     {
-        return view('landing.berita');
+        $data = berita::all();
+        return view('landing.berita', compact('data'));
     }
 
     public function indexRekrutmen()
@@ -52,8 +57,15 @@ class landingController extends Controller
         return view('landing.rekrut', compact('lab'));
     }
 
-    public function detailBerita()
+    public function detailBerita($slug)
     {
-        return view('landing.detail-berita');
+        $data = berita::where('slug', $slug)->first();
+        return view( 'landing.detail-berita', compact('data') );
+    }
+
+    public function downloadFileSyarat($file)
+    {
+        $file= public_path('rekrut_file').'/'.$file;
+        return response()->download($file);
     }
 }

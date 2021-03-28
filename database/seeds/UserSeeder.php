@@ -39,14 +39,29 @@ class UserSeeder extends Seeder
         $mahasiswa = [
             'name' => "mahasiswa",
             'email' => "mahasiswa@test.com",
-            'nomer_id' => "12345678",
+            'nrp' => "152017076",
             'roles_id' => 2,
             'email_verified_at' => now(),
             'password' => bcrypt('12345'),
             'remember_token' => Str::random(10),
         ];
+        
         if(!User::where('email',$mahasiswa['email'])->exists()){
             User::create($mahasiswa);
+        }
+
+        $dosen = [
+            'name' => "dosen",
+            'email' => "dosen@test.com",
+            'nomer_id' => "001",
+            'roles_id' => 2,
+            'email_verified_at' => now(),
+            'password' => bcrypt('12345'),
+            'remember_token' => Str::random(10),
+        ];
+        
+        if(!User::where('email',$dosen['email'])->exists()){
+            User::create($dosen);
         }
     }
 }

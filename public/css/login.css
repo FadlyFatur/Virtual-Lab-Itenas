@@ -10,7 +10,7 @@
     display: none;
 }
 
-.internal-input{
+.dosen-input, .maha-input{
     display: none;
 }
 
@@ -89,11 +89,12 @@ form{
 	margin-top: 1.5em;
 	margin-bottom: 1em;
 }
+
 .btn-login:hover, .btn-login:focus{
 	background-color: #008080;
 	color:#fff;
 }
 
-#btn-itenas, #btn-umum{
+#btn-Maha, #btn-Dosen, #btn-umum{
     border: 1px solid black ;
 }

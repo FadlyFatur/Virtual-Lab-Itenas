@@ -16,12 +16,17 @@ use App\user_rekrutmen as rekrut;
 use App\kelas_praktikum as kelas;
 use App\file_materi as fmateri;
 use App\assisten;
+use App\berita;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 Use Alert;
 use Auth;
+use App\Imports\MahasiswaImport;
+use App\Imports\DosenImport;
+use Session;
 
 class AdminController extends Controller
 {
@@ -68,24 +73,114 @@ class AdminController extends Controller
         return view('admin.berita');
     }
 
+    public function postBerita(Request $request)
+    {
+        // dd($request->all());
+        $validator = Validator::make($request->all(), [
+            'judul' => 'required | string | max:100',
+            'isi_berita' => 'required | string | max:20000',
+            'thumb' => 'required | image',
+        ]);
+
+        if ($validator->fails()) { 
+            return redirect()
+            ->back()
+            ->withError("Data gagal di submit, lengkapi form input data");
+        }
+
+        $name = "b_".Carbon::now()->format('YmdHs').$request->file('thumb')->getClientOriginalName();
+        $path_img = Storage::putFileAs('images/img_berita', $request->file('thumb'), $name);
+
+        berita::create([
+            'judul' => $request->get('judul'),
+            'slug' => Str::slug($request->get('judul'),'-'),
+            'deskripsi' => $request->get('isi_berita'),
+            'img' => $path_img,
+        ]);
+
+        return redirect()
+            ->back()
+            ->withSuccess("Data berhasil di submit");
+    }
+
+    public function getBerita()
+    {
+        $data = berita::orderBy('created_at','desc')->get();
+        return Datatables::of($data)->make(true);
+    }
+
     public function indexAsisten()
     {
-        return view('admin.asisten');
+        $data = assisten::all();
+        return view('admin.asisten', compact('data'));
     }
 
     public function getUserData()
     {
-        return Datatables::collection(User::all())->make(true);
+        $data = User::orderBy('roles_id','desc')->get();
+        return Datatables::of($data)->make(true);
     }
     
     public function getMahasiswa()
     {
-        return Datatables::collection(user::where('roles_id',2)->get())->make(true);
+        return Datatables::collection(mahasiswa::all())->make(true);
+    }
+
+    public function impotMahasiswa(Request $request)
+    {
+        // dd($request->all());
+        // validasi
+		$this->validate($request, [
+			'file' => 'required|mimes:csv,xls,xlsx'
+		]);
+ 
+		// menangkap file excel
+		$file = $request->file('file');
+ 
+		// membuat nama file unik
+		$nama_file = rand().$file->getClientOriginalName();
+ 
+		// upload ke folder file_siswa di dalam folder public
+		$file->move('file_import',$nama_file);
+ 
+		// import data
+		Excel::import(new MahasiswaImport, public_path('/file_import/'.$nama_file));
+ 
+		// notifikasi dengan session
+		Session::flash('sukses','Data Siswa Berhasil Diimport!');
+ 
+		// alihkan halaman kembali
+		return redirect()->back();
     }
 
     public function indexDosen()
     {
         return view('admin.dosen');
+    }
+
+    public function impotDosen(Request $request)
+    {
+        $this->validate($request, [
+			'file' => 'required|mimes:csv,xls,xlsx'
+		]);
+ 
+		// menangkap file excel
+		$file = $request->file('file');
+ 
+		// membuat nama file unik
+		$nama_file = rand().$file->getClientOriginalName();
+ 
+		// upload ke folder file_siswa di dalam folder public
+		$file->move('file_import',$nama_file);
+ 
+		// import data
+		Excel::import(new DosenImport, public_path('/file_import/'.$nama_file));
+ 
+		// notifikasi dengan session
+		Session::flash('sukses','Data Siswa Berhasil Diimport!');
+ 
+		// alihkan halaman kembali
+		return redirect()->back();
     }
 
     public function getDosen()
@@ -177,7 +272,7 @@ class AdminController extends Controller
         return Datatables::of($data)
             ->addIndexColumn()
             ->addColumn('opsi', function ($data){
-                return '<a target="_blank" href="'.asset($data->thumbnail).'" class="edit btn btn-info btn-sm"><i class="fas fa-eye"></i></a> <a target="_blank" href="'.route('praktikumAdmin', $data->slug).'" class="edit btn btn-info btn-sm"><i class="fas fa-book-open"></i>';
+                return '<a target="_blank" href="'.asset($data->thumbnail).'" class="edit btn btn-info btn-sm"><i class="fas fa-eye"></i></a> <a onclick="hapusLab('.$data->id.')" class="btn btn-warning btn-sm"><i class="fa fa-trash" aria-hidden="true"></i></a> <a target="_blank" href="'.route('praktikumAdmin', $data->slug).'" class="edit btn btn-primary btn-sm"><i class="fas fa-book-open"></i></a>';
             })
             ->addColumn('jurusan', function ($data){
                 $jur = $data->jurusan()->first()->nama;
@@ -185,6 +280,30 @@ class AdminController extends Controller
             })
             ->rawColumns(['opsi', 'jurusan'])
             ->make(true);
+    }
+
+    public function deleteLab($id)
+    {
+        $lab = lab::where('id', $id)->first();
+        Storage::delete($lab['thumbnail']);
+
+        // Storage::disk('public')->delete($lab['thumbnail']);
+        $delete = $lab->delete();
+
+        // check data deleted or not
+        if ($delete == 1) {
+            $success = true;
+            $message = "Materi berhasil dihapus";
+        } else {
+            $success = true;
+            $message = "Materi tidak ditemukan";
+        }
+
+        //  Return response
+        return response()->json([
+            'success' => $success,
+            'message' => $message,
+        ]);
     }
 
     public function getMateri($id){
@@ -201,7 +320,7 @@ class AdminController extends Controller
     public function postMateri(Request $request, $id){
         $validator = Validator::make($request->all(), [
             'nama_materi' => 'required | string | max:100',
-            'deskripsi' => 'string | max:1000',
+            'deskripsi' => 'string | max:3000',
         ]);
 
         if ($validator->fails()) { 
@@ -220,10 +339,6 @@ class AdminController extends Controller
         return redirect()
             ->back()
             ->withSuccess("Data berhasil di submit");
-    }
-
-    public function postDataMateri(Request $request){
-        // dd($request->all());
     }
 
     public function postKelas(Request $request){
@@ -312,7 +427,7 @@ class AdminController extends Controller
         // dd($request->all());
         if ($request->get('tipe') == '1' && $request->get('materi') != null) {
             $validator = Validator::make($request->all(), [
-                'materi' => 'required | string | max:2000',
+                'materi' => 'required | string | max:10000',
                 'pilih_materi' => 'required',
                 'nama_materi' => 'required | string',
             ]);
@@ -486,10 +601,6 @@ class AdminController extends Controller
         return response()->json($data, 200);
     }
 
-    public function updateJurusan(Request $request){
-        
-    }
-
     public function postRekrut(Request $request){
         // dd(date("Y-m-d", strtotime($request->get('deadline'))) );
         $validator = Validator::make($request->all(), [
@@ -498,7 +609,7 @@ class AdminController extends Controller
             'kuota' => 'required',
             'deadline' => 'required',
             'kode_praktikum' => 'required',
-            'fileSyarat' => 'required | mimes:pdf,zip,rar | max:10000'
+            'fileSyarat' => 'required | mimes:pdf,zip,rar,doc,docx | max:10000'
         ]);
         if ($validator->fails()) { 
             return redirect()
@@ -507,8 +618,11 @@ class AdminController extends Controller
             ->withInput();
         };
 
-        $name = Carbon::now()->format('YmdHs')."_".$request->file('fileSyarat')->getClientOriginalName();
-        $path_file = Storage::putFileAs('public/file', $request->file('fileSyarat'), $name);
+        // $name = Carbon::now()->format('YmdHs')."_".$request->file('fileSyarat')->getClientOriginalName();
+        // $path_file = Storage::putFileAs('public/file', $request->file('fileSyarat'), $name);
+        $path = public_path('rekrut_file');
+        $nameFile = "r_".Carbon::now()->format('YmdHs')."_".$request->file('fileSyarat')->getClientOriginalName();
+        $request->file('fileSyarat')->move($path,$nameFile);
 
         rekrutmen::create([
             'nama' => $request->get('nama_rekrutmen'),
@@ -516,7 +630,7 @@ class AdminController extends Controller
             'kuota' => $request->get('kuota'),
             'deadline' => date("Y-m-d", strtotime($request->get('deadline'))), 
             'praktikum_id'=>$request->get('kode_praktikum'),
-            'file'=> $path_file
+            'file'=> $nameFile
         ]);
 
         return redirect()
@@ -546,7 +660,7 @@ class AdminController extends Controller
                     
                 })
                 ->addColumn('file', function ($data){
-                    return '<a download title="download" href="#" class="btn btn-info btn-sm">Download File</a>';
+                    return '<a download title="download" href="'.route('downloadFileSyarat',$data->file).'" class="btn btn-info btn-sm">Download File</a>';
                 })
                 ->addColumn('total', function ($data){
                     return rekrut::where('rekrut_id', $data->id)->count();
@@ -554,6 +668,12 @@ class AdminController extends Controller
                 })
                 ->rawColumns(['opsi','file'])
                 ->make(true);
+    }
+
+    public function downloadFileRekrut($file)
+    {
+        $file= public_path('rekrut_file').'/'.$file;
+        return response()->download($file);
     }
 
     public function getDetailrekrut($id)
@@ -574,7 +694,6 @@ class AdminController extends Controller
                 'rekrut' => $id,
                 'cek' => $userRekrut
             ];
-    
             return response()->json($data);
         }else{
             $data = "Belum ada rekrutmen";
@@ -595,18 +714,20 @@ class AdminController extends Controller
             ->withErrors($validator)
             ->withInput();
         };
-        $bio = Carbon::now()->format('YmdHs')."_".$request->file('biodata')->getClientOriginalName();
-        $nilai = Carbon::now()->format('YmdHs')."_".$request->file('transkip')->getClientOriginalName();
-        $file = Carbon::now()->format('YmdHs')."_".$request->file('file')->getClientOriginalName();
+        
+        $path = public_path('rekrut_file');
+        $bio = "b_".Carbon::now()->format('YmdHs').$request->file('biodata')->getClientOriginalName();
+        $nilai = "n_".Carbon::now()->format('YmdHs').$request->file('transkip')->getClientOriginalName();
+        $file = "f_".Carbon::now()->format('YmdHs').$request->file('file')->getClientOriginalName();
 
-        $path_bio = Storage::putFileAs('public/rekrut', $request->file('biodata'), $bio);
-        $path_nilai = Storage::putFileAs('public/rekrut', $request->file('transkip'), $nilai);
-        $path_file = Storage::putFileAs('public/rekrut', $request->file('file'), $file);
+        $request->file('biodata')->move($path,$bio);
+        $request->file('transkip')->move($path,$nilai);
+        $request->file('file')->move($path,$file);
         
         rekrut::create([
-            'biodata' => $path_bio,
-            'transkip' => $path_nilai,
-            'file' => $path_file,
+            'biodata' => $bio,
+            'transkip' => $nilai,
+            'file' => $file,
             'rekrut_id'=>$request->get('rekrutId'),
             'user_id'=>$request->get('userId')
         ]);
@@ -665,6 +786,8 @@ class AdminController extends Controller
 
     public function acceptRekrut($id, $userId)
     {
+        $rekrut = rekrutmen::where('id',$id)->first();
+
         rekrut::where('user_id', $userId)
                 ->where('rekrut_id',$id)
                 ->first()
@@ -674,13 +797,12 @@ class AdminController extends Controller
                 ->first()
                 ->update(['roles_id' => 3]);
 
-        $rekrut = rekrutmen::where('id',$id)->first();
-
         assisten::create([
-                'jabatan' => 1,
-                'user_id' => $userId,
+                'role' => 1,
+                'id_mahasiswa' => $userId,
                 'praktikum_id' => $rekrut->getPrak->id,
                 ]);
+
         $data = ['message' => 'Sukses!'];
         return response()->json($data, 200);
     }

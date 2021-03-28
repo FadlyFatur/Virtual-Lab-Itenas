@@ -21,11 +21,6 @@ class CreateJurusansTable extends Migration
             $table->text('deskripsi')->nullable();
             $table->string('thumbnail')->nullable();
             $table->string('thumbnail_path')->nullable();
-            $table->foreignId('ketua_jurusan')
-                ->nullable()
-                ->constrained('dosens')
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
             $table->timestamps();
         });
     }

@@ -14,4 +14,9 @@ class file_materi extends Model
     {
         return $this->belongsTo('App\Materi', 'materi_id');
     }
+
+    public function getTugas()
+    {
+        return $this->hasMany('App\tugas', 'file_materi', 'id');
+    }
 }
