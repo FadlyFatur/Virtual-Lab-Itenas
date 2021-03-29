@@ -13,7 +13,11 @@ class MahasiswaImport implements ToModel
     * @return \Illuminate\Database\Eloquent\Model|null
     */
     public function model(array $row)
-    {
+    {   
+        $exists = mahasiswa::where('nrp',$row[0])->where('nama',$row[1])->first();
+        if ($exists) {
+            return null;    
+        }
         return new mahasiswa([
             'nrp' => $row[0],
             'nama' => $row[1], 

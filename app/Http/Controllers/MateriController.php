@@ -257,24 +257,26 @@ class MateriController extends Controller
     }
 
     public function indexTugas($id)
-    {
-        if(Materi::where('praktikum_id',$id)->exists()){
-            $materi = Materi::where('praktikum_id',$id)->get();
+    {   
+        $materi = Materi::where('praktikum_id',$id)->get();
+        // dd($materi);
+        $data = [];
+        if (count($materi) > 0) {
             foreach ($materi as $m) {
-                $tugas = file_materi::where('materi_id',$m->id)->where('type', 5)->get();
-                // dd($tugas);
-                foreach ($tugas as $t) {
+                $tugas = file_materi::where('materi_id',$m->id)->where('type', 5)->first();
+                if ($tugas) {
                     $data [] = [
-                        'id' => $t->id,
-                        'nama' => $t->nama
+                        'id' => $tugas->id,
+                        'nama' => $tugas->nama
                     ];
                 }
             }
         }else{
-            $data = [];
+            return redirect()
+            ->back()
+            ->withErrors('Belum ada data materi atau tugas untuk praktikum ini!');
         }
 
-        // dd($data);
         return view('landing.tugas', compact('data'));
     }
 

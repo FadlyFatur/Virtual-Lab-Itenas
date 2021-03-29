@@ -24,6 +24,7 @@
       @if (count($data)>0)
         <div class="row">
             <div class="col-md-3">
+                <h4 class="text-center">Pilih Tugas</h4>
                 <ul class="list-group" id="list-tugas">
                   @foreach ($data as $d => $items)
                     <li class="list-group-item">
