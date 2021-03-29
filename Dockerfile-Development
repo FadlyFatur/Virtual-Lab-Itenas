@@ -30,6 +30,7 @@ RUN mkdir -p /var/www/html
 RUN mkdir -p /var/www/html/public/file_import
 RUN mkdir -p /var/www/html/public/file_tugas
 RUN mkdir -p /var/www/html/public/rekrut_file
+RUN mkdir -p /var/www/html/public/images
 RUN mkdir -p /var/www/html/public/images/img_berita
 RUN mkdir -p /var/www/html/public/images/img_materi
 RUN mkdir -p /var/www/html/public/images/thumbnail
