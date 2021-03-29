@@ -11,7 +11,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-Development
-    image: insightme:development
+    image: virtuallabitenas:development
     environment:
       - LETSENCRYPT_HOST=fdly.insightme.id
       - VIRTUAL_HOST=fdly.insightme.id
