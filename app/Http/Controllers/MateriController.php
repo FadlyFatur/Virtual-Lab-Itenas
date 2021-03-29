@@ -245,7 +245,11 @@ class MateriController extends Controller
         $path = public_path('file_tugas');
         $nameFile = "t_".Carbon::now()->format('YmdHs').$request->file('tugas')->getClientOriginalName();
         $request->file('tugas')->move($path,$nameFile);
-        tugas::create([
+        tugas::updateOrCreate([
+            'user_id' => $request->get('user_id'), 
+            'file_materi' => $request->get('materi_id')
+        ],
+        [
             'file_tugas' => $nameFile,
             'user_id' => $request->get('user_id'),
             'file_materi' => $request->get('materi_id'),
@@ -284,6 +288,7 @@ class MateriController extends Controller
     {
         $tugas = tugas::where('file_materi',$id);
         return Datatables::of($tugas)
+                        ->addIndexColumn()
                         ->editColumn('user_id', function ($tugas) {
                             return $tugas->getUser->name;
                         })
@@ -296,13 +301,16 @@ class MateriController extends Controller
                         })
                         ->editColumn('nilai', function ($tugas){
                             if ($tugas->nilai == null) {
-                                return '<input type="number" name="nilai" id="nilai'.$tugas->id.'" onfocusout="updateNilai('.$tugas->id.')">';
+                                return '<input type="number" name="nilai" id="nilai'.$tugas->id.'" onfocusout="updateNilai('.$tugas->id.')" pattern="/^-?\d+\.?\d*$/" onKeyPress="if(this.value.length==3) return false;" >';
                             }else {
                                 return $tugas->nilai;
                             }
                         })
                         ->editColumn('file_tugas', function ($tugas){
                             return '<a href="'.route('downloadTugas',$tugas->file_tugas).'" class="btn btn-sm btn-info"><i class="fa fa-download"></i> Download Tugas</a>';
+                        })
+                        ->addColumn('nrp', function ($tugas) {
+                            return $tugas->getUser->nrp;
                         })
                         ->rawColumns(['status', 'nilai', 'file_tugas'])
                         ->make(true);

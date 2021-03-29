@@ -37,15 +37,17 @@
             <div class="col-md-8 side-line">
                 
                 <div class="pull-left" id="input_area">
-                    <p id="notif">*Refresh halaman untuk menyimpan semua nilai</p>
-                    {{-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#input_materi">Rekap Nilai</button> --}}
+                    {{-- <p id="notif">*Refresh halaman untuk menyimpan semua nilai</p> --}}
+                    <button onClick="window.location.reload();" type="button" class="btn btn-primary">Simpan Nilai</button>
                 <hr></div>
 
                 <div id="materi-area">
                   <table class="table table-bordered" id="users-table">
                     <thead>
                         <tr>
+                            <th>No</th>
                             <th>Status</th>
+                            <th>NRP</th>
                             <th>Nama</th>
                             <th>File</th>
                             <th>Nilai</th>
@@ -138,10 +140,16 @@
           serverSide: true,
           ajax: "get-list-tugas/"+id,
           columns: [
-              {data: 'status'},
+              { data: 'DT_RowIndex',  
+                orderable: false, 
+                searchable: false,
+                width: 20,
+              },
+              {data: 'status', width:50},
+              {data: 'nrp'},
               {data: 'user_id'},
-              {data: 'file_tugas'},
-              {data: 'nilai'},
+              {data: 'file_tugas', orderable: false, searchable: false},
+              {data: 'nilai', orderable: false, searchable: false},
             ]
         });
       }
