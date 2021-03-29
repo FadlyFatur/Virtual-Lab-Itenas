@@ -24,7 +24,7 @@ services:
       - ./docker/config/fpm-pool.conf:/usr/local/etc/php-fpm.d/fpm-pool.conf:ro
       - ./docker/config/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./docker/config/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf:ro
-      - /home/pengguna/storage/virtuallabitenas-storage:/var/www/html/storage
+      # - /home/pengguna/storage/virtuallabitenas-storage:/var/www/html/storage
     logging:
       driver: json-file
     restart: always
