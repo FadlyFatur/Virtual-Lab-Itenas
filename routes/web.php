@@ -63,8 +63,8 @@ Route::get('get-list-prak/{id}', 'AdminController@getPrak')->name('get-list-prak
 Route::get('get-list-rekrut/{id}', 'AdminController@getRekrut')->name('get-list-rekrut');
 
 // admin controller 
-Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function (){
-    Route::get('/', 'AdminController@index')->name('dashboard');
+Route::group(['prefix' => 'admin', 'middleware' => ['auth']], function (){
+    Route::get('/', 'AdminController@index')->name('dashboard')->middleware('admin');
     Route::get('get-prak-rekrut/{id}', 'AdminController@getPrak')->name('get-prak-rekrut');
     Route::get('rekrutmen/download/{file}','AdminController@downloadFileRekrut')->name('downloadFileRekrut');
 
@@ -73,12 +73,12 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function 
     
     Route::post('post-berita', 'AdminController@postBerita')->name('post-berita');
 
-    Route::get('jurusan', 'AdminController@indexJurusan')->name('jurusan');
+    Route::get('jurusan', 'AdminController@indexJurusan')->name('jurusan')->middleware('admin');
     Route::get('jurusan/json', 'AdminController@getJurusan')->name('get-jurusan');
     Route::post('jurusan/post-jurusan', 'AdminController@postJurusan')->name('post-jurusan');
     
     Route::prefix('laboratorium')->group(function (){
-        Route::get('/', 'AdminController@indexLab')->name('laboratorium');
+        Route::get('/', 'AdminController@indexLab')->name('laboratorium')->middleware('admin');
         Route::get('json', 'AdminController@getTableLab')->name('get-Lab');
         Route::post('post-lab', 'AdminController@postLab')->name('post-Lab');
     });
@@ -86,7 +86,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function 
     Route::post('delete-lab/{id}', 'AdminController@deleteLab')->name('delete-Lab');
 
     Route::prefix('praktikum')->group(function (){
-        Route::get('{slug}', 'AdminController@indexPrak')->name('praktikumAdmin');
+        Route::get('{slug}', 'AdminController@indexPrak')->name('praktikumAdmin')->middleware('admin');
         Route::get('get-data/{id}', 'AdminController@getTablePrak')->name('get-praktikum');
         Route::post('post-praktikum/{id}', 'AdminController@postPrak')->name('post-praktikum');
 
@@ -100,7 +100,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function 
     });
 
     Route::prefix('rekrutmen')->group(function (){
-        Route::get('/', 'AdminController@indexRek')->name('rekrutmen');
+        Route::get('/', 'AdminController@indexRek')->name('rekrutmen')->middleware('admin');
         Route::get('get-rekrutmen-admin', 'AdminController@getTableRek')->name('get-rekrutmen-admin');
         Route::post('/post-rekrutmen', 'AdminController@postRekrut')->name('post-rekrutmen');
         Route::get('/list-rekrutmen/{id}', 'AdminController@getListRekrut')->name('get-list-rekrutmen');
@@ -109,18 +109,18 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function 
         Route::get('{id}/rekrutmen-denied/{userId}', 'AdminController@deniedRekrut')->name('rekrutmen-denied');
     });
     
-    Route::get('/user', 'AdminController@indexUser')->name('user');
+    Route::get('/user', 'AdminController@indexUser')->name('user')->middleware('admin');
     Route::get('/user/json', 'AdminController@getUserData')->name('get-user');
 
-    Route::get('/mahasiswa', 'AdminController@indexMahasiswa')->name('mahasiswa');
+    Route::get('/mahasiswa', 'AdminController@indexMahasiswa')->name('mahasiswa')->middleware('admin');
     Route::get('/mahasiswa/json', 'AdminController@getMahasiswa')->name('get-mahasiswa');
     Route::post('/mahasiswa/import_excel', 'AdminController@impotMahasiswa')->name('import-mahasiswa');
 
-    Route::get('/dosen', 'AdminController@indexDosen')->name('dosen');
+    Route::get('/dosen', 'AdminController@indexDosen')->name('dosen')->middleware('admin');
     Route::get('/dosen/json', 'AdminController@getDosen')->name('get-dosen');
     Route::post('/dosen/import_excel', 'AdminController@impotDosen')->name('import-dosen');
 
-    Route::get('/berita', 'AdminController@indexBerita')->name('Berita');
+    Route::get('/berita', 'AdminController@indexBerita')->name('Berita')->middleware('admin');
     Route::get('/berita/get-berita', 'AdminController@getBerita')->name('get-Berita');
     Route::get('/asisten', 'AdminController@indexAsisten')->name('asisten');
 

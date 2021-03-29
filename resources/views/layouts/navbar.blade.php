@@ -77,7 +77,7 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ url('/rekrutmen') }}">Rekrutmen</a></li>
                             </li>
-                            @if (Auth::user()->roles_id != 2 )
+                            @if (Auth::user()->roles_id == 0 )
                                 <li class="nav-item">
                                     <a class="nav-link" href="{{ route('dashboard') }}">Dashboard</a></li>
                                 </li>

@@ -17,7 +17,7 @@ class admin
     public function handle($request, Closure $next)
     {
         if (Auth::user() != null) {
-            if (Auth::user()->roles_id != 1 && Auth::user()->roles_id != 2 ) {
+            if (Auth::user()->roles_id == 0) {
                 return $next($request);
             }else{
                 abort(403);
