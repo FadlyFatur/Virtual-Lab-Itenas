@@ -115,10 +115,12 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth']], function (){
     Route::get('/mahasiswa', 'AdminController@indexMahasiswa')->name('mahasiswa')->middleware('admin');
     Route::get('/mahasiswa/json', 'AdminController@getMahasiswa')->name('get-mahasiswa');
     Route::post('/mahasiswa/import_excel', 'AdminController@impotMahasiswa')->name('import-mahasiswa');
+    Route::post('/mahasiswa/post-mahasiswa', 'AdminController@postMahasiswa')->name('post-mahasiswa');
 
     Route::get('/dosen', 'AdminController@indexDosen')->name('dosen')->middleware('admin');
     Route::get('/dosen/json', 'AdminController@getDosen')->name('get-dosen');
     Route::post('/dosen/import_excel', 'AdminController@impotDosen')->name('import-dosen');
+    Route::post('/dosen/post-dosen', 'AdminController@postDosen')->name('post-dosen');
 
     Route::get('/berita', 'AdminController@indexBerita')->name('Berita')->middleware('admin');
     Route::get('/berita/get-berita', 'AdminController@getBerita')->name('get-Berita');

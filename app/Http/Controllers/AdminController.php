@@ -829,4 +829,62 @@ class AdminController extends Controller
 
         return response()->json($data);
     }
+
+    public function postDosen(Request $request)
+    {
+        // dd($request->all());
+        $validator = Validator::make($request->all(), [
+            'nama' => 'required | string',
+            'noPegawai' => 'required | integer | unique:dosens,nomer_id',
+        ]);
+
+        if ($validator->fails()) { 
+            return redirect()
+            ->back()
+            ->withErrors($validator);
+        }
+
+        dosen::updateOrCreate([
+            'nama' => $request->get('nama'), 
+            'nomer_id' => $request->get('noPegawai')
+        ],
+        [
+            'nama' => $request->get('nama'), 
+            'nomer_id' => $request->get('noPegawai')
+        ]);
+
+        Alert::success('Sukses', 'Data Berhasil diinput');
+        return redirect()
+            ->back()
+            ->withSuccess("Data berhasil di simpan");
+    }
+
+    public function postMahasiswa(Request $request)
+    {
+         // dd($request->all());
+         $validator = Validator::make($request->all(), [
+            'nama' => 'required | string',
+            'noMaha' => 'required | integer | unique:mahasiswas,nrp',
+        ]);
+
+        if ($validator->fails()) { 
+            return redirect()
+            ->back()
+            ->withErrors($validator);
+        }
+
+        mahasiswa::updateOrCreate([
+            'nama' => $request->get('nama'), 
+            'nrp' => $request->get('noMaha')
+        ],
+        [
+            'nama' => $request->get('nama'), 
+            'nrp' => $request->get('noMaha')
+        ]);
+
+        Alert::success('Sukses', 'Data Berhasil diinput');
+        return redirect()
+            ->back()
+            ->withSuccess("Data berhasil di simpan");
+    }
 }

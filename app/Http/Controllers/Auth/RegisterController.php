@@ -51,7 +51,6 @@ class RegisterController extends Controller
      */
     protected function validator(array $data)
     {   
-        // dd($data);
         if ( isset($data['nomer_id']) ) {
             $rules = [
                 'name' => ['required', 'string', 'max:255'],
@@ -100,6 +99,7 @@ class RegisterController extends Controller
     protected function create(array $data)
     {   
         if ( isset($data['nomer_id']) ){
+            dosen::where('nomer_id', $data['nomer_id'])->first()->update(['status' => 1]);
             return User::create([
                 'name' => $data['name'],
                 'nomer_id' => $data['nomer_id'],
@@ -108,6 +108,7 @@ class RegisterController extends Controller
                 'password' => Hash::make($data['password']),
             ]);
         }elseif ( isset($data['nrp']) ){
+            mahasiswa::where('nrp', $data['nrp'])->first()->update(['status' => 1]);
             return User::create([
                 'name' => $data['name'],
                 'nrp' => $data['nrp'],
