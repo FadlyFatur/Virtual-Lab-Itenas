@@ -4,9 +4,9 @@ FROM php:7.3.25-fpm-alpine3.11
 ENV TZ ${TZ:-Asia/Jakarta}
 
 # Install On System
-RUN apk update && apk add --no-cache curl tzdata nginx supervisor ca-certificates zip unzip \
+RUN apk update && apk add --no-cache curl tzdata nginx supervisor ca-certificates zip unzip gd \
     # Library
-    libzip-dev \
+    libzip-dev libpng-dev \
     # Development Tools
     zlib-dev
 
