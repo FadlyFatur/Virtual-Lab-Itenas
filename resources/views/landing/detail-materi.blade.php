@@ -316,7 +316,7 @@
 
       @if(session('errors'))
           <div class="alert alert-danger">
-            {{ implode('', $errors->all(':message, ')) }}
+            {{ implode('', $errors->all(':message ')) }}
           </div>
       @endif
         <div class="row">

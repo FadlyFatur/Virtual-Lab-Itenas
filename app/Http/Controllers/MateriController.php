@@ -261,11 +261,14 @@ class MateriController extends Controller
         if(Materi::where('praktikum_id',$id)->exists()){
             $materi = Materi::where('praktikum_id',$id)->get();
             foreach ($materi as $m) {
-                $tugas = file_materi::where('materi_id',$m->id)->where('type', 5)->first();
-                $data [] = [
-                    'id' => $tugas->id,
-                    'nama' => $tugas->nama
-                ];
+                $tugas = file_materi::where('materi_id',$m->id)->where('type', 5)->get();
+                // dd($tugas);
+                foreach ($tugas as $t) {
+                    $data [] = [
+                        'id' => $t->id,
+                        'nama' => $t->nama
+                    ];
+                }
             }
         }else{
             $data = [];

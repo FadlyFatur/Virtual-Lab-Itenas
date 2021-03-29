@@ -542,7 +542,7 @@ class AdminController extends Controller
             if ( fmateri::where('type', 5)->where('materi_id',$request->get('pilih_materi'))->exists() ) {
                 return redirect()
                 ->back()
-                ->withErrors("Sudah ada tugas pada materi ini.");
+                ->withErrors("Setiap materi hanya bisa memiliki satu tugas!");
             }
 
             $data = $request->get('tugas');

@@ -1,4 +1,8 @@
 @extends('layouts.admin.app')
+@section('style')
+@parent
+
+@endsection
 
 @section('content')
 <style>
@@ -27,6 +31,73 @@
   width: 150px;
 }
 </style>
+  {{-- modal Tambah Kelas --}}
+  <div class="modal fade" id="tambah-kelas" tabindex="-1" role="dialog" aria-labelledby="tambah-kelasLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="tambah-kelaslLabel">Tambah Kelas</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form role="form" method="POST" action="{{route('post-kelas')}}" enctype="multipart/form-data">
+            @csrf
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label>Nama Kelas</label>
+                  <input type="text" class="form-control" name="nama_kelas" placeholder="Nama/Kode Kelas" required autofocus> 
+                </div>
+                <div class="form-group">
+                  <label>Deskripsi Kelas</label>
+                  <textarea class="form-control" rows="5" name="deskripsi" placeholder="Masukan Deskripsi/Penjelsan Singkat" autofocus></textarea>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label>Waktu Mulai</label>
+                  <div class="input-group date" id="datetimepicker3" data-target-input="nearest">
+                    <input type="text" class="form-control datetimepicker-input" data-target="#datetimepicker3" name="wm" required/>
+                    <div class="input-group-append" data-target="#datetimepicker3" data-toggle="datetimepicker">
+                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>Waktu Selesai</label>
+                  <div class="input-group date" id="datetimepicker4" data-target-input="nearest">
+                    <input type="text" class="form-control datetimepicker-input" data-target="#datetimepicker4" name="ws" required/>
+                    <div class="input-group-append" data-target="#datetimepicker4" data-toggle="datetimepicker">
+                      <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>Hari</label>
+                  <select name="hari" class="custom-select form-control" required>
+                    <option value= "" selected>Pilih salah satu</option>
+                      <option value="Senin">Senin</option>
+                      <option value="Selasa">Selasa</option>
+                      <option value="Rabu">Rabu</option>
+                      <option value="Kamis">Kamis</option>
+                      <option value="Jumat">Jumat</option>
+                      <option value="Sabtu">Sabtu</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+          <button type="submit" class="btn btn-primary">Simpan</button>
+        </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
     <!-- Content Header (Page header) -->
     <div class="content-header">
         <div class="container-fluid">
@@ -120,6 +191,7 @@
           <!-- /.card-body -->
           <div class="card-footer">
             <button type="submit" class="btn btn-primary">Simpan</button>
+            <button class="btn btn-info" data-toggle="modal" data-target="#tambah-kelas" style="margin-left: 32px">Tambah Kelas</button>
           </div>
         </form>
       </div>
@@ -149,43 +221,57 @@
 @endsection
 
 @section('js')
-<script>
-  $(document).ready( function() {
+@parent
+
+  <script type="text/javascript">
+    $(document).ready( function() {
+
+      $('#datetimepicker3').datetimepicker({
+        format: 'H:mm',
+      });
+
+      $('#datetimepicker4').datetimepicker({
+        format: 'H:mm'
+      });
+
       $(document).on('change', '.btn-file :file', function() {
-    var input = $(this),
-      label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
-    input.trigger('fileselect', [label]);
-    });
+        var input = $(this),
+        label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+        input.trigger('fileselect', [label]);
+      });
 
-    $('.btn-file :file').on('fileselect', function(event, label) {
+      $('.btn-file :file').on('fileselect', function(event, label) {
+          
+          var input = $(this).parents('.input-group').find(':text'),
+              log = label;
+          
+          if( input.length ) {
+              input.val(log);
+          } else {
+              if( log ) alert(log);
+          }
         
-        var input = $(this).parents('.input-group').find(':text'),
-            log = label;
-        
-        if( input.length ) {
-            input.val(log);
-        } else {
-            if( log ) alert(log);
-        }
-      
-    });
-    function readURL(input) {
-        if (input.files && input.files[0]) {
-            var reader = new FileReader();
-            
-            reader.onload = function (e) {
-                $('#img-upload').attr('src', e.target.result);
-            }
-            
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
+      });
 
-    $("#imgInp").change(function(){
-        readURL(this);
-    }); 	
-  });
-</script>   
+      function readURL(input) {
+          if (input.files && input.files[0]) {
+              var reader = new FileReader();
+              
+              reader.onload = function (e) {
+                  $('#img-upload').attr('src', e.target.result);
+              }
+              
+              reader.readAsDataURL(input.files[0]);
+          }
+      }
+
+      $("#imgInp").change(function(){
+          readURL(this);
+      }); 	
+
+    });
+  </script>   
+
   <script type="text/javascript">
     $(function () {
       
