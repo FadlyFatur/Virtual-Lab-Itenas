@@ -11,8 +11,8 @@ RUN apk update && apk add --no-cache curl tzdata nginx supervisor ca-certificate
     zlib-dev
 
 # Install PHP Depedencies    
-RUN docker-php-ext-install mysqli pdo pdo_mysql zip exif pcntl bcmath opcache zip gd mbstring
-RUN docker-php-ext-enable mysqli pdo pdo_mysql zip exif pcntl bcmath opcache zip gd mbstring
+RUN docker-php-ext-install mysqli pdo pdo_mysql zip mbstring
+RUN docker-php-ext-enable mysqli pdo pdo_mysql zip mbstring
 RUN curl -sS https://getcomposer.org/installer | php -- \
     --install-dir=/usr/local/bin --filename=composer --version=2.0.9
 
