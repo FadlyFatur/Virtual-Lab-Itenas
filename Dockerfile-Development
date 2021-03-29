@@ -1,0 +1,52 @@
+FROM php:7.3.25-fpm-alpine3.11
+
+# Setup ENV
+ENV TZ ${TZ:-Asia/Jakarta}
+
+# Install On System
+RUN apk update && apk add --no-cache curl tzdata nginx supervisor ca-certificates zip unzip \
+    # Library
+    libzip-dev \
+    # Development Tools
+    zlib-dev
+
+# Install PHP Depedencies    
+RUN docker-php-ext-install mysqli pdo pdo_mysql zip exif pcntl bcmath opcache zip gd mbstring
+RUN docker-php-ext-enable mysqli pdo pdo_mysql zip exif pcntl bcmath opcache zip gd mbstring
+RUN curl -sS https://getcomposer.org/installer | php -- \
+    --install-dir=/usr/local/bin --filename=composer --version=2.0.9
+
+# Setup Timezone
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+# Copy Configuration
+# COPY ./docker/config/php.ini /usr/local/etc/php/php.ini
+# COPY ./docker/config/fpm-pool.conf /usr/local/etc/php-fpm.d/fpm-pool.conf
+# COPY ./docker/config/nginx.conf /etc/nginx/nginx.conf
+# COPY ./docker/config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+# Setup User & Path Workdir
+RUN mkdir -p /var/www/html
+COPY --chown=www-data . /var/www/html/
+RUN cp /var/www/html/.env.development /var/www/html/.env
+RUN chown -R www-data:www-data /var/www/html
+RUN ls -lahtr
+WORKDIR /var/www/html
+
+# Composer Setup
+RUN composer install && \
+    php artisan key:generate && \
+    php artisan storage:link
+
+# Remove Library Development & Nginx Default
+# RUN apk del libzip-dev libpng-dev zlib-dev oniguruma-dev dpkg-dev musl-dev \
+#     libc-dev freetype-dev libjpeg-turbo-dev
+RUN rm -rf /tmp/*
+RUN rm /etc/nginx/conf.d/default.conf
+RUN rm /var/www/html/.env.development
+RUN rm -Rf docker/
+RUN ls -lahtr
+
+# Lock Command & Expose Port
+EXPOSE 80
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
