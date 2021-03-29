@@ -112,6 +112,7 @@
             <table class="table table-bordered data-table">
               <thead>
                   <tr>
+                      <th>No</th>
                       <th>Status</th>
                       <th>Judul</th>
                       <th>Deskripsi</th>
@@ -188,6 +189,11 @@
         serverSide: true,
         ajax: "{{ route('get-Berita') }}",
         columns: [
+            { data: 'DT_RowIndex',  
+              orderable: false, 
+              searchable: false,
+              width: 20,
+            },
             {data: 'status', 
               render: function (data, type, row) {
                   let checked = null;

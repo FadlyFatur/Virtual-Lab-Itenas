@@ -114,6 +114,7 @@
           <table class="table table-bordered data-table">
             <thead>
                 <tr>
+                    <th>No</th>
                     <th>Status</th>
                     <th>Jurusan</th>
                     <th>Deskripsi</th>
@@ -186,6 +187,11 @@
           serverSide: true,
           ajax: "{{ route('get-jurusan') }}",
           columns: [
+              { data: 'DT_RowIndex',  
+                orderable: false, 
+                searchable: false,
+                width: 20,
+              },
               {data: 'status', 
                 render: function (data, type, row) {
                     let checked = null;

@@ -106,7 +106,9 @@ class AdminController extends Controller
     public function getBerita()
     {
         $data = berita::orderBy('created_at','desc')->get();
-        return Datatables::of($data)->make(true);
+        return Datatables::of($data)
+                            ->addIndexColumn()
+                            ->make(true);
     }
 
     public function indexAsisten()
@@ -123,7 +125,7 @@ class AdminController extends Controller
     
     public function getMahasiswa()
     {
-        return Datatables::collection(mahasiswa::all())->make(true);
+        return Datatables::collection(mahasiswa::all())->addIndexColumn()->make(true);
     }
 
     public function impotMahasiswa(Request $request)
@@ -185,7 +187,9 @@ class AdminController extends Controller
 
     public function getDosen()
     {
-        return Datatables::collection(dosen::all())->make(true);
+        return Datatables::collection(dosen::all())
+                        ->addIndexColumn()
+                        ->make(true);
     }
 
     public function postJurusan(Request $request)

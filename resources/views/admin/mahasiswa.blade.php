@@ -31,6 +31,7 @@
           <table class="table table-bordered data-table">
             <thead>
                 <tr>
+                    <th>No</th>
                     <th>NRP</th>
                     <th>Nama</th>
                 </tr>
@@ -79,6 +80,11 @@
         serverSide: true,
         ajax: "{{ route('get-mahasiswa') }}",
         columns: [
+            { data: 'DT_RowIndex',  
+              orderable: false, 
+              searchable: false,
+              width: 20,
+            },
             {data: 'nrp', name: 'nrp'},
             {data: 'nama', name: 'nama'},
         ]

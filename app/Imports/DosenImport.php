@@ -14,6 +14,10 @@ class DosenImport implements ToModel
     */
     public function model(array $row)
     {
+        $exists = dosen::where('nomer_id',$row[0])->first();
+        if ($exists) {
+            return null;    
+        }
         return new dosen([
             'nomer_id' => $row[0],
             'nama' => $row[1], 

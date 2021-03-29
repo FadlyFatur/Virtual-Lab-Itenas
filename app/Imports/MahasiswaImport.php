@@ -14,7 +14,7 @@ class MahasiswaImport implements ToModel
     */
     public function model(array $row)
     {   
-        $exists = mahasiswa::where('nrp',$row[0])->where('nama',$row[1])->first();
+        $exists = mahasiswa::where('nrp',$row[0])->first();
         if ($exists) {
             return null;    
         }

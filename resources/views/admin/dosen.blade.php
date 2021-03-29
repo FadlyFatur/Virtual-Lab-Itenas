@@ -31,6 +31,7 @@
           <table class="table table-bordered data-table">
             <thead>
                 <tr>
+                  <th>No</th>
                   <th>Nomer Pegawai</th>
                   <th>Nama</th>
                 </tr>
@@ -79,6 +80,7 @@
         serverSide: true,
         ajax: "{{ route('get-dosen') }}",
         columns: [
+            {data: 'DT_RowIndex', width: 20, orderable: false, searchable:false},
             {data: 'nama', name: 'nama'},
             {data: 'nomer_id', name: 'nomer pegawai'},
         ]

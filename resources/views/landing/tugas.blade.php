@@ -58,7 +58,7 @@
         </div>
         <br>
       @else
-        <h3>Belum ada tugas untuk praktikum ini</h3>
+        <h3 class="text-center">Belum ada tugas untuk praktikum ini</h3>
       @endif
 
     </div>
