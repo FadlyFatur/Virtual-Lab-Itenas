@@ -61,7 +61,7 @@ class RegisterController extends Controller
 
             $messages = [
                 'nomer_id.exists' => 'Nomer Pegawai belum terdata, harap hubungi admin',
-                'nomer_id.unique' => 'Nomer Pegawai sudah ada digunakan, harap hubungi admin untuk mengubah.',
+                'nomer_id.unique' => 'Nomer Pegawai sudah ada digunakan user lain, harap hubungi admin mendaftar.',
             ];
         }elseif ( isset($data['nrp']) ) {
             $rules = [
@@ -73,7 +73,7 @@ class RegisterController extends Controller
 
             $messages = [
                 'nrp.exists' => 'NRP belum terdata, harap hubungi admin',
-                'nrp.unique' => 'NRP sudah ada digunakan, harap hubungi admin untuk mengubah',
+                'nrp.unique' => 'NRP sudah ada digunakan user lain, harap hubungi admin untuk mendaftar',
             ];
         }else{
             $rules = [
