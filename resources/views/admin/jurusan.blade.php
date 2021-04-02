@@ -118,6 +118,7 @@
                     <th>Status</th>
                     <th>Jurusan</th>
                     <th>Deskripsi</th>
+                    <th>Gambar</th>
                     <th>Opsi</th>
                 </tr>
             </thead>
@@ -207,8 +208,9 @@
                 searchable: false
               },
               {data: 'nama'},
-              {data: 'deskripsi'},
-              {data: 'opsi', orderable: false, searchable: false}
+              {data: 'deskripsi', width:500},
+              {data: 'gmb', orderable: false, searchable: false},
+              {data: 'cta', orderable: false, searchable: false}
             ]
         });
     });

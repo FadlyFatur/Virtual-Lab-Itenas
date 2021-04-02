@@ -34,10 +34,11 @@ class MateriController extends Controller
                             ->get();
         if($request->has('filter') && $request->get('filter') != '0'){
             $data = praktikum::where('laboratorium',$lab->id)
-                            ->where('tahun_ajaran',$request->get('filter'))        
+                            ->where('tahun_ajaran',$request->get('filter'))
+                            ->where('status',1)        
                             ->get();
         }else {
-            $data = praktikum::where('laboratorium',$lab->id)->get();
+            $data = praktikum::where('laboratorium',$lab->id)->where('status',1)->latest()->get();
         }
         // dd($filter);
         $enroll = enroll::where('user_id', Auth::user()->id)->get();

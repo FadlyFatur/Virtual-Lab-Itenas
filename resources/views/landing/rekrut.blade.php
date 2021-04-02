@@ -128,7 +128,7 @@
                             </table>`
                 }else{
                 body += `<h2 style="font-size:3rem;"><span class="badge badge-primary">`+resp.nama+`</span></h2>
-                        <h3>Deadline : `+resp.deadline+`</h3>
+                        <h3>Deadline : `+resp.deadline+`</h3><h3>Kuota : `+resp.kuota+`</h3> 
                         <p>`+resp.deskripsi+`</p>
                         <a href="rekrutmen/download/`+resp.file+`"><h4><span class="badge badge-success">Download Persyaratan <i class="fa fa-download"></i></span></h4></a>
                         <hr>

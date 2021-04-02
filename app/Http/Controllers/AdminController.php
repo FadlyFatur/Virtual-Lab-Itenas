@@ -30,51 +30,26 @@ use Session;
 
 class AdminController extends Controller
 {
-    public function index()
-    {
+    public function index(){
         return view('admin.home');
     }
 
-    public function indexMateri($id)
-    {
-        $lab = praktikum::where('id',$id)->first();
-        return view('admin.materi', compact('id', 'lab'));
-    }
-
-    public function indexJurusan()
-    {
-        return view('admin.jurusan');
-    }
-
-    public function indexLab()
-    {
-        $data = jurusan::all();
-        return view('admin.laboratorium', compact('data'));
-    }
-
-    public function indexRek()
-    {
-        $data = lab::orderBy('nama', 'asc')->get();
-        return view('admin.rekrutmen', compact('data'));
-    }
-
-    public function indexUser()
-    {
+    // User 
+    public function indexUser(){
         return view('admin.user');
     }
 
-    public function indexMahasiswa()
-    {
-        return view('admin.mahasiswa');
+    public function getUserData(){
+        $data = User::orderBy('roles_id','desc')->get();
+        return Datatables::of($data)->make(true);
     }
 
-    public function indexBerita()
-    {
+    // Berita 
+    public function indexBerita(){
         return view('admin.berita');
     }
 
-    public function postBerita(Request $request)
-    {
+    public function postBerita(Request $request){
         // dd($request->all());
         $validator = Validator::make($request->all(), [
             'judul' => 'required | string | max:100',
@@ -103,97 +78,21 @@ class AdminController extends Controller
             ->withSuccess("Data berhasil di submit");
     }
 
-    public function getBerita()
-    {
+    public function getBerita(){
         $data = berita::orderBy('created_at','desc')->get();
         return Datatables::of($data)
                             ->addIndexColumn()
                             ->make(true);
     }
 
-    public function indexAsisten()
-    {
+    // Assisten 
+    public function indexAsisten(){
         $data = assisten::all();
         return view('admin.asisten', compact('data'));
     }
 
-    public function getUserData()
-    {
-        $data = User::orderBy('roles_id','desc')->get();
-        return Datatables::of($data)->make(true);
-    }
-    
-    public function getMahasiswa()
-    {
-        return Datatables::collection(mahasiswa::all())->addIndexColumn()->make(true);
-    }
-
-    public function impotMahasiswa(Request $request)
-    {
-        // dd($request->all());
-        // validasi
-		$this->validate($request, [
-			'file' => 'required|mimes:csv,xls,xlsx'
-		]);
- 
-		// menangkap file excel
-		$file = $request->file('file');
- 
-		// membuat nama file unik
-		$nama_file = rand().$file->getClientOriginalName();
- 
-		// upload ke folder file_siswa di dalam folder public
-		$file->move('file_import',$nama_file);
- 
-		// import data
-		Excel::import(new MahasiswaImport, public_path('/file_import/'.$nama_file));
- 
-		// notifikasi dengan session
-		Session::flash('sukses','Data Siswa Berhasil Diimport!');
- 
-		// alihkan halaman kembali
-		return redirect()->back();
-    }
-
-    public function indexDosen()
-    {
-        return view('admin.dosen');
-    }
-
-    public function impotDosen(Request $request)
-    {
-        $this->validate($request, [
-			'file' => 'required|mimes:csv,xls,xlsx'
-		]);
- 
-		// menangkap file excel
-		$file = $request->file('file');
- 
-		// membuat nama file unik
-		$nama_file = rand().$file->getClientOriginalName();
- 
-		// upload ke folder file_siswa di dalam folder public
-		$file->move('file_import',$nama_file);
- 
-		// import data
-		Excel::import(new DosenImport, public_path('/file_import/'.$nama_file));
- 
-		// notifikasi dengan session
-		Session::flash('sukses','Data Siswa Berhasil Diimport!');
- 
-		// alihkan halaman kembali
-		return redirect()->back();
-    }
-
-    public function getDosen()
-    {
-        return Datatables::collection(dosen::all())
-                        ->addIndexColumn()
-                        ->make(true);
-    }
-
-    public function postJurusan(Request $request)
-    {   
+    // JURUSAN 
+    public function postJurusan(Request $request){   
         if ($request->has('thumb')){
             Validator::make($request->all(), [
                 'nama_jurusan' => 'string | max:100',
@@ -219,16 +118,65 @@ class AdminController extends Controller
                 ->withError("Data gagal di submit");
     }
 
-    public function getJurusan()
-    {
+    public function getJurusan(){
         $data = jurusan::all();
         return Datatables::of($data)
             ->addIndexColumn()
-            ->addColumn('opsi', function ($data){
-                return '<a target="_blank" href="'.asset($data->thumbnail_path).'" class="edit btn btn-info btn-sm"><i class="fas fa-eye"></i></a> <a title="Hapus" href="#" onclick="deleted('.$data->id.')" class="hapus btn btn-danger btn-sm"><i class="fa fa-trash"></i></a>';
+            ->addColumn('gmb', function ($data){
+                return '<a target="_blank" href="'.asset($data->thumbnail_path).'" class="edit btn btn-info btn-sm"><i class="fas fa-eye"></i></a>';
             })
-            ->rawColumns(['opsi'])
+            ->addColumn('cta', function ($data){
+                return '<a target="_blank" href="'.route('jurusan').'" class="edit btn btn-info btn-sm">Lihat <i class="fas fa-chevron-right"></i></a>';
+            })
+            ->rawColumns(['gmb','cta'])
             ->make(true);
+    }
+
+    public function indexJurusan(){
+        return view('admin.jurusan');
+    }
+
+    public function statusJurusan($id){
+        $check = jurusan::find($id);
+        $field['status'] = !$check->status;
+        if($check){
+            $check->update($field);
+            $data['status']=true;
+            if($field['status'] == 1){
+                $data['message']="Jurusan telah diaktifkan.";
+            }else {
+                $data['message']="Jurusan dinonaktifkan.";
+            }
+        }else{
+            $data['status']=false;
+            $data['message']="Ops telah terjadi kesalahan pada saat mengupdate data";
+        }
+        return response()->json($data, 200);
+    }
+
+    public function deleteJurusan($id){
+        $delete = jurusan::where('id',$id)->delete();
+
+        // check data deleted or not
+        if ($delete == 1) {
+            $success = true;
+            $message = "Materi berhasil dihapus";
+        } else {
+            $success = true;
+            $message = "Materi tidak ditemukan";
+        }
+
+        //  Return response
+        return response()->json([
+            'success' => $success,
+            'message' => $message,
+        ]);
+    }
+
+    // LAB 
+    public function indexLab(){
+        $data = jurusan::all();
+        return view('admin.laboratorium', compact('data'));
     }
 
     public function postLab(Request $request){
@@ -275,19 +223,21 @@ class AdminController extends Controller
         $data = lab::all();
         return Datatables::of($data)
             ->addIndexColumn()
+            ->addColumn('gmb', function ($data){
+                return '<a target="_blank" href="'.asset($data->thumbnail).'" class="edit btn btn-info btn-sm">Lihat Gambar<i class="fas fa-eye"></i></a>';
+            })
             ->addColumn('opsi', function ($data){
-                return '<a target="_blank" href="'.asset($data->thumbnail).'" class="edit btn btn-info btn-sm"><i class="fas fa-eye"></i></a> <a onclick="hapusLab('.$data->id.')" class="btn btn-warning btn-sm"><i class="fa fa-trash" aria-hidden="true"></i></a> <a target="_blank" href="'.route('praktikumAdmin', $data->slug).'" class="edit btn btn-primary btn-sm"><i class="fas fa-book-open"></i></a>';
+                return '<a onclick="hapusLab('.$data->id.')" class="btn btn-warning btn-sm">Hapus <i class="fa fa-trash" aria-hidden="true"></i></a> <a target="_blank" href="'.route('praktikumAdmin', $data->slug).'" class="edit btn btn-primary btn-sm">Praktikum <i class="fas fa-book-open"></i></a>';
             })
             ->addColumn('jurusan', function ($data){
                 $jur = $data->jurusan()->first()->nama;
                 return $jur;
             })
-            ->rawColumns(['opsi', 'jurusan'])
+            ->rawColumns(['opsi', 'jurusan','gmb'])
             ->make(true);
     }
 
-    public function deleteLab($id)
-    {
+    public function deleteLab($id){
         $lab = lab::where('id', $id)->first();
         Storage::delete($lab['thumbnail']);
 
@@ -310,68 +260,25 @@ class AdminController extends Controller
         ]);
     }
 
-    public function getMateri($id){
-        $data = Materi::where('praktikum_id',$id)->get();
-        return Datatables::of($data)
-            ->addIndexColumn()
-            ->addColumn('opsi', function ($data){
-                return '<a target="_blank" href="#" class="edit btn btn-info btn-sm"><i class="fas fa-eye"></i></a>';
-            })
-            ->rawColumns(['opsi'])
-            ->make(true);
-    }
-
-    public function postMateri(Request $request, $id){
-        $validator = Validator::make($request->all(), [
-            'nama_materi' => 'required | string | max:100',
-            'deskripsi' => 'string | max:3000',
-        ]);
-
-        if ($validator->fails()) { 
-            return redirect()
-            ->back()
-            ->withError("Data gagal di submit, lengkapi form input data");
+    public function statusLab($id){
+        $check = lab::find($id);
+        $field['status'] = !$check->status;
+        if($check){
+            $check->update($field);
+            $data['status']=true;
+            if($field['status'] == 1){
+                $data['message']="Laboratorium telah diaktifkan.";
+            }else {
+                $data['message']="Laboratorium dinonaktifkan.";
+            }
+        }else{
+            $data['status']=false;
+            $data['message']="Ops telah terjadi kesalahan pada saat mengupdate status";
         }
-
-        materi::create([
-            'nama' => $request->get('nama_materi'),
-            'slug' => Str::slug($request->get('nama_materi'),'-'),
-            'deskripsi' => $request->get('deskripsi'),
-            'praktikum_id' => $id
-        ]);
-
-        return redirect()
-            ->back()
-            ->withSuccess("Data berhasil di submit");
+        return response()->json($data, 200);
     }
 
-    public function postKelas(Request $request){
-        // dd($request->all());
-        $validator = Validator::make($request->all(), [
-            'nama_kelas' => 'required | string | max:100',
-            'wm' => 'required',
-            'ws' => 'required',
-            'hari' => 'required | string', // max 7MB
-        ]);
-        if ($validator->fails()) { 
-            return redirect()
-            ->back()
-            ->withError("Data gagal di submit, lengkapi form input data");
-        }
-
-        kelas::create([
-            'nama' => $request->get('nama_kelas'),
-            'hari' => $request->get('hari'),
-            'deskripsi' => $request->get('deskripsi'),
-            'jadwal_mulai' => $request->get('wm'),
-            'jadwal_akhir' => $request->get('ws'),
-        ]);
-
-        return redirect()
-            ->back()
-            ->withSuccess("Data berhasil di submit");
-    }
-
+    // Praktikum 
     public function indexPrak($slug){
         $lab = lab::where('slug',$slug)->first();
         $data = praktikum::where('laboratorium',$lab->id)->get();
@@ -418,15 +325,196 @@ class AdminController extends Controller
         return Datatables::of($data)
             ->addIndexColumn()
             ->addColumn('opsi', function ($data){
-                return '<a target="_blank" href="'.route('materi', $data->id).'" class="edit btn btn-info btn-sm"><i class="fas fa-book-open"></i>';
+                return '<a onclick="hapusPrak('.$data->id.')" class="btn btn-warning btn-sm">Hapus <i class="fa fa-trash" aria-hidden="true"></i></a>';
+            })
+            ->addColumn('materi', function ($data){
+                return '<a target="_blank" href="'.route('materi', $data->id).'" class="edit btn btn-info btn-sm">Materi <i class="fas fa-book-open"></i>';
             })
             ->addColumn('th', function ($data){
                 return $data->semester.'/'.$data->tahun_ajaran;
             })
-            ->rawColumns(['opsi','th'])
+            ->editColumn('kelas', function ($data){
+                return $data->getKelas->nama;
+            })
+            ->rawColumns(['opsi','th','materi'])
             ->make(true);
     }
 
+    public function getPrak($id){
+        $data = praktikum::where('laboratorium',$id)
+                ->where('status', 1)
+                ->get();
+        
+            return response()->json($data);
+    }
+
+    public function deletePrak($id){
+        $lab = praktikum::where('id', $id)->first();
+
+        $delete = $lab->delete();
+
+        // check data deleted or not
+        if ($delete == 1) {
+            $success = true;
+            $message = "Materi berhasil dihapus";
+        } else {
+            $success = true;
+            $message = "Materi tidak ditemukan";
+        }
+
+        //  Return response
+        return response()->json([
+            'success' => $success,
+            'message' => $message,
+        ]);
+    }
+
+    public function statusPrak($id){
+        $check = praktikum::find($id);
+        $field['status'] = !$check->status;
+        if($check){
+            $check->update($field);
+            $data['status']=true;
+            if($field['status'] == 1){
+                $data['message']="Praktikum telah diaktifkan.";
+            }else {
+                $data['message']="Praktikum dinonaktifkan.";
+            }
+        }else{
+            $data['status']=false;
+            $data['message']="Ops telah terjadi kesalahan pada saat mengupdate status";
+        }
+        return response()->json($data, 200);
+    }
+
+    // Materi 
+    public function indexMateri($id){
+        $lab = praktikum::where('id',$id)->first();
+        return view('admin.materi', compact('id', 'lab'));
+    }
+
+    public function getMateri($id){
+        $data = Materi::where('praktikum_id',$id)->get();
+        return Datatables::of($data)
+            ->addIndexColumn()
+            ->addColumn('opsi', function ($data){
+                return '<a target="_blank" href="#" class="edit btn btn-info btn-sm">Lihat <i class="fas fa-eye"></i></a>';
+            })
+            ->rawColumns(['opsi'])
+            ->make(true);
+    }
+
+    public function postMateri(Request $request, $id){
+        $validator = Validator::make($request->all(), [
+            'nama_materi' => 'required | string | max:100',
+            'deskripsi' => 'string | max:3000',
+        ]);
+
+        if ($validator->fails()) { 
+            return redirect()
+            ->back()
+            ->withError("Data gagal di submit, lengkapi form input data");
+        }
+
+        materi::create([
+            'nama' => $request->get('nama_materi'),
+            'slug' => Str::slug($request->get('nama_materi'),'-'),
+            'deskripsi' => $request->get('deskripsi'),
+            'praktikum_id' => $id
+        ]);
+
+        return redirect()
+            ->back()
+            ->withSuccess("Data berhasil di submit");
+    }
+
+    public function materiPrak($id){
+        $check = Materi::find($id);
+        $field['status'] = !$check->status;
+        if($check){
+            $check->update($field);
+            $data['status']=true;
+            if($field['status'] == 1){
+                $data['message']="Praktikum telah diaktifkan.";
+            }else {
+                $data['message']="Praktikum dinonaktifkan.";
+            }
+        }else{
+            $data['status']=false;
+            $data['message']="Ops telah terjadi kesalahan pada saat mengupdate status";
+        }
+        return response()->json($data, 200);
+    }
+
+    public function deleteMateri($id){
+        $lab = Materi::where('id', $id)->first();
+
+        $delete = $lab->delete();
+
+        // check data deleted or not
+        if ($delete == 1) {
+            $success = true;
+            $message = "Materi berhasil dihapus";
+        } else {
+            $success = true;
+            $message = "Materi tidak ditemukan";
+        }
+
+        //  Return response
+        return response()->json([
+            'success' => $success,
+            'message' => $message,
+        ]);
+    }
+
+    public function materiStatus($id)
+    {
+        $check = Materi::find($id);
+        $field['status'] = !$check->status;
+        if($check){
+            $check->update($field);
+            $data['status']=true;
+            if($field['status'] == 1){
+                $data['message']="Praktikum telah diaktifkan.";
+            }else {
+                $data['message']="Praktikum dinonaktifkan.";
+            }
+        }else{
+            $data['status']=false;
+            $data['message']="Ops telah terjadi kesalahan pada saat mengupdate status";
+        }
+        return response()->json($data, 200);
+    }
+
+    // Kelas 
+    public function postKelas(Request $request){
+        // dd($request->all());
+        $validator = Validator::make($request->all(), [
+            'nama_kelas' => 'required | string | max:100',
+            'wm' => 'required',
+            'ws' => 'required',
+            'hari' => 'required | string', // max 7MB
+        ]);
+        if ($validator->fails()) { 
+            return redirect()
+            ->back()
+            ->withError("Data gagal di submit, lengkapi form input data");
+        }
+
+        kelas::create([
+            'nama' => $request->get('nama_kelas'),
+            'hari' => $request->get('hari'),
+            'deskripsi' => $request->get('deskripsi'),
+            'jadwal_mulai' => $request->get('wm'),
+            'jadwal_akhir' => $request->get('ws'),
+        ]);
+
+        return redirect()
+            ->back()
+            ->withSuccess("Data berhasil di submit");
+    }
+
+    // Detail Materi 
     public function postDetailMateri(Request $request){
         // dd($request->all());
         if ($request->get('tipe') == '1' && $request->get('materi') != null) {
@@ -568,45 +656,14 @@ class AdminController extends Controller
         }
     }
 
-    public function deleteJurusan($id){
-        $delete = jurusan::where('id',$id)->delete();
-
-        // check data deleted or not
-        if ($delete == 1) {
-            $success = true;
-            $message = "Materi berhasil dihapus";
-        } else {
-            $success = true;
-            $message = "Materi tidak ditemukan";
-        }
-
-        //  Return response
-        return response()->json([
-            'success' => $success,
-            'message' => $message,
-        ]);
-    }
-
-    public function statusJurusan($id){
-        $check = jurusan::find($id);
-        $field['status'] = !$check->status;
-        if($check){
-            $check->update($field);
-            $data['status']=true;
-            if($field['status'] == 1){
-                $data['message']="Jurusan telah diaktifkan.";
-            }else {
-                $data['message']="Jurusan dinonaktifkan.";
-            }
-        }else{
-            $data['status']=false;
-            $data['message']="Ops telah terjadi kesalahan pada saat mengupdate data";
-        }
-        return response()->json($data, 200);
+    // Rekrutmen 
+    public function indexRek(){
+        $data = lab::orderBy('nama', 'asc')->get();
+        return view('admin.rekrutmen', compact('data'));
     }
 
     public function postRekrut(Request $request){
-        // dd(date("Y-m-d", strtotime($request->get('deadline'))) );
+        // dd($request->all());
         $validator = Validator::make($request->all(), [
             'nama_rekrutmen' => ' string | max:100',
             'deskripsi' => 'string | max:1000',
@@ -642,17 +699,7 @@ class AdminController extends Controller
                 ->withSuccess("Data berhasil di simpan");
     }
 
-    public function getPrak($id)
-    {
-        $data = praktikum::where('laboratorium',$id)
-                ->where('status', 1)
-                ->get();
-        
-            return response()->json($data);
-    }
-
-    public function getTableRek()
-    {
+    public function getTableRek(){
         $data = rekrutmen::orderBy('created_at','desc')->get();
         return Datatables::of($data)
                 ->editColumn('praktikum_id', function ($data){
@@ -666,22 +713,20 @@ class AdminController extends Controller
                 ->addColumn('file', function ($data){
                     return '<a download title="download" href="'.route('downloadFileSyarat',$data->file).'" class="btn btn-info btn-sm">Download File</a>';
                 })
-                ->addColumn('total', function ($data){
-                    return rekrut::where('rekrut_id', $data->id)->count();
-                    
-                })
+                    ->addColumn('total', function ($data){
+                        return rekrut::where('rekrut_id', $data->id)->count();
+                        
+                    })
                 ->rawColumns(['opsi','file'])
                 ->make(true);
     }
 
-    public function downloadFileRekrut($file)
-    {
+    public function downloadFileRekrut($file){
         $file= public_path('rekrut_file').'/'.$file;
         return response()->download($file);
     }
 
-    public function getDetailrekrut($id)
-    {
+    public function getDetailrekrut($id){
         $rekrut = rekrutmen::where('id', $id)->orderBy('created_at')->first();
         $userRekrut = rekrut::where('user_id', Auth::id())->where('rekrut_id',$id)->exists();
         $user = Auth::user();
@@ -770,8 +815,7 @@ class AdminController extends Controller
                 ->make(true);
     }
 
-    public function getUserRekrut($id)
-    {
+    public function getUserRekrut($id){
         $rekrut = rekrut::where('id',$id)->first();
 
         $data = [
@@ -830,8 +874,8 @@ class AdminController extends Controller
         return response()->json($data);
     }
 
-    public function postDosen(Request $request)
-    {
+    // Dosen 
+    public function postDosen(Request $request){
         // dd($request->all());
         $validator = Validator::make($request->all(), [
             'nama' => 'required | string',
@@ -859,8 +903,46 @@ class AdminController extends Controller
             ->withSuccess("Data berhasil di simpan");
     }
 
-    public function postMahasiswa(Request $request)
-    {
+    public function getDosen(){
+        return Datatables::collection(dosen::all())
+                        ->addIndexColumn()
+                        ->make(true);
+    }
+
+    public function indexDosen(){
+        return view('admin.dosen');
+    }
+
+    public function impotDosen(Request $request){
+        $this->validate($request, [
+			'file' => 'required|mimes:csv,xls,xlsx'
+		]);
+ 
+		// menangkap file excel
+		$file = $request->file('file');
+ 
+		// membuat nama file unik
+		$nama_file = rand().$file->getClientOriginalName();
+ 
+		// upload ke folder file_siswa di dalam folder public
+		$file->move('file_import',$nama_file);
+ 
+		// import data
+		Excel::import(new DosenImport, public_path('/file_import/'.$nama_file));
+ 
+		// notifikasi dengan session
+		Session::flash('sukses','Data Siswa Berhasil Diimport!');
+ 
+		// alihkan halaman kembali
+		return redirect()->back();
+    }
+
+    // Mahasiswa 
+    public function indexMahasiswa(){
+        return view('admin.mahasiswa');
+    }
+
+    public function postMahasiswa(Request $request){
          // dd($request->all());
          $validator = Validator::make($request->all(), [
             'nama' => 'required | string',
@@ -886,5 +968,35 @@ class AdminController extends Controller
         return redirect()
             ->back()
             ->withSuccess("Data berhasil di simpan");
+    }
+
+    public function getMahasiswa(){
+        return Datatables::collection(mahasiswa::all())->addIndexColumn()->make(true);
+    }
+
+    public function impotMahasiswa(Request $request){
+        // dd($request->all());
+        // validasi
+		$this->validate($request, [
+			'file' => 'required|mimes:csv,xls,xlsx'
+		]);
+ 
+		// menangkap file excel
+		$file = $request->file('file');
+ 
+		// membuat nama file unik
+		$nama_file = rand().$file->getClientOriginalName();
+ 
+		// upload ke folder file_siswa di dalam folder public
+		$file->move('file_import',$nama_file);
+ 
+		// import data
+		Excel::import(new MahasiswaImport, public_path('/file_import/'.$nama_file));
+ 
+		// notifikasi dengan session
+		Session::flash('sukses','Data Siswa Berhasil Diimport!');
+ 
+		// alihkan halaman kembali
+		return redirect()->back();
     }
 }

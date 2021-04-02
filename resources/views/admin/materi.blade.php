@@ -27,6 +27,41 @@
     width: 100px;
   }
 </style>
+    <!-- Modal materi -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Tambah Materi</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form action="{{route('post-materi',$lab->id)}}" method="POST">
+              @csrf
+                <div class="row">
+                  <div class="col">
+                    <div class="form-group">
+                      <label>Nama Materi</label>
+                      <input type="text" class="form-control" name="nama_materi" placeholder="Nama Materi (*Pengenalan, Teori)" required> 
+                    </div>
+                    <div class="form-group">
+                      <label>Deskripsi/Rangkuman Singkat Materi</label>
+                      <textarea class="form-control" id="materi" rows="5" name="deskripsi" placeholder="Masukan Deskripsi/Penjelsan Singkat" required></textarea>
+                    </div>
+                  </div>
+                </div>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Tambah</button>
+          </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Content Header (Page header) -->
     <div class="content-header">
         <div class="container-fluid">
@@ -58,91 +93,20 @@
           </div>
       @endif
 
-      <div class="card card-warning collapsed-card">
-        <div class="card-header">
-          <h5 class="card-title">Input Materi {{$lab->nama}}</h5>
-
-          <div class="card-tools">
-            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-              <i class="fas fa-plus"></i>
-            </button>
-          </div>
-        </div>
-        <!-- /.card-header -->
-        <div class="card-body pb-0">
-          <form role="form" method="POST" action="{{route('post-materi', $lab->id)}}" enctype="multipart/form-data">
-            @csrf
-            <div class="row">
-              <div class="col-sm-6">
-                <div class="form-group">
-                  <label>Nama Materi</label>
-                  <input type="text" class="form-control" name="nama_materi" placeholder="Materi" required autofocus> 
-                </div>
-                <div class="form-group">
-                  <label>Deskripsi/Rangkuman Singkat</label>
-                  <textarea class="form-control" rows="3" name="deskripsi" placeholder="Masukan Deskripsi/Penjelsan Singkat" required autofocus></textarea>
-                </div>
-              </div>
-              <div class="col-sm-6">
-                <div class="form-group">
-                  <label>Materi</label>
-                  <textarea class="form-control" rows="7" name="materi" placeholder="Masukan materi Jurusan" required autofocus></textarea>
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-sm-6">
-                <div class="form-group">
-                  <label>Thumbnail</label>
-                  <div class="input-group">
-                      <span class="input-group-btn">
-                          <span class="btn btn-default btn-file">
-                              Browse… <input type="file" name="thumb" id="imgInp">
-                          </span>
-                      </span>
-                      <input type="text" class="form-control" readonly>
-                  </div>
-                  <img id='img-upload'/>
-                </div>
-              </div>
-              <div class="col-sm-6">
-                <div class="form-group">
-                  <label>File Materi (*rar)</label>
-                  <div class="input-group">
-                      <span class="input-group-btn">
-                          <span class="btn btn-default btn-file">
-                              Browse… <input type="file" name="file" id="file">
-                          </span>
-                      </span>
-                      <input type="text" class="form-control" readonly>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label>Link Materi (*jika ada)</label>
-                  <input type="text" class="form-control" name="link_materi" placeholder="Masukan link" required autofocus> 
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- /.card-body -->
-          <div class="card-footer">
-            <button type="submit" class="btn btn-primary">Simpan</button>
-          </div>
-        </div>
-      </form>
-
       <div class="card">
         <div class="card-header">
-          <h3 class="card-title">Data Materi {{$lab->nama}}</h3>
+          <h3 class="card-title">Data Materi {{$lab->nama}}</h3>  <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#exampleModal"><i class="fa fa-plus"></i> Tambah Materi</button>
+          
         </div>
         <div class="card-body">
           <table class="table table-bordered data-table">
             <thead>
                 <tr>
+                    <th>No</th>
                     <th>Status</th>
                     <th>Nama</th>
                     <th>Deskripsi</th>
-                    <th>Opsi</th>
+                    {{-- <th>Opsi</th> --}}
                 </tr>
             </thead>
             <tbody>
@@ -199,30 +163,56 @@
           serverSide: true,
           ajax: "{{ route('get-materi', "+$lab->id+") }}",
           columns: [
+              { data: 'DT_RowIndex',  
+                  orderable: false, 
+                  searchable: false,
+                  width: 20,
+              },
               {data: 'status', 
-                render: function (data, type, row) {
-                    if (data == 1) {
-                        return `<div class="custom-control custom-switch">
-                                  <input type="checkbox" class="custom-control-input" id="switch`+row.id+`" checked>
-                                  <label class="custom-control-label" for="switch`+row.id+`"></label>
-                                </div>`;
-                    }
-                    if (data == 0) {
-                        return `<div class="custom-control custom-switch">
-                                  <input type="checkbox" class="custom-control-input" id="switch`+row.id+`">
-                                  <label class="custom-control-label" for="switch`+row.id+`"></label>
-                                </div>`;
-                    }
-                },
-                orderable: false, 
-                searchable: false
+                  render: function (data, type, row) {
+                      let checked = null;
+                      if(data == 1){
+                          checked = "checked";
+                      }
+                      return `<div class="custom-control custom-switch">
+                                <input type="checkbox" class="custom-control-input" onchange="changeStatus(`+row.id+`)" id="switch`+row.id+`" `+checked+`>
+                                <label class="custom-control-label" for="switch`+row.id+`"></label>
+                              </div>`
+                  },
+                  width:50,
+                  orderable: false, 
+                  searchable: false
               },
               {data: 'nama'},
               {data: 'deskripsi'},
-              {data: 'opsi', orderable: false, searchable: false}
+              // {data: 'opsi', orderable: false, searchable: false}
           ]
       });
       
     });
+
+  function changeStatus(id){
+    $.ajax({
+        type:'GET',
+        url:"status-materi/"+id,
+        success:function(data){
+          console.log('1');
+            if(data.status === true){
+                swal({
+                    title: "Success!",
+                    text: data.message,
+                    icon: "success",
+                });
+            }else{
+                let message = data.message;
+                swal({
+                title: "Ups!",
+                    text: data.message,
+                    icon: "error",
+                });
+            }
+        }
+    });
+  }
   </script>  
 @endsection

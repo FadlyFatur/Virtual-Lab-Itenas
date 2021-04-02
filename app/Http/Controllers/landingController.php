@@ -15,8 +15,7 @@ use Auth;
 
 class landingController extends Controller
 {
-    public function landing()
-    {
+    public function landing(){
         $jurusan = jurusan::all()->take(6);
         $totalLab = lab::all()->count();
         $totalUser = User::all()->count();
@@ -25,46 +24,39 @@ class landingController extends Controller
         return view('welcome', compact('jurusan','totalLab','totalUser','totalMateri', 'berita'));
     }
 
-    public function indexJurusan()
-    {
-        $jurusan = jurusan::latest()->get();
+    public function indexJurusan(){
+        $jurusan = jurusan::where('status',1)->latest()->get();
         return view('landing.jurusan', compact('jurusan'));
     }
 
-    public function indexlaboratorium($slug)
-    {
+    public function indexlaboratorium($slug){
         $jurusan = jurusan::where('slug',$slug)->first();
-        $lab = lab::where('jurusan',$jurusan->id)->get();
+        $lab = lab::where('jurusan',$jurusan->id)->where('status',1)->latest()->get();
         return view('landing.lab', compact('jurusan', 'lab'));
     }
 
-    public function indexPengajar()
-    {
+    public function indexPengajar(){
         $data = assisten::all();
         return view('landing.pengajar', compact('data'));
     }
 
-    public function indexBerita()
-    {
+    public function indexBerita(){
         $data = berita::all();
         return view('landing.berita', compact('data'));
     }
 
-    public function indexRekrutmen()
-    {
+    public function indexRekrutmen(){
         $lab = lab::all();
         
         return view('landing.rekrut', compact('lab'));
     }
 
-    public function detailBerita($slug)
-    {
+    public function detailBerita($slug){
         $data = berita::where('slug', $slug)->first();
         return view( 'landing.detail-berita', compact('data') );
     }
 
-    public function downloadFileSyarat($file)
-    {
+    public function downloadFileSyarat($file){
         $file= public_path('rekrut_file').'/'.$file;
         return response()->download($file);
     }

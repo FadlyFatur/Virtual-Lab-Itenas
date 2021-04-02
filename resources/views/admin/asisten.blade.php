@@ -59,16 +59,6 @@
                       </div>
                     </div>
                   </div>
-                  {{-- <div class="card-footer">
-                    <div class="text-right">
-                      <a href="#" class="btn btn-sm bg-teal">
-                        <i class="fas fa-comments"></i>
-                      </a>
-                      <a href="#" class="btn btn-sm btn-primary">
-                        <i class="fas fa-user"></i> View Profile
-                      </a>
-                    </div>
-                  </div> --}}
                 </div>
               </div>
               @endforeach
@@ -77,7 +67,7 @@
           </div>
           <!-- /.card-body -->
           <div class="card-footer">
-            <nav aria-label="Contacts Page Navigation">
+            {{-- <nav aria-label="Contacts Page Navigation">
               <ul class="pagination justify-content-center m-0">
                 <li class="page-item active"><a class="page-link" href="#">1</a></li>
                 <li class="page-item"><a class="page-link" href="#">2</a></li>
@@ -88,7 +78,7 @@
                 <li class="page-item"><a class="page-link" href="#">7</a></li>
                 <li class="page-item"><a class="page-link" href="#">8</a></li>
               </ul>
-            </nav>
+            </nav> --}}
           </div>
           <!-- /.card-footer -->
         </div>

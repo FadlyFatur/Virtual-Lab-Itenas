@@ -82,14 +82,10 @@
                     </div>
 
                     <div class="form-group">
-                      <label>Kuota</label>
-                      <select name="kuota" class="custom-select form-control">
-                        <option selected>Wajib dipilih</option>
-                        <option value"3">6</option>
-                        <option value"4">8</option>
-                        <option value"5">10</option>
-                        <option value"0">> 10</option>
-                      </select>
+                      <div class="form-group">
+                        <label>Kuota</label>
+                        <input type="number" class="form-control" name="kuota" placeholder="Masukan jumlah kuota dalam nomer"> 
+                      </div>
                     </div>
                     
                   </div>

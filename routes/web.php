@@ -73,7 +73,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth']], function (){
     
     Route::post('post-berita', 'AdminController@postBerita')->name('post-berita');
 
-    Route::get('jurusan', 'AdminController@indexJurusan')->name('jurusan')->middleware('admin');
+    Route::get('jurusan', 'AdminController@indexJurusan')->name('jurusan-admin')->middleware('admin');
     Route::get('jurusan/json', 'AdminController@getJurusan')->name('get-jurusan');
     Route::post('jurusan/post-jurusan', 'AdminController@postJurusan')->name('post-jurusan');
     
@@ -83,12 +83,15 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth']], function (){
         Route::post('post-lab', 'AdminController@postLab')->name('post-Lab');
     });
     
+    Route::get('status-lab/{id}', 'AdminController@statusLab')->name('status-Lab');
     Route::post('delete-lab/{id}', 'AdminController@deleteLab')->name('delete-Lab');
 
     Route::prefix('praktikum')->group(function (){
         Route::get('{slug}', 'AdminController@indexPrak')->name('praktikumAdmin')->middleware('admin');
         Route::get('get-data/{id}', 'AdminController@getTablePrak')->name('get-praktikum');
         Route::post('post-praktikum/{id}', 'AdminController@postPrak')->name('post-praktikum');
+        Route::get('status-prak/{id}', 'AdminController@statusPrak')->name('status-prak');
+        Route::post('delete-prak/{id}', 'AdminController@deletePrak')->name('delete-Prak');
 
         Route::prefix('materi')->group(function (){
             Route::get('{id}', 'AdminController@indexMateri')->name('materi');
@@ -96,6 +99,9 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth']], function (){
             Route::post('post-materi/{id}', 'AdminController@postMateri')->name('post-materi');
             Route::post('post-detail-materi', 'AdminController@postDetailMateri')->name('post-Detail-materi');
             Route::post('post-kelas', 'AdminController@postKelas')->name('post-kelas');
+
+            Route::get('status-materi/{id}', 'AdminController@materiStatus')->name('status-materi');
+            Route::post('delete-materi/{id}', 'AdminController@deleteStatus')->name('delete-materi');
         });
     });
 

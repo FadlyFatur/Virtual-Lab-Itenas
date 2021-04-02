@@ -74,7 +74,7 @@
                 </a>
                 <ul class="nav nav-treeview">
                     <li class="nav-item">
-                        <a href="{{route('jurusan')}}" class="nav-link" data-toggle="push-menu" role="button">
+                        <a href="{{route('jurusan-admin')}}" class="nav-link" data-toggle="push-menu" role="button">
                         <i class="far fa-circle nav-icon"></i>
                         <p>Jurusan</p>
                         </a>

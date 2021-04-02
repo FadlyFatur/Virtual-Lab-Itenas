@@ -204,11 +204,13 @@
           <table class="table table-bordered data-table">
             <thead>
                 <tr>
+                    <th>No</th>
                     <th>Status</th>
                     <th>Nama</th>
                     <th>Deskripsi</th>
                     <th>Tahun Ajaran</th>
                     <th>Kelas</th>
+                    <th>Materi</th>
                     <th>Opsi</th>
                 </tr>
             </thead>
@@ -280,32 +282,94 @@
           serverSide: true,
           ajax: "{{ route('get-praktikum', "+$lab->id+") }}",
           columns: [
-              {data: 'status', orderable: false, searchable: false,
-                render: function (data, type, row) {
-                    if (data == 1) {
-                        return `<div class="custom-control custom-switch">
-                                  <input type="checkbox" class="custom-control-input" id="switch`+row.id+`" checked>
-                                  <label class="custom-control-label" for="switch`+row.id+`"></label>
-                                </div>`;
-                    }
-                    if (data == 0) {
-                        return `<div class="custom-control custom-switch">
-                                  <input type="checkbox" class="custom-control-input" id="switch`+row.id+`">
-                                  <label class="custom-control-label" for="switch`+row.id+`"></label>
-                                </div>`;
-                    }
-                },
-                orderable: false, 
-                searchable: false
+              { data: 'DT_RowIndex',  
+                  orderable: false, 
+                  searchable: false,
+                  width: 20,
+              },
+              {data: 'status', 
+                  render: function (data, type, row) {
+                      let checked = null;
+                      if(data == 1){
+                          checked = "checked";
+                      }
+                      return `<div class="custom-control custom-switch">
+                                <input type="checkbox" class="custom-control-input" onchange="changeStatus(`+row.id+`)" id="switch`+row.id+`" `+checked+`>
+                                <label class="custom-control-label" for="switch`+row.id+`"></label>
+                              </div>`
+                  },
+                  orderable: false, 
+                  searchable: false
               },
               {data: 'nama'},
               {data: 'deskripsi'},
               {data: 'th'},
               {data: 'kelas'},
+              {data: 'materi', orderable: false, searchable: false},
               {data: 'opsi', orderable: false, searchable: false}
           ]
       });
       
     });
+
+    function hapusPrak(id) {
+      swal({
+          title: "Apakah yakin?",
+          text: "Data yang dihapus tidak dapat dikembalikan!",
+          icon: "warning",
+          buttons: true,
+          dangerMode: true,
+      })
+      .then((willDelete) => {
+        if (willDelete) {
+          $.ajax({
+                type: 'POST',
+                url: "delete-prak/"+id ,
+                // data: {_token: CSRF_TOKEN},
+                dataType: 'JSON',
+                success: function (results) {
+                    if (results.success === true) {
+                      swal("Oke! Praktikum dan data lainya telah dihapus", {
+                        icon: "success",
+                      });
+                      location.reload();
+                    } else {
+                        swal("Gagal!", results.message, "error");
+                        location.reload();
+                    }
+                }
+            });
+          swal("Praktikum telah terhapus!", {
+            icon: "success",
+          });
+        } else {
+          swal("Praktikum Aman!");
+        }
+      });
+  }
+
+  function changeStatus(id){
+    $.ajax({
+        type:'GET',
+        url:"status-prak/"+id,
+        success:function(data){
+          console.log('1');
+            if(data.status === true){
+                swal({
+                    title: "Success!",
+                    text: data.message,
+                    icon: "success",
+                });
+            }else{
+                let message = data.message;
+                swal({
+                title: "Ups!",
+                    text: data.message,
+                    icon: "error",
+                });
+            }
+        }
+    });
+  }
   </script>  
 @endsection
