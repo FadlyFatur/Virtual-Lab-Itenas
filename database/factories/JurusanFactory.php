@@ -12,6 +12,6 @@ $factory->define(jurusan::class, function (Faker $faker) {
     return [
         'nama' => $nama,
         'slug' => Str::slug($nama),
-        'deskripsi' => $faker->sentence($nbWords = 50, $variableNbWords = true),
+        'deskripsi' => 'Informatika merupakan disiplin ilmu komputer yaitu data maupun informasi pada mesin berbasis komputasi. Disiplin ilmu ini mencakup beberapa macam bidang.',
     ];
 });
