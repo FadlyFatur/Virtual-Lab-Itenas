@@ -23,6 +23,7 @@
 
     </div>
 </div>
+
 @if (!Auth::check())   
         <div class="card-block-content-2-1">
             <div class="card-content-2-1">
@@ -85,28 +86,30 @@
     </div>
 
     <div class="container">
-        <div class="row">
-            @foreach ($jurusan as $j)
-                <div class="col-lg-3 col-md-6 d-flex align-items-stretch">
-                    <div class="card" style="width: 18rem;">
-                        <img src="{{asset($j->thumbnail_path)}}" class="card-img-top" alt="..." style="background-image: url('{{asset('Logo-Itenas.jpg')}}'); object-fit: cover; background-size: cover;">
-                        <div class="card-body">
-                            <h5 class="card-title">{{$j->nama}}</h5>
-                            {{-- <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p> --}}
-                            <a href="{{ route('lab', $j->slug) }}" class="btn btn-primary">Lihat Selengkapnya <i class="fa fa-angle-double-right"></i></a>
+        @if (count($jurusan) > 0)
+            <div class="row">
+                @foreach ($jurusan as $j)
+                    <div class="col-lg-3 col-md-6 d-flex align-items-stretch">
+                        <div class="card" style="width: 18rem;">
+                            <img src="{{asset($j->thumbnail_path)}}" class="card-img-top" alt="..." style="background-image: url('{{asset('Logo-Itenas.jpg')}}'); object-fit: cover; background-size: cover;">
+                            <div class="card-body">
+                                <h5 class="card-title">{{$j->nama}}</h5>
+                                {{-- <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p> --}}
+                                <a href="{{ route('lab', $j->slug) }}" class="btn btn-primary">Lihat Selengkapnya <i class="fa fa-angle-double-right"></i></a>
+                            </div>
                         </div>
                     </div>
-                </div>
-            @endforeach
-            
-        </div>
-
-        <hr>
-        <div class="text-center text-lg-start d-flex justify-content-center">
-            <a href="{{ url('/jurusan') }}" class="btn btn-primary d-inline-flex align-items-center justify-content-center align-self-center">
-                <span>Lihat Lebih Banyak</span>
-            </a>
-        </div>
+                @endforeach
+            </div>
+            <hr>
+            <div class="text-center text-lg-start d-flex justify-content-center">
+                <a href="{{ url('/jurusan') }}" class="btn btn-primary d-inline-flex align-items-center justify-content-center align-self-center">
+                    <span>Lihat Lebih Banyak</span>
+                </a>
+            </div>
+        @else
+            <h3 class="text-center">Belum ada jurusan</h3>
+        @endif
     </div>
 
     </div>
@@ -122,29 +125,32 @@
     </div>
     
     <div class="container">
-        <div class="row">
-            @foreach ($berita as $b)
-                <div class="col-lg-4 col-md-6 d-flex align-items-stretch">
-                    <div class="member">
-                        <div class="post-img">
-                        <img src="{{asset($b->img)}}" class="img-fluid" alt="{{$b->judul}}" style="width: 100%; height: auto; object-fit: cover;">
-                        </div>
-                        <div class="member-info mt-2">
-                            <span class="post-date">{{$b->created_at->format('M d,Y - H:i')}}</span>
-                            <h3 class="post-title">{{$b->judul}}</h3>
-                            <a href="{{route('detailBerita',$b->slug)}}" class="readmore stretched-link mt-auto"><span>Read More</span><i class="bi bi-arrow-right"></i></a>
+        @if (count($jurusan) > 0)
+            <div class="row">
+                @foreach ($berita as $b)
+                    <div class="col-lg-4 col-md-6 d-flex align-items-stretch">
+                        <div class="member">
+                            <div class="post-img">
+                            <img src="{{asset($b->img)}}" class="img-fluid" alt="{{$b->judul}}" style="width: 100%; height: auto; object-fit: cover;">
+                            </div>
+                            <div class="member-info mt-2">
+                                <span class="post-date">{{$b->created_at->format('M d,Y - H:i')}}</span>
+                                <h3 class="post-title">{{$b->judul}}</h3>
+                                <a href="{{route('detailBerita',$b->slug)}}" class="readmore stretched-link mt-auto"><span>Read More</span><i class="bi bi-arrow-right"></i></a>
+                            </div>
                         </div>
                     </div>
-                </div>
-            @endforeach
-
-        </div>
-        <hr>
-        <div class="text-center text-lg-start d-flex justify-content-center">
-            <a href="{{ url('/berita') }}" class="btn btn-primary d-inline-flex align-items-center justify-content-center align-self-center">
-                <span>Lihat Lebih Banyak</span>
-            </a>
-        </div>
+                @endforeach
+            </div>
+            <hr>
+            <div class="text-center text-lg-start d-flex justify-content-center">
+                <a href="{{ url('/berita') }}" class="btn btn-primary d-inline-flex align-items-center justify-content-center align-self-center">
+                    <span>Lihat Lebih Banyak</span>
+                </a>
+            </div>
+        @else
+            <h3 class="text-center">Belum ada Info/Pengumuman</h3>
+        @endif
     </div>
 </section><!-- End Team Section -->
 

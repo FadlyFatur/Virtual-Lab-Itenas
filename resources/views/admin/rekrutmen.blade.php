@@ -242,7 +242,7 @@ function getPraktikum(id){
         $('#praktikum').empty();
         var body = "";
         $.each(resp,function(index,value){
-          console.log(value);
+          // console.log(value);
           body += `<option value="`+value.id+`">`+value.nama+`</option>`
         });
         $("#praktikum").append(body);

@@ -8,26 +8,25 @@
         <div class="text-center">
             <h1>List Jurusan</h1><br><hr>
             <div class="group-jurusan">
-                <div class="row gy-4">
-                    @foreach ($jurusan as $j)
-                        <div class="col-lg-4 col-sm-6 d-flex align-items-stretch mb-3">
-                            <div class="card">
-                                <div class="card-header">
-                                    <img src="{{asset($j->thumbnail_path)}}" class="card-img-top" alt="{{$j->nama}}" style="background-image: url('{{asset('Logo-Itenas.jpg')}}'); object-fit: cover; background-size: cover;">
+                    @if (count($jurusan)>0)
+                        <div class="row gy-4">
+                            @foreach ($jurusan as $j)
+                                <div class="col-lg-4 col-sm-6 d-flex align-items-stretch mb-3">
+                                    <div class="card" style="width: 18rem;">
+                                        <img src="{{asset($j->thumbnail_path)}}" class="card-img-top" alt="{{$j->nama}}" style="background-image: url('{{asset('Logo-Itenas.jpg')}}'); object-fit: cover; background-size: cover;">
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{$j->nama}}</h5>
+                                            <p class="card-text text-justify">{!!$j->deskripsi!!}</p>
+                                            <a href="{{ route('lab', $j->slug) }}" class="btn btn-primary">Lihat  <i class="fa fa-angle-double-right"></i></a>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="card-body">
-                                    <h5 class="card-title">{{$j->nama}}</h5>
-                                    {{-- <p class="card-text text-left">{!!substr($j->deskripsi, 0, 300)!!} ...</p> --}}
-                                    <p class="card-text text-left">{!!$j->deskripsi!!}</p>
-                                </div>
-                                <div class="card-footer">
-                                    <a href="{{ route('lab', $j->slug) }}" class="btn btn-primary">Lihat  <i class="fa fa-angle-double-right"></i></a>
-                                </div>
-                            </div>
+                            @endforeach
                         </div>
-                    @endforeach
-                </div>
-
+                    @else
+                        <img src="{{asset('page-kosong.svg')}}" class="img-fluid mb-3" alt="halaman kosong" style="width:500px; height:500px " >
+                        <h3>Belum ada jurusan</h3>
+                    @endif
             </div>
         </div>
     </div>

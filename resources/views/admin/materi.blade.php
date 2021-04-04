@@ -161,7 +161,7 @@
       var table = $('.data-table').DataTable({
           processing: true,
           serverSide: true,
-          ajax: "{{ route('get-materi', "+$lab->id+") }}",
+          ajax: '{{route("get-materi", ["id" =>  $lab->id ])}}',
           columns: [
               { data: 'DT_RowIndex',  
                   orderable: false, 

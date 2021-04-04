@@ -208,45 +208,51 @@
           @endif
         </div>
         <br><hr>
-    
-        <div class="row">
-          @foreach ($data as $d)
-            <div class="col-md-6 mb-4">
-                <div class="card mb-3" style="max-width: 540px;">
-                    <div class="row g-0">
-                      <div class="col-md-4">
-                        <div class="jadwal-materi text-center">
-                            <h2 style="color:#230b50;">Jadwal</h2>
-                            <hr>
-                            <h5>{{ ($d->kelas)? $d->getKelas->nama : '-' }}</h5>
-                            @if ($d->kelas)
-                              <p>{{Carbon\Carbon::parse($d->getKelas->jadwal_mulai)->format('H:i')}} - {{Carbon\Carbon::parse($d->getKelas->jadwal_akhir)->format('H:i')}}</p><br>
+        @if (count($data)>0)
+          <div class="row">
+            @foreach ($data as $d)
+              <div class="col-md-6 mb-4">
+                  <div class="card mb-3" style="max-width: 540px;">
+                      <div class="row g-0">
+                        <div class="col-md-4">
+                          <div class="jadwal-materi text-center">
+                              <h2 style="color:#230b50;">Jadwal</h2>
+                              <hr>
+                              <h5>{{ ($d->kelas)? $d->getKelas->nama : '-' }}</h5>
+                              @if ($d->kelas)
+                                <p>{{Carbon\Carbon::parse($d->getKelas->jadwal_mulai)->format('H:i')}} - {{Carbon\Carbon::parse($d->getKelas->jadwal_akhir)->format('H:i')}}</p><br>
+                              @else
+                                <p>-</p>
+                              @endif
+                              <p>Koor Lab</p><hr>
+                              <p>Semester {{$d->semester}} <br> {{$d->tahun_ajaran}}</p>
+                          </div>
+                        </div>
+                        <div class="col-md-8">
+                          <div class="card-body">
+                            <h4 class="card-title" style="color:#230b50;">{{$d->nama}}</h4>
+                            <p class="card-text">{{substr($d->deskripsi, 0, 300)}}</p>
+                            <p class="card-text"><small class="text-muted">Tanggal Dibuat : {{$d->created_at->format('d F Y')}}</small></p>
+                          </div>
+                          <div class="card-footer d-flex justify-content-center">
+                            @if ($enroll->where('praktikum_id', $d->id)->count() > 0 || $assisten->where('praktikum_id', $d->id)->count() > 0 ||$role == 0)
+                              <a href="{{route('detail-materi',$d->id)}}"><button class="btn btn-info" style="color: #fff;">Masuk</button></a>
                             @else
-                              <p>-</p>
+                              <a href="{{route('daftar-prak',$d->id)}}"><button class="btn btn-success">Daftar</button></a>
                             @endif
-                            <p>Koor Lab</p><hr>
-                            <p>Semester {{$d->semester}} <br> {{$d->tahun_ajaran}}</p>
+                          </div>
                         </div>
                       </div>
-                      <div class="col-md-8">
-                        <div class="card-body">
-                          <h4 class="card-title" style="color:#230b50;">{{$d->nama}}</h4>
-                          <p class="card-text">{{substr($d->deskripsi, 0, 300)}}</p>
-                          <p class="card-text"><small class="text-muted">Tanggal Dibuat : {{$d->created_at->format('d F Y')}}</small></p>
-                        </div>
-                        <div class="card-footer d-flex justify-content-center">
-                          @if ($enroll->where('praktikum_id', $d->id)->count() > 0 || $assisten->where('praktikum_id', $d->id)->count() > 0 ||$role == 0)
-                            <a href="{{route('detail-materi',$d->id)}}"><button class="btn btn-info" style="color: #fff;">Masuk</button></a>
-                          @else
-                            <a href="{{route('daftar-prak',$d->id)}}"><button class="btn btn-success">Daftar</button></a>
-                          @endif
-                        </div>
-                      </div>
-                    </div>
-                </div>
-            </div>
-          @endforeach
-        </div>
+                  </div>
+              </div>
+            @endforeach
+          </div>
+        @else
+          <div class="text-center">
+            <img src="{{asset('page-kosong.svg')}}" class="img-fluid mb-3" alt="halaman kosong" style="width:500px; height:500px " >
+            <h3>Belum ada Praktikum</h3>
+          </div>
+        @endif
 
     </div>
 @endsection

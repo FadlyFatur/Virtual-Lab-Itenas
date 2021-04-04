@@ -15,10 +15,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $data = factory(mahasiswa::class)->create();
-        $data = factory(dosen::class)->create();
-        $this->call(UserSeeder::class);
-        // $data = factory(jurusan::class)->create();
-        // $data = factory(kelas_praktikum::class)->create();
+        // $data = factory(mahasiswa::class)->create();
+        // $data = factory(dosen::class)->create();
+        // $this->call(UserSeeder::class);
+        $data = factory(jurusan::class)->create();
+        $data = factory(kelas_praktikum::class)->create();
     }
 }

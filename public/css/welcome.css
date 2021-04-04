@@ -25,6 +25,10 @@ button.btn-card-content-2-1{
     height: 200px;
 }
 
+.icon-content-2-1-caption {
+    font-size: 1.5rem;
+}
+
 @media (max-width: 1200px) {
 
     button.btn-card-content-2-1{

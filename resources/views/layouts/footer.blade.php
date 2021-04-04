@@ -13,74 +13,20 @@
             <a class="list-menu-footer-2-1">Home</a>
           </li>
           <li class="list-space-footer-2-1">
-            <a class="list-menu-footer-2-1">About</a>
+            <a class="list-menu-footer-2-1">Jurusan</a>
           </li>
           <li class="list-space-footer-2-1">
-            <a class="list-menu-footer-2-1">Features</a>
+            <a class="list-menu-footer-2-1">Pengajar</a>
           </li>
           <li class="list-space-footer-2-1">
-            <a class="list-menu-footer-2-1">Pricing</a>
-          </li>
-          <li class="list-space-footer-2-1">
-            <a class="list-menu-footer-2-1">Testimonial</a>
-          </li>
-          <li class="list-space-footer-2-1">
-              <a class="list-menu-footer-2-1">Help</a>
+            <a class="list-menu-footer-2-1">Berita/Pengumuman</a>
           </li>
         </nav>
       </div>
       </div>
-      <div class="col-lg-3 col-md-6">
-        {{-- <h2 class="footer-text-title-footer-2-1 list-space-footer-2-1-title">Product</h2>
-        <nav style="list-style-type:none;">
-          <li class="list-space-footer-2-1">
-            <a class="list-menu-footer-2-1">Real Time Analytic</a>
-          </li>
-          <li class="list-space-footer-2-1">
-            <a class="list-menu-footer-2-1">Easy to Operate</a>
-          </li>
-          <li class="list-space-footer-2-1">
-            <a class="list-menu-footer-2-1">Full Secured</a>
-          </li>
-          <li class="list-space-footer-2-1">
-            <a class="list-menu-footer-2-1">Analytic Tool</a>
-          </li>
-          <li class="list-space-footer-2-1">
-              <a class="list-menu-footer-2-1">Story</a>
-          </li>
-        </nav> --}}
-      </div>
-      <div class="col-lg-3 col-md-6">
-        {{-- <h2 class="footer-text-title-footer-2-1 list-space-footer-2-1-title">Company</h2>
-        <nav style="list-style-type:none;">
-            <li class="list-space-footer-2-1">
-            <a class="list-menu-footer-2-1">Contact Us</a>
-            </li>
-            <li class="list-space-footer-2-1">
-            <a class="list-menu-footer-2-1">Blog</a>
-            </li>
-            <li class="list-space-footer-2-1">
-            <a class="list-menu-footer-2-1">Culture</a>
-            </li>
-            <li class="list-space-footer-2-1">
-            <a class="list-menu-footer-2-1">Security</a>
-            </li>
-        </nav> --}}
-      </div>
-      <div class="col-lg-3 col-md-6">
-        <h2 class="footer-text-title-footer-2-1 list-space-footer-2-1-title">Support</h2>
-        <nav style="list-style-type:none;">
-          <li class="list-space-footer-2-1">
-            <a class="list-menu-footer-2-1">Getting Started</a>
-          </li>
-          <li class="list-space-footer-2-1">
-            <a class="list-menu-footer-2-1">Help Center</a>
-          </li>
-          <li class="list-space-footer-2-1">
-            <a class="list-menu-footer-2-1">Server Status</a>
-          </li>
-        </nav>
-      </div>
+      <div class="col-lg-3 col-md-6"></div>
+      <div class="col-lg-3 col-md-6"></div>
+      <div class="col-lg-3 col-md-6"></div>
     </div>
   </div>
 
@@ -137,7 +83,7 @@
             <a class="footer-link-footer-2-1" style="text-decoration: none;">Licenses</a>
           </nav>
           <nav class="d-flex flex-lg-row flex-column align-items-center justify-content-center">
-              <p style="margin: 0">Copyright ©  2021 Analystic Max</p>
+              <p style="margin: 0">Copyright ©  2021 Virtual Laboratorium Itenas</p>
             </nav>
         </div>
   </div>
