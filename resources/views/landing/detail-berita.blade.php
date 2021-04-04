@@ -9,8 +9,8 @@
     <div class="VIRTUAL-LAB-ITENAS container">
         <div class="row">
             <div class="col-md-6">
-                <div class="VIRTUAL-LAB-ITENAS_img">
-                    <img src="{{asset($data->img)}}" alt="{{asset($data->judul)}}">
+                <div class="VIRTUAL-LAB-ITENAS_img" style="background-image: url('{{asset('news-kosong.png')}}'); object-fit: cover; background-size: cover;">
+                    <img src="" alt="{{asset($data->judul)}}">
                 </div>
             </div>
             <div class="col-md-6">
@@ -25,4 +25,14 @@
             </div>
         </div>
     </div>    
+@endsection
+
+@section('js')
+    <script src="{{ asset('js/readmore.js') }}"></script>
+
+    <script>
+        $(function() {
+            // $('.VIRTUAL-LAB-ITENAS_text').readmore();
+        });
+    </script>
 @endsection
