@@ -88,17 +88,69 @@ class AdminController extends Controller
     // Assisten 
     public function indexAsisten(){
         $data = assisten::all();
-        return view('admin.asisten', compact('data'));
+        $jur = jurusan::all();
+        $maha = user::where('nrp','!=',NULL)->where('roles_id','!=', 6)->where('roles_id','!=', 7)->get();
+        return view('admin.asisten', compact('data','jur', 'maha'));
+    }
+
+    public function getListLab($id){
+        $data = lab::where('jurusan',$id)
+                ->where('status', 1)
+                ->get();
+        
+        return response()->json($data);
+    }
+
+    public function postAssisten(Request $request)
+    {
+        // dd($request->all());
+
+        $validator = Validator::make($request->all(), [
+            'maha' => 'required',
+            'Jabatan' => 'required',
+            'Prak' => 'required',
+        ]);
+
+        if ($validator->fails()) { 
+            return redirect()
+            ->back()
+            ->withError("Data gagal di submit, lengkapi form input data");
+        }
+        
+        assisten::create([
+            'role' => $request->get('Jabatan'),
+            'mahasiswa_id' => $request->get('maha'),
+            'praktikum_id' => $request->get('Prak'),
+        ]);
+
+        User::where('id', $request->get('maha'))
+                ->first()
+                ->update(['roles_id' => 6]);
+
+        return redirect()
+            ->back()
+            ->withSuccess("Data berhasil di submit");
+
+        return redirect()
+                ->back()
+                ->withError("Data gagal di submit");
     }
 
     // JURUSAN 
     public function postJurusan(Request $request){   
         if ($request->has('thumb')){
-            Validator::make($request->all(), [
+            $validator = Validator::make($request->all(), [
                 'nama_jurusan' => 'string | max:100',
                 'deskripsi_jurusan' => 'string | max:1000',
                 'thumb_photo' => 'required|mimes:jpg,png,jpeg|max:7000', // max 7MB
             ]);
+
+            if ($validator->fails()) { 
+                return redirect()
+                ->back()
+                ->withError("Data gagal di submit, lengkapi form input data");
+            }
+
             $name = "".Carbon::now()->format('YmdHs')."_".$request->file('thumb')->getClientOriginalName();
             $path = Storage::putFileAs('images/thumbnail', $request->file('thumb'), $name);
             jurusan::create([
@@ -182,12 +234,17 @@ class AdminController extends Controller
     public function postLab(Request $request){
         // dd($request->all());
         if ($request->has('thumb')){
-            Validator::make($request->all(), [
+            $validator = Validator::make($request->all(), [
                 'nama_lab' => 'required | string | max:100',
                 'deskripsi_lab' => 'required | string | max:1000',
                 'thumb' => 'required|mimes:jpg,png,jpeg|max:7000', // max 7MB
                 'kode' => 'required'
             ]);
+            if ($validator->fails()) { 
+                return redirect()
+                ->back()
+                ->withError("Data gagal di submit, lengkapi form input data");
+            }
 
             $name = "".Carbon::now()->format('YmdHs')."_".$request->file('thumb')->getClientOriginalName();
             $path = Storage::putFileAs('images/thumbnail', $request->file('thumb'), $name);
@@ -287,12 +344,17 @@ class AdminController extends Controller
     }
 
     public function postPrak(Request $request, $id){
-        Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             'nama_praktikum' => 'required | string | max:100',
             'deskripsi' => 'string | max:1000',
             'semester' => 'required',
             'tahun_ajaran' => 'required',
         ]);
+        if ($validator->fails()) { 
+            return redirect()
+            ->back()
+            ->withError("Data gagal di submit, lengkapi form input data");
+        }
 
         if ($request->get('kelas') != null) {
             praktikum::create([
@@ -345,7 +407,7 @@ class AdminController extends Controller
                 ->where('status', 1)
                 ->get();
         
-            return response()->json($data);
+        return response()->json($data);
     }
 
     public function deletePrak($id){
@@ -467,8 +529,7 @@ class AdminController extends Controller
         ]);
     }
 
-    public function materiStatus($id)
-    {
+    public function materiStatus($id){
         $check = Materi::find($id);
         $field['status'] = !$check->status;
         if($check){
@@ -519,9 +580,9 @@ class AdminController extends Controller
         // dd($request->all());
         if ($request->get('tipe') == '1' && $request->get('materi') != null) {
             $validator = Validator::make($request->all(), [
-                'materi' => 'required | string | max:10000',
+                'materi' => 'required | string | max:20000',
                 'pilih_materi' => 'required',
-                'nama_materi' => 'required | string',
+                'nama_materi' => 'string',
             ]);
     
             if ($validator->fails()) { 
@@ -620,7 +681,7 @@ class AdminController extends Controller
         }if ($request->get('tipe') == '5' && $request->get('tugas') != null){
             // dd($request->get('tugas'));
             $validator = Validator::make($request->all(), [
-                'tugas' => 'required | max:2000',
+                'tugas' => 'required | max:20000',
                 'pilih_materi' => 'required',
                 'nama_materi' => 'required | string | unique:materis,nama',
             ]);
@@ -832,8 +893,7 @@ class AdminController extends Controller
         return response()->json($data);
     }
 
-    public function acceptRekrut($id, $userId)
-    {
+    public function acceptRekrut($id, $userId){
         $rekrut = rekrutmen::where('id',$id)->first();
 
         rekrut::where('user_id', $userId)
@@ -843,11 +903,11 @@ class AdminController extends Controller
         
         User::where('id', $userId)
                 ->first()
-                ->update(['roles_id' => 3]);
+                ->update(['roles_id' => 6]);
 
         assisten::create([
                 'role' => 1,
-                'id_mahasiswa' => $userId,
+                'mahasiswa_id' => $userId,
                 'praktikum_id' => $rekrut->getPrak->id,
                 ]);
 

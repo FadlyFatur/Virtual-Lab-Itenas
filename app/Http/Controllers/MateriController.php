@@ -42,7 +42,7 @@ class MateriController extends Controller
         }
         // dd($filter);
         $enroll = enroll::where('user_id', Auth::user()->id)->get();
-        $assisten = assisten::where('id_mahasiswa', Auth::user()->id)->get();
+        $assisten = assisten::where('mahasiswa_id', Auth::user()->id)->get();
         return view('landing.praktikum', compact('lab', 'data', 'enroll', 'role', 'filter', 'assisten'));
     }
 
@@ -53,9 +53,10 @@ class MateriController extends Controller
         $prak = praktikum::where('id',$id)->first();
         // dd($prak->id);
         $data = Materi::where('praktikum_id',$id)->get();
-        $assisten = assisten::where('id_mahasiswa', Auth::user()->id)->get();
+        $assisten = assisten::where('mahasiswa_id', Auth::user()->id)->get();
         $Cekabsen = Absen::where('praktikum_id',$id)->get();
         $absen = absen_mahasiswa::where('user_id',Auth::id())->orderBy('absen_id','asc')->get();
+        $listAsisten = assisten::where('praktikum_id', $id)->get();
         if (count($absen) > 0) {
             foreach ($absen as $a ) {
                 $dataAbsen_mhs []= $a->absen_id;
@@ -63,7 +64,9 @@ class MateriController extends Controller
         }else{
             $dataAbsen_mhs = [];
         }
-        return view('landing.detail-materi',compact('data','prak', 'role','assisten', 'id','Cekabsen','absen','dataAbsen_mhs'));
+
+        // dd($listAsisten);
+        return view('landing.detail-materi',compact('listAsisten', 'data','prak', 'role','assisten', 'id','Cekabsen','absen','dataAbsen_mhs'));
     }
 
     public function daftarPrak($id)
@@ -77,7 +80,7 @@ class MateriController extends Controller
             $data = Materi::where('praktikum_id',$id)->get();
             $prak = praktikum::where('id',$id)->first();
             $role = Auth::user()->roles_id;
-            $assisten = assisten::where('id_mahasiswa', Auth::user()->id)->get();
+            $assisten = assisten::where('mahasiswa_id', Auth::user()->id)->get();
             $Cekabsen = Absen::where('praktikum_id',$id)->get();
             $absen = absen_mahasiswa::where('user_id',Auth::id())->orderBy('absen_id','asc')->get();
             if (count($absen) > 0) {

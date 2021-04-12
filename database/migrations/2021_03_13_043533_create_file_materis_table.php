@@ -16,7 +16,7 @@ class CreateFileMaterisTable extends Migration
         Schema::create('file_materis', function (Blueprint $table) {
             $table->id();
             $table->string('nama',200);
-            $table->text('materi',2000)->nullable();
+            $table->text('materi',10000)->nullable();
             $table->string('img')->nullable();
             $table->string('file')->nullable();
             $table->string('link')->nullable();

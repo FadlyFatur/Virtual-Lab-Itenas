@@ -77,7 +77,7 @@
                     <div class="form-group">
                       <label>Pilih Praktikum</label>
                       <select name="kode_praktikum" id="praktikum" class="custom-select form-control">
-                        <option selected>Pilih jurusan dahulu</option>
+                        <option selected>Pilih Lab dahulu</option>
                       </select>
                     </div>
 

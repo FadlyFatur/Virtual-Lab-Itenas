@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class assisten extends Model
 {
     protected $fillable = [
-        'status', 'role', 'foto', 'id_mahasiswa', 'praktikum_id'
+        'status', 'role', 'foto', 'mahasiswa_id', 'praktikum_id', 'jurusan_id'
     ];
 
     public function praktikum()
@@ -17,7 +17,7 @@ class assisten extends Model
 
     public function getUser()
     {
-        return $this->belongsTo('App\User', 'id_mahasiswa');
+        return $this->belongsTo('App\User', 'mahasiswa_id');
     }
 
 }

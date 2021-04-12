@@ -33,7 +33,7 @@
       @endif
       <div class="card card-info collapsed-card">
         <div class="card-header">
-          <h5 class="card-title">Input Dosen</h5>
+          <h5 class="card-title">Input Mahasiswa</h5>
 
           <div class="card-tools">
             <button type="button" class="btn btn-tool" data-card-widget="collapse">

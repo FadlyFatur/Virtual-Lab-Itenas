@@ -66,6 +66,7 @@ Route::get('get-list-rekrut/{id}', 'AdminController@getRekrut')->name('get-list-
 Route::group(['prefix' => 'admin', 'middleware' => ['auth']], function (){
     Route::get('/', 'AdminController@index')->name('dashboard')->middleware('admin');
     Route::get('get-prak-rekrut/{id}', 'AdminController@getPrak')->name('get-prak-rekrut');
+    Route::get('get-lab-list/{id}', 'AdminController@getListLab')->name('get-prak-rekrut');
     Route::get('rekrutmen/download/{file}','AdminController@downloadFileRekrut')->name('downloadFileRekrut');
 
     Route::post('delete-jurusan/{id}', 'AdminController@deleteJurusan')->name('delete-jurusan');
@@ -131,5 +132,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth']], function (){
     Route::get('/berita', 'AdminController@indexBerita')->name('Berita')->middleware('admin');
     Route::get('/berita/get-berita', 'AdminController@getBerita')->name('get-Berita');
     Route::get('/asisten', 'AdminController@indexAsisten')->name('asisten');
+    Route::get('/get-asisten', 'AdminController@indexAsisten')->name('asisten');
+    Route::post('/post-asisten', 'AdminController@postAssisten')->name('post-assisten');
 
 });

@@ -18,12 +18,12 @@ class CreateAssistensTable extends Migration
             $table->integer('status')->default(1);
             $table->integer('role')->default(1);
             $table->string('foto')->nullable();
-            $table->foreignId('praktikum_id')
-                ->constrained('praktikums')
+            $table->foreignId('mahasiswa_id')
+                ->constrained('users')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
-            $table->foreignId('id_mahasiswa')
-                ->constrained('users')
+            $table->foreignId('praktikum_id')
+                ->constrained('praktikums')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
             $table->timestamps();
