@@ -86,9 +86,8 @@
     </div>
 
     <div class="container">
-        @if (count($jurusan) > 0)
             <div class="row">
-                @foreach ($jurusan as $j)
+                @forelse ($jurusan as $j)
                     <div class="col-lg-3 col-md-6 d-flex align-items-stretch">
                         <div class="card" style="width: 18rem;">
                             <img src="{{asset($j->thumbnail_path)}}" class="card-img-top" alt="..." style="background-image: url('{{asset('Logo-Itenas.jpg')}}'); object-fit: cover; background-size: cover;">
@@ -99,7 +98,9 @@
                             </div>
                         </div>
                     </div>
-                @endforeach
+                @empty 
+                    <h3 class="text-center">Belum ada jurusan</h3>
+                @endforelse
             </div>
             <hr>
             <div class="text-center text-lg-start d-flex justify-content-center">
@@ -107,9 +108,6 @@
                     <span>Lihat Lebih Banyak</span>
                 </a>
             </div>
-        @else
-            <h3 class="text-center">Belum ada jurusan</h3>
-        @endif
     </div>
 
     </div>
@@ -125,9 +123,8 @@
     </div>
     
     <div class="container">
-        @if (count($jurusan) > 0)
             <div class="row">
-                @foreach ($berita as $b)
+                @forelse ($berita as $b)
                     <div class="col-lg-4 col-md-6 d-flex align-items-stretch">
                         <div class="member">
                             <div class="post-img">
@@ -140,7 +137,9 @@
                             </div>
                         </div>
                     </div>
-                @endforeach
+                @empty 
+                    <h3 class="text-center">Belum ada Info/Pengumuman</h3>
+                @endforelse
             </div>
             <hr>
             <div class="text-center text-lg-start d-flex justify-content-center">
@@ -148,9 +147,6 @@
                     <span>Lihat Lebih Banyak</span>
                 </a>
             </div>
-        @else
-            <h3 class="text-center">Belum ada Info/Pengumuman</h3>
-        @endif
     </div>
 </section><!-- End Team Section -->
 

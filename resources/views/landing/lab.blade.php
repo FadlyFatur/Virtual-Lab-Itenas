@@ -11,9 +11,8 @@
             <br><h1>Laboratorium</h1>
             <h2>"{{$jurusan->nama}}"</h2><br><hr>
             <div class="group-jurusan">
-                @if (count($lab) > 0)
                     <div class="row">
-                        @foreach ($lab as $l)
+                        @forelse ($lab as $l)
                             <div class="col-lg-3 col-md-6 d-flex align-items-stretch">
                                 <div class="card" style="width: 18rem;">
                                     <img src="" class="card-img-top" alt="{{$l->nama}}" style="background-image: url('{{asset('Logo-Itenas.jpg')}}'); object-fit: cover; background-size: cover;">
@@ -26,12 +25,13 @@
                                     </div>
                                 </div>
                             </div>
-                        @endforeach
+                        @empty 
+                            <div class="d-flex justify-content-center">
+                                <img src="{{asset('page-kosong.svg')}}" class="img-fluid mb-3" alt="halaman kosong" style="width:500px; height:500px " >
+                            </div><br>
+                            <h3>Belum ada Laboratorium</h3>
+                        @endforelse
                     </div>
-                @else
-                    <img src="{{asset('page-kosong.svg')}}" class="img-fluid mb-3" alt="halaman kosong" style="width:500px; height:500px " >
-                    <h3>Belum ada Laboratorium</h3>
-                @endif
             </div>
         </div>
     </div>

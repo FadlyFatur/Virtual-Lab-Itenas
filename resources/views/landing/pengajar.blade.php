@@ -14,9 +14,8 @@
                     <h1>Pengajar dan Asisten Laboratorium</h1>
                 </div><br><hr>
     
-                @if (count($data)>0)
                     <div class="row gy-4 text-center">
-                        @foreach ($data as $d)
+                        @forelse ($data as $d)
                             <div class="col-lg-3 col-md-6 d-flex align-items-stretch">
                                 <div class="member">
                                     <div class="member-img">
@@ -31,17 +30,13 @@
                                     </div>
                                 </div>
                             </div>
-                        @endforeach
+                        @empty
+                            <div class="text-center">
+                                <img src="{{asset('page-kosong.svg')}}" class="img-fluid mb-3" alt="halaman kosong" style="width:500px; height:500px " >
+                                <h3>Belum ada Data Pengajar</h3>
+                            </div>
+                        @endforelse
                     </div>
-                @else
-                    <div class="text-center">
-                        <img src="{{asset('page-kosong.svg')}}" class="img-fluid mb-3" alt="halaman kosong" style="width:500px; height:500px " >
-                        <h3>Belum ada Data Pengajar</h3>
-                    </div>
-                @endif
-
-    
-    
             </div>
   
         </section><!-- End Team Section -->
