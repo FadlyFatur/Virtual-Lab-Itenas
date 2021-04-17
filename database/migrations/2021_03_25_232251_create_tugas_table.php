@@ -18,16 +18,8 @@ class CreateTugasTable extends Migration
             $table->integer('status')->default(1);
             $table->string('file_tugas')->nullable();
             $table->integer('nilai')->nullable();
-            $table->foreignId('user_id')
-                ->nullable()
-                ->constrained('users')
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
-            $table->foreignId('file_materi')
-                ->nullable()
-                ->constrained('file_materis')
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
+            $table->foreignId('user_id')->nullable();
+            $table->foreignId('file_materi')->nullable();
             $table->timestamps();
         });
     }

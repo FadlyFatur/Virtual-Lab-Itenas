@@ -22,17 +22,7 @@ class CreateUsersTable extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('nomer_id')->nullable()->unique();
-            $table->foreign('nomer_id')
-                    ->references('nomer_id')
-                    ->on('dosens')
-                    ->onDelete('cascade')
-                    ->onUpdate('cascade');
             $table->string('nrp')->nullable()->unique();
-            $table->foreign('nrp')
-                    ->references('nrp')
-                    ->on('mahasiswas')
-                    ->onDelete('cascade')
-                    ->onUpdate('cascade');
             $table->rememberToken();
             $table->timestamps();
         });

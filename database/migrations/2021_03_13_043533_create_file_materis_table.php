@@ -22,11 +22,7 @@ class CreateFileMaterisTable extends Migration
             $table->string('link')->nullable();
             $table->text('tugas',2000)->nullable();
             $table->integer('type');
-            $table->foreignId('materi_id')
-                ->nullable()
-                ->constrained('materis')
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
+            $table->foreignId('materi_id')->nullable();
             $table->timestamps();
         });
     }

@@ -17,10 +17,7 @@ class CreateAbsensTable extends Migration
             $table->id();
             $table->string('nama');
             $table->timestamp('tanggal_absen');
-            $table->foreignId('praktikum_id')
-                ->constrained('praktikums')
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
+            $table->foreignId('praktikum_id');
             $table->boolean('status')->default(1);
             $table->timestamps();
         });

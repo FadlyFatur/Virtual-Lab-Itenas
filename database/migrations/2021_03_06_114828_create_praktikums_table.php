@@ -21,21 +21,10 @@ class CreatePraktikumsTable extends Migration
             $table->text('deskripsi')->nullable();
             $table->string('semester');
             $table->string('tahun_ajaran');
-            $table->foreignId('laboratorium')
-                ->nullable()
-                ->constrained('labs')
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
-            $table->foreignId('kelas')
-                ->nullable()
-                ->constrained('kelas_praktikums')
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
-                $table->foreignId('koor_lab')
-                ->nullable()
-                ->constrained('users')
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
+            $table->foreignId('laboratorium');
+            $table->foreignId('kelas')->nullable();
+            $table->foreignId('koor_lab')->nullable();
+            $table->foreignId('koor_prak')->nullable();
             $table->timestamps();
         });
     }

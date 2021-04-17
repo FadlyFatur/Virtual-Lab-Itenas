@@ -16,16 +16,8 @@ class CreateAbsenMahasiswasTable extends Migration
         Schema::create('absen_mahasiswas', function (Blueprint $table) {
             $table->id();
             $table->integer('status')->default(0);
-            $table->foreignId('absen_id')
-                ->nullable()
-                ->constrained('absens')
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
-            $table->foreignId('user_id')
-                ->nullable()
-                ->constrained('users')
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
+            $table->foreignId('absen_id');
+            $table->foreignId('user_id');
             $table->timestamps();
         });
     }

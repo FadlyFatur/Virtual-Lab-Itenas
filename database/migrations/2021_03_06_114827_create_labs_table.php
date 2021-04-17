@@ -20,15 +20,8 @@ class CreateLabsTable extends Migration
             $table->string('slug');
             $table->text('deskripsi');
             $table->string('thumbnail');
-            $table->foreignId('jurusan')
-                ->constrained('jurusans')
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
-            $table->foreignId('kepala_lab')
-                ->nullable()
-                ->constrained('users')
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
+            $table->string('kepala_lab')->nullable();
+            $table->foreignId('jurusan');
             $table->timestamps();
         });
     }

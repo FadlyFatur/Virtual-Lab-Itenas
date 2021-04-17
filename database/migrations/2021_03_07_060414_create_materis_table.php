@@ -19,11 +19,7 @@ class CreateMaterisTable extends Migration
             $table->string('nama',100);
             $table->string('slug');
             $table->text('deskripsi')->nullable();
-            $table->foreignId('praktikum_id')
-                ->nullable()
-                ->constrained('praktikums')
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
+            $table->foreignId('praktikum_id');
             $table->timestamps();
         });
     }

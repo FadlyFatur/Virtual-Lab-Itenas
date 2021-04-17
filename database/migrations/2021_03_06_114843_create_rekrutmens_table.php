@@ -21,10 +21,7 @@ class CreateRekrutmensTable extends Migration
             $table->text('deskripsi');
             $table->string('nama')->nullable();
             $table->string('file');
-            $table->foreignId('praktikum_id')
-                ->constrained('praktikums')
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
+            $table->foreignId('praktikum_id');
             $table->timestamps();
         });
     }

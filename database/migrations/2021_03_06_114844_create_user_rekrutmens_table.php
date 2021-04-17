@@ -20,15 +20,8 @@ class CreateUserRekrutmensTable extends Migration
             $table->string('transkip')->nullable();
             $table->string('file')->nullable();
             $table->string('foto')->nullable();
-            $table->foreignId('rekrut_id')
-                ->constrained('rekrutmens')
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
-            $table->foreignId('user_id')
-                ->nullable()
-                ->constrained('users')
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
+            $table->foreignId('rekrut_id');
+            $table->foreignId('user_id');
             $table->timestamps();
         });
     }
