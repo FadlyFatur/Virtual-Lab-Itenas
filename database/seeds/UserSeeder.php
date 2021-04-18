@@ -54,7 +54,7 @@ class UserSeeder extends Seeder
             'name' => "dosen",
             'email' => "dosen@test.com",
             'nomer_id' => "001",
-            'roles_id' => 2,
+            'roles_id' => 3,
             'email_verified_at' => now(),
             'password' => bcrypt('12345'),
             'remember_token' => Str::random(10),

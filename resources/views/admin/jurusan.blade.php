@@ -116,14 +116,21 @@
                 <tr>
                     <th>No</th>
                     <th>Status</th>
-                    <th>Jurusan</th>
-                    <th>Deskripsi</th>
-                    <th>Gambar</th>
-                    <th>Opsi</th>
+                    <th>Nama Jurusan</th>
+                    <th>Deskripsi Jurusan</th>
+                    <th>Aksi</th>
                 </tr>
             </thead>
-            <tbody>
-            </tbody>
+            <tbody></tbody>
+            <tfoot>
+              <tr>
+                <th>No</th>
+                <th>Status</th>
+                <th>Nama Jurusan</th>
+                <th>Deskripsi Jurusan</th>
+                <th>Aksi</th>
+              </tr>
+            </tfoot>
         </table>
         </div>
       </div>
@@ -209,8 +216,7 @@
               },
               {data: 'nama'},
               {data: 'deskripsi', width:500},
-              {data: 'gmb', orderable: false, searchable: false},
-              {data: 'cta', orderable: false, searchable: false}
+              {data: 'aksi', orderable: false, searchable: false},
             ]
         });
     });

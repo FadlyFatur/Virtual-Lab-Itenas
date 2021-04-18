@@ -137,15 +137,23 @@
                 <tr>
                     <th>No</th>
                     <th>Status</th>
+                    <th>Jurusan</th>
                     <th>Laboratorium</th>
                     <th>Deskripsi</th>
-                    <th>Jurusan</th>
-                    <th>Gambar</th>
-                    <th>Opsi</th>
+                    <th>Aksi</th>
                 </tr>
             </thead>
-            <tbody>
-            </tbody>
+            <tbody></tbody>
+            <tfoot>
+              <tr>
+                <th>No</th>
+                <th>Status</th>
+                <th>Jurusan</th>
+                <th>Laboratorium</th>
+                <th>Deskripsi</th>
+                <th>Aksi</th>
+              </tr>
+            </tfoot>
         </table>
         </div>
       </div>
@@ -202,7 +210,7 @@
             { data: 'DT_RowIndex',  
                 orderable: false, 
                 searchable: false,
-                width: 20,
+                width: 10,
             },
             {data: 'status', 
                 render: function (data, type, row) {
@@ -216,13 +224,13 @@
                             </div>`
                 },
                 orderable: false, 
-                searchable: false
+                searchable: false,
+                width: 20,
             },
+            {data: 'jurusan'},  
             {data: 'nama'},
             {data: 'deskripsi'},
-            {data: 'jurusan'},
-            {data: 'gmb', orderable: false, searchable: false},
-            {data: 'opsi', orderable: false, searchable: false}
+            {data: 'aksi', orderable: false, searchable: false}
         ]
     });
     

@@ -123,8 +123,12 @@
               @foreach ($data as $d)
               <div class="col-12 col-sm-6 col-md-4 d-flex align-items-stretch">
                 <div class="card bg-light">
-                  <div class="card-header text-muted border-bottom-0">
-                    Praktikum {{$d->praktikum->nama}}
+                  <div class="card-header text-muted border-bottom-0 clearfix">
+                    <p class="float-left">{{$d->praktikum->nama}}</p>
+                    <div class="float-right">
+                      <a class="btn btn-primary btn-sm" href=""><i class="fas fa-edit"></i></a> 
+                      <button class="btn btn-danger btn-sm" onclick="hapusAssisten({{$d->id}})"><i class="fas fa-trash"></i></button>
+                    </div>
                   </div>
                   <div class="card-body pt-0">
                     <div class="row">
@@ -211,6 +215,40 @@
         }
       })
     }
+
+    function hapusAssisten(id) {
+      swal({
+          title: "Apakah yakin?",
+          text: "Data yang dihapus tidak dapat dikembalikan!",
+          icon: "warning",
+          buttons: true,
+          dangerMode: true,
+      })
+      .then((willDelete) => {
+        if (willDelete) {
+          $.ajax({
+                type: 'post',
+                url: "hapus-asisten/"+id ,
+                success: function (results) {
+                    if (results.success === true) {
+                      swal("Oke! Materi telah dihapus", {
+                        icon: "success",
+                      });
+                      location.reload();
+                    } else {
+                      swal("Gagal!", results.message, "error");
+                      location.reload();
+                    }
+                }
+            });
+          swal("Materi telah terhapus!", {
+            icon: "success",
+          });
+        } else {
+          swal("Materi Aman!");
+        }
+      });
+  }
 
 </script>
 @endsection

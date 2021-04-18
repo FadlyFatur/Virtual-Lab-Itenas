@@ -80,10 +80,19 @@
                     <th>NRP</th>
                     <th>Nama</th>
                     <th>Status</th>
+                    <th>Aksi</th>
                 </tr>
             </thead>
-            <tbody>
-            </tbody>
+            <tbody></tbody>
+            <tfoot>
+              <tr>
+                <th>No</th>
+                <th>Nomer Pegawai</th>
+                <th>Nama</th>
+                <th>Status</th>
+                <th>Aksi</th>
+              </tr>
+            </tfoot>
         </table>
         </div>
       </div>
@@ -134,10 +143,52 @@
             },
             {data: 'nrp', name: 'nrp'},
             {data: 'nama', name: 'nama'},
-            {data: 'status', name: 'status'},
+            {data: 'status', render: function (data){
+                if (data == 1){
+                  return '<small class="badge badge-warning">Aktif</small>';
+                }else{
+                  return '<small class="badge badge-danger">Non-Aktif</small>';
+                }
+              }
+            },
+            {data: 'aksi'}
         ]
     });
     
   });
+
+  function hapusMaha(id) {
+      swal({
+          title: "Apakah yakin?",
+          text: "Data yang dihapus tidak dapat dikembalikan!",
+          icon: "warning",
+          buttons: true,
+          dangerMode: true,
+      })
+      .then((willDelete) => {
+        if (willDelete) {
+          $.ajax({
+                type: 'post',
+                url: "mahasiswa/hapus-mahasiswa/"+id ,
+                success: function (results) {
+                    if (results.success === true) {
+                      swal("Oke! Materi telah dihapus", {
+                        icon: "success",
+                      });
+                      location.reload();
+                    } else {
+                      swal("Gagal!", results.message, "error");
+                      location.reload();
+                    }
+                }
+            });
+          swal("Materi telah terhapus!", {
+            icon: "success",
+          });
+        } else {
+          swal("Materi Aman!");
+        }
+      });
+  }
 </script>   
 @endsection

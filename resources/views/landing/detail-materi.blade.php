@@ -363,14 +363,14 @@
                     <div class="text-center">
                         <h1 id="judul-materi">{{$prak->nama}}</h1>
                         <p>{{$prak->deskripsi}}</p><br>
-                        @if (count($listAsisten) > 0)
                           <h3>Assisten Laboratorium</h3>
                           <ul class="list-group list-group-flush">
-                            @foreach ($listAsisten as $la)
+                            @forelse ($listAsisten as $la)
                               <li class="list-group-item">{{$la->getUser->name}} | {{$la->getUser->nrp}}</li>
-                            @endforeach
+                            @empty
+                              Belum ada assisten
+                            @endforelse
                           </ul><br>
-                        @endif
                         <hr><div class="d-flex justify-content-center">
                           <button class="btn btn-secondary">Silahkan Pilih Materi</button>
                         </div>

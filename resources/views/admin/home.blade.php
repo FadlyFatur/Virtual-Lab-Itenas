@@ -17,6 +17,36 @@
           </div><!-- /.row -->
         </div><!-- /.container-fluid -->
     </div>
-    <!-- /.content-header -->
+    
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4">
+          <div class="info-box bg-success">
+            <span class="info-box-icon"><i class="far fa-flag"></i></span>
+            <div class="info-box-content">
+              <span class="info-box-text">Bookmarks</span>
+              <span class="info-box-number">410</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4"><div class="info-box bg-success">
+          <span class="info-box-icon"><i class="far fa-flag"></i></span>
+            <div class="info-box-content">
+              <span class="info-box-text">Bookmarks</span>
+              <span class="info-box-number">410</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="info-box bg-success">
+            <span class="info-box-icon"><i class="far fa-flag"></i></span>
+            <div class="info-box-content">
+              <span class="info-box-text">Bookmarks</span>
+              <span class="info-box-number">410</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
 @endsection

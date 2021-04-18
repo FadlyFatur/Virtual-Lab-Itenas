@@ -80,16 +80,26 @@
                   <th>Nomer Pegawai</th>
                   <th>Nama</th>
                   <th>Status</th>
+                  <th>Aksi</th>
                 </tr>
             </thead>
-            <tbody>
-            </tbody>
+            <tbody></tbody>
+            <tfoot>
+              <tr>
+                <th>No</th>
+                <th>Nomer Pegawai</th>
+                <th>Nama</th>
+                <th>Status</th>
+                <th>Aksi</th>
+              </tr>
+            </tfoot>
         </table>
         </div>
       </div>
   
     </div>
-        <!-- Import Excel -->
+
+    <!-- Import Excel -->
 		<div class="modal fade" id="importExcel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 			<div class="modal-dialog" role="document">
 				<form method="post" action="dosen/import_excel" enctype="multipart/form-data">
@@ -127,12 +137,55 @@
         ajax: "{{ route('get-dosen') }}",
         columns: [
             {data: 'DT_RowIndex', width: 20, orderable: false, searchable:false},
-            {data: 'nama', name: 'nama'},
             {data: 'nomer_id', name: 'nomer pegawai'},
-            {data: 'status', name: 'Status'},
+            {data: 'nama', name: 'nama'},
+            {data: 'status', render: function (data){
+                if (data == 1){
+                  return '<small class="badge badge-warning">Aktif</small>';
+                }else{
+                  return '<small class="badge badge-danger">Non-Aktif</small>';
+                }
+              }
+            },
+            {data: 'aksi'}
         ]
     });
     
   });
+
+  function hapusDosen(id) {
+      swal({
+          title: "Apakah yakin?",
+          text: "Data yang dihapus tidak dapat dikembalikan!",
+          icon: "warning",
+          buttons: true,
+          dangerMode: true,
+      })
+      .then((willDelete) => {
+        if (willDelete) {
+          $.ajax({
+                type: 'post',
+                url: "dosen/hapus-dosen/"+id ,
+                success: function (results) {
+                    if (results.success === true) {
+                      swal("Oke! Materi telah dihapus", {
+                        icon: "success",
+                      });
+                      location.reload();
+                    } else {
+                      swal("Gagal!", results.message, "error");
+                      location.reload();
+                    }
+                }
+            });
+          swal("Materi telah terhapus!", {
+            icon: "success",
+          });
+        } else {
+          swal("Materi Aman!");
+        }
+      });
+  }
 </script>   
 @endsection
+

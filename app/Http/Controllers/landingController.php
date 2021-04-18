@@ -41,7 +41,7 @@ class landingController extends Controller
     }
 
     public function indexBerita(){
-        $data = berita::all();
+        $data = berita::all()->where('status',1);
         return view('landing.berita', compact('data'));
     }
 

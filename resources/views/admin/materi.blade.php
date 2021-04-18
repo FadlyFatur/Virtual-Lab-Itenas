@@ -95,22 +95,30 @@
 
       <div class="card">
         <div class="card-header">
-          <h3 class="card-title">Data Materi {{$lab->nama}}</h3>  <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#exampleModal"><i class="fa fa-plus"></i> Tambah Materi</button>
-          
+          <h3 class="card-title">Materi {{$lab->nama}}</h3>
         </div>
         <div class="card-body">
+          <button class="btn btn-primary btn-sm mb-3" data-toggle="modal" data-target="#exampleModal"><i class="fa fa-plus"></i> Tambah Materi</button>
           <table class="table table-bordered data-table">
             <thead>
                 <tr>
                     <th>No</th>
                     <th>Status</th>
-                    <th>Nama</th>
+                    <th>Materi</th>
                     <th>Deskripsi</th>
-                    {{-- <th>Opsi</th> --}}
+                    <th>Aksi</th>
                 </tr>
             </thead>
-            <tbody>
-            </tbody>
+            <tbody></tbody>
+            <tfoot>
+              <tr>
+                <th>No</th>
+                <th>Status</th>
+                <th>Materi</th>
+                <th>Deskripsi</th>
+                <th>Aksi</th>
+              </tr>
+            </tfoot>
         </table>
         </div>
       </div>
@@ -185,7 +193,7 @@
               },
               {data: 'nama'},
               {data: 'deskripsi'},
-              // {data: 'opsi', orderable: false, searchable: false}
+              {data: 'aksi', orderable: false, searchable: false}
           ]
       });
       
@@ -213,6 +221,40 @@
             }
         }
     });
+  }
+
+  function hapusMateri(id) {
+      swal({
+          title: "Apakah yakin?",
+          text: "Data yang dihapus tidak dapat dikembalikan!",
+          icon: "warning",
+          buttons: true,
+          dangerMode: true,
+      })
+      .then((willDelete) => {
+        if (willDelete) {
+          $.ajax({
+                type: 'post',
+                url: "delete-materi/"+id ,
+                success: function (results) {
+                    if (results.success === true) {
+                      swal("Oke! Materi telah dihapus", {
+                        icon: "success",
+                      });
+                      location.reload();
+                    } else {
+                        swal("Gagal!", results.message, "error");
+                        location.reload();
+                    }
+                }
+            });
+          swal("Materi telah terhapus!", {
+            icon: "success",
+          });
+        } else {
+          swal("Materi Aman!");
+        }
+      });
   }
   </script>  
 @endsection

@@ -109,7 +109,7 @@
             if (resp.length != 0) {
                 if(resp.cek == true){
                     body += `<h2 style="font-size:3rem;"><span class="badge badge-primary">`+resp.nama+`</span></h2>
-                            <p><b>Info :</b> Sudah mendaftar, harap tunggu info lebih lanjut atau cek halaman profil</p>
+                            <p><b>Info :</b> Halo, <i>`+resp.user.name+`</i>! anda sudah mendaftar, harap tunggu info lebih lanjut atau buka halaman profil untuk melihat status rekrutmen.</p>
                             <table class="table">
                                 <thead>
                                     <tr>
@@ -121,7 +121,7 @@
                                 <tbody>
                                     <tr>
                                     <td>`+resp.user.name+`</td>
-                                    <td>`+resp.user.nomer_id+`</td>
+                                    <td>`+resp.user.nrp+`</td>
                                     <td>`+resp.user.email+`</td>
                                     </tr>
                                 </tbody>
@@ -148,7 +148,7 @@
                                 <tbody>
                                     <tr>
                                     <td>`+resp.user.name+`</td>
-                                    <td>`+resp.user.nomer_id+`</td>
+                                    <td>`+resp.user.nrp+`</td>
                                     <td>`+resp.user.email+`</td>
                                     </tr>
                                 </tbody>

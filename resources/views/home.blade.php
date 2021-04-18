@@ -11,15 +11,34 @@
                 <div class="left">
                     <img src="https://www.searchpng.com/wp-content/uploads/2019/02/Deafult-Profile-Pitcher.png" alt="user" width="100">
                     <h4>{{Auth::user()->name}}</h4>
-                    @if (Auth::user()->roles_id == 1)
-                        <p>User</p>
-                    @elseif( Auth::user()->roles_id == 2)
-                        <p>Mahasiswa</p>
-                    @elseif( Auth::user()->roles_id == 3)
-                        <p>Dosen</p>
-                    @else
-                        <p>Admin</p>
-                    @endif
+                    @switch(Auth::user()->roles_id)
+                        @case(2)
+                            <p>Mahasiswa</p>
+                            @break
+
+                        @case(3)
+                            <p>Dosen</p>
+                            @break
+                        
+                        @case(4)
+                            <p>Dosen | Kepala Laboratorium</p>
+                            @break
+                        
+                        @case(5)
+                            <p>Dosen | Koordinator Praktikum</p>
+                            @break
+
+                        @case(6)
+                            <p>Mahasiswa | Assisten Laboratorium</p>
+                            @break
+
+                        @case(7)
+                            <p>Kaprodi</p>
+                            @break
+
+                        @default
+                            <p>User</p>
+                    @endswitch
                 </div>
                 <div class="right">
         
@@ -47,12 +66,12 @@
                         <h3>Laboratorium</h3>
                         <div class="project_data">
                             <div class="data">
-                                <h4>Recent</h4>
-                                <p>Loream ipsum blalalala</p>
+                                <h5>Total</h5>
+                                <p>{{Count($kelas)}}</p>
                             </div>
                             <div class="data">
-                                <h4>Most viewed</h4>
-                                <p>Loream ipsum blalalala</p>
+                                <h5>Terbaru</h5>
+                                <p>{{count($kelas) > 0 ? $kelas->first()->praktikum->nama : '-' }}</p>
                             </div>
                         </div>
                     </div>
@@ -187,7 +206,7 @@
                             <figure>
                                 <div class="tourpic">
                                     <img width="320" height="180" src="{{asset($k->praktikum->lab->thumbnail)}}">
-                                    <span class="tourcat">Praktikum terbaru</span>                             
+                                    <span class="tourcat">Praktikum</span>                             
                                     <span class="tourday hot">{{$k->praktikum->lab->nama}}</span>
                                 </div>
                                 <figcaption>

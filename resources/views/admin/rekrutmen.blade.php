@@ -134,13 +134,22 @@
                     <th>Nama</th>
                     <th>Kuota</th>
                     <th>Deadline</th>
-                    <th>Total Rekrutmen</th>
-                    <th>File</th>
-                    <th>Opsi</th>
+                    <th>Pendaftar</th>
+                    <th>Aksi</th>
                 </tr>
             </thead>
-            <tbody>
-            </tbody>
+            <tbody></tbody>
+            <tfoot>
+              <tr>
+                <th>Status</th>
+                <th>Praktikum</th>
+                <th>Nama</th>
+                <th>Kuota</th>
+                <th>Deadline</th>
+                <th>Pendaftar</th>
+                <th>Aksi</th>
+              </tr>
+            </tfoot>
         </table>
         </div>
       </div>
@@ -161,8 +170,16 @@
                       <th>Opsi</th>
                   </tr>
               </thead>
-              <tbody>
-              </tbody>
+              <tbody></tbody>
+              <tfoot>
+                <tr>
+                  <th>Nama</th>
+                  <th>NRP</th>
+                  <th>Email</th>
+                  <th>Status</th>
+                  <th>Opsi</th>
+                </tr>
+              </tfoot>
             </table>
 
             {{-- detail  --}}
@@ -207,18 +224,14 @@
         columns: [
             {data: 'status', 
               render: function (data, type, row) {
-                  if (data == 1) {
-                      return `<div class="custom-control custom-switch">
-                                <input type="checkbox" class="custom-control-input" id="switch`+row.id+`" checked>
-                                <label class="custom-control-label" for="switch`+row.id+`"></label>
-                              </div>`;
+                  let checked = null;
+                  if(data == 1){
+                      checked = "checked";
                   }
-                  if (data == 0) {
-                      return `<div class="custom-control custom-switch">
-                                <input type="checkbox" class="custom-control-input" id="switch`+row.id+`">
-                                <label class="custom-control-label" for="switch`+row.id+`"></label>
-                              </div>`;
-                  }
+                  return `<div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" onchange="changeStatus(`+row.id+`)" id="switch`+row.id+`" `+checked+`>
+                            <label class="custom-control-label" for="switch`+row.id+`"></label>
+                          </div>`
               },
               orderable: false, 
               searchable: false
@@ -228,8 +241,7 @@
             {data: 'kuota'},
             {data: 'deadline'},
             {data: 'total'},
-            {data: 'file', orderable: false, searchable: false},
-            {data: 'opsi', orderable: false, searchable: false}
+            {data: 'aksi', orderable: false, searchable: false}
         ]
     });
   });
@@ -274,7 +286,8 @@ function showRekrut(id) {
        console.log(resp);
        $('#card-rekrutmen').empty();
        var body = "";
-       body +=`<div class="card-header">
+       if (resp.status == 0) {
+          body +=`<div class="card-header">
                 <h3 class="card-title">Detail Rekrutmen</h3>
               </div>
               <div class="card-body p-0">
@@ -322,7 +335,56 @@ function showRekrut(id) {
                 <button onclick="accept(`+resp.id+`,`+resp.user_id+`)" type="button" class="btn btn-danger"><i class="fa fa-check"></i> Diterima</button>
                 <button onclick="denied(`+resp.id+`,`+resp.user_id+`)" type="button" class="btn btn-success"><i class="fa fa-ban"></i> Ditolak</button>
               </div>`;
-          
+       }else{
+          body =`<div class="card-header">
+                <h3 class="card-title">Detail Rekrutmen</h3>
+              </div>
+              <div class="card-body p-0">
+                <div class="mailbox-read-info">
+                  <h5>`+resp.nama+` | `+resp.nrp+`</h5>
+                  <h6>`+resp.email+`
+                    <span class="mailbox-read-time float-right">`+resp.tanggal+`</span></h6>
+                </div>
+                <ul class="mailbox-attachments d-flex align-items-stretch clearfix m-3">
+                  <li>
+                    <span class="mailbox-attachment-icon"><i class="far fa-file-pdf"></i></span>
+  
+                    <div class="mailbox-attachment-info">
+                      <a href="rekrutmen/download/`+resp.bio+`" class="mailbox-attachment-name"><i class="fas fa-paperclip"></i>Biodata</a>
+                          <span class="mailbox-attachment-size clearfix mt-1">
+                            <a href="rekrutmen/download/`+resp.bio+`" class="btn btn-default btn-sm float-right"><i class="fas fa-cloud-download-alt"></i></a>
+                          </span>
+                    </div>
+                  </li>
+                  <li>
+                    <span class="mailbox-attachment-icon"><i class="far fa-file-pdf"></i></span>
+  
+                    <div class="mailbox-attachment-info">
+                      <a href="rekrutmen/download/`+resp.transkip+`" class="mailbox-attachment-name"><i class="fas fa-paperclip"></i> Transkip Nilai</a>
+                          <span class="mailbox-attachment-size clearfix mt-1">
+                            <a href="rekrutmen/download/`+resp.transkip+`" class="btn btn-default btn-sm float-right"><i class="fas fa-cloud-download-alt"></i></a>
+                          </span>
+                    </div>
+                  </li>
+                  <li>
+                    <span class="mailbox-attachment-icon"><i class="fas fa-file-archive"></i></span>
+  
+                    <div class="mailbox-attachment-info">
+                      <a href="rekrutmen/download/`+resp.file+`" class="mailbox-attachment-name"><i class="fas fa-paperclip"></i> File Kelengkapan</a>
+                          <span class="mailbox-attachment-size clearfix mt-1">
+                            <a href="rekrutmen/download/`+resp.file+`" class="btn btn-default btn-sm float-right"><i class="fas fa-cloud-download-alt"></i></a>
+                          </span>
+                    </div>
+                  </li>
+                 
+                </ul>
+              </div>
+
+              <div class="card-footer">
+                <h5> Sudah diproses </h5>
+              </div>`;
+       }
+       
         $("#card-rekrutmen").append(body);
       }
     })
@@ -401,5 +463,28 @@ function denied(id, userId) {
     })
   
 }
+
+function changeStatus(id){
+      $.ajax({
+          type:'GET',
+          url:"status-rekrutmen/"+id,
+          success:function(data){
+              if(data.status === true){
+                  swal({
+                      title: "Success!",
+                      text: data.message,
+                      icon: "success",
+                  });
+              }else{
+                  let message = data.message;
+                  swal({
+                  title: "Ups!",
+                      text: data.message,
+                      icon: "error",
+                  });
+              }
+          }
+      });
+    }
 </script> 
 @endsection

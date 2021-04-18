@@ -24,24 +24,12 @@ use Carbon\Carbon;
 use Illuminate\Support\Str;
 Use Alert;
 use Auth;
-use App\Imports\MahasiswaImport;
-use App\Imports\DosenImport;
 use Session;
 
 class AdminController extends Controller
 {
     public function index(){
         return view('admin.home');
-    }
-
-    // User 
-    public function indexUser(){
-        return view('admin.user');
-    }
-
-    public function getUserData(){
-        $data = User::orderBy('roles_id','desc')->get();
-        return Datatables::of($data)->make(true);
     }
 
     // Berita 
@@ -82,7 +70,50 @@ class AdminController extends Controller
         $data = berita::orderBy('created_at','desc')->get();
         return Datatables::of($data)
                             ->addIndexColumn()
+                            ->addColumn('aksi', function ($data){
+                                return '<a class="btn btn-primary" href=""><i class="fas fa-edit"></i></a> <button onclick="deleted('.$data->id.')" class="btn btn-danger"><i class="far fa-trash-alt"></i></button>';
+                            })
+                            ->rawColumns(['aksi'])
                             ->make(true);
+    }
+
+    public function statusBerita($id){
+        $check = berita::find($id);
+        $field['status'] = !$check->status;
+        if($check){
+            $check->update($field);
+            $data['status']=true;
+            if($field['status'] == 1){
+                $data['message']="Berita telah diaktifkan.";
+            }else {
+                $data['message']="Berita dinonaktifkan.";
+            }
+        }else{
+            $data['status']=false;
+            $data['message']="Ops telah terjadi kesalahan pada saat mengupdate data";
+        }
+        return response()->json($data, 200);
+    }
+
+    public function hapusBerita($id)
+    {
+        $asis = berita::where('id', $id)->first();
+        Storage::delete($asis['img']);
+        $delete = $asis->delete();
+        // check data deleted or not
+        if ($delete == 1) {
+            $success = true;
+            $message = "Berita berhasil dihapus";
+        } else {
+            $success = false;
+            $message = "Berita tidak ditemukan";
+        }
+
+        //  Return response
+        return response()->json([
+            'success' => $success,
+            'message' => $message,
+        ]);
     }
 
     // Assisten 
@@ -101,8 +132,7 @@ class AdminController extends Controller
         return response()->json($data);
     }
 
-    public function postAssisten(Request $request)
-    {
+    public function postAssisten(Request $request){
         // dd($request->all());
 
         $validator = Validator::make($request->all(), [
@@ -134,6 +164,27 @@ class AdminController extends Controller
         return redirect()
                 ->back()
                 ->withError("Data gagal di submit");
+    }
+
+    public function hapusAsisten($id)
+    {
+        $asis = assisten::where('id', $id)->first();
+        
+        $delete = $asis->delete();
+        // check data deleted or not
+        if ($delete == 1) {
+            $success = true;
+            $message = "Asisten berhasil dihapus";
+        } else {
+            $success = false;
+            $message = "Asisten tidak ditemukan";
+        }
+
+        //  Return response
+        return response()->json([
+            'success' => $success,
+            'message' => $message,
+        ]);
     }
 
     // JURUSAN 
@@ -171,16 +222,13 @@ class AdminController extends Controller
     }
 
     public function getJurusan(){
-        $data = jurusan::all();
+        $data = jurusan::all()->sortByDesc('created_at');
         return Datatables::of($data)
             ->addIndexColumn()
-            ->addColumn('gmb', function ($data){
-                return '<a target="_blank" href="'.asset($data->thumbnail_path).'" class="edit btn btn-info btn-sm"><i class="fas fa-eye"></i></a>';
+            ->addColumn('aksi', function ($data){
+                return '<a target="_blank" href="'.asset($data->thumbnail_path).'" class="edit btn btn-secondary btn-sm"><i class="far fa-image"></i></a> <a target="_blank" href="'.route('lab', $data->slug).'" class="edit btn btn-info btn-sm"><i class="fas fa-eye"></i></a> <a class="btn btn-primary btn-sm" href=""><i class="fas fa-edit"></i></a>';
             })
-            ->addColumn('cta', function ($data){
-                return '<a target="_blank" href="'.route('jurusan').'" class="edit btn btn-info btn-sm">Lihat <i class="fas fa-chevron-right"></i></a>';
-            })
-            ->rawColumns(['gmb','cta'])
+            ->rawColumns(['aksi'])
             ->make(true);
     }
 
@@ -280,17 +328,14 @@ class AdminController extends Controller
         $data = lab::all();
         return Datatables::of($data)
             ->addIndexColumn()
-            ->addColumn('gmb', function ($data){
-                return '<a target="_blank" href="'.asset($data->thumbnail).'" class="edit btn btn-info btn-sm">Lihat Gambar<i class="fas fa-eye"></i></a>';
-            })
-            ->addColumn('opsi', function ($data){
-                return '<a onclick="hapusLab('.$data->id.')" class="btn btn-warning btn-sm">Hapus <i class="fa fa-trash" aria-hidden="true"></i></a> <a target="_blank" href="'.route('praktikumAdmin', $data->slug).'" class="edit btn btn-primary btn-sm">Praktikum <i class="fas fa-book-open"></i></a>';
+            ->addColumn('aksi', function ($data){
+                return '<a target="_blank" href="'.asset($data->thumbnail).'" class="edit btn btn-secondary btn-sm"><i class="far fa-image"></i></a> <a target="_blank" href="'.route('praktikum-list', $data->slug).'" class="edit btn btn-info btn-sm"><i class="fas fa-eye"></i></a> <a class="btn btn-primary btn-sm" href=""><i class="fas fa-edit"></i></a> <a onclick="hapusLab('.$data->id.')" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></a> <a target="_blank" href="'.route('praktikumAdmin', $data->slug).'" class="edit btn btn-primary btn-sm"><i class="fas fa-book-open"></i></a>';
             })
             ->addColumn('jurusan', function ($data){
                 $jur = $data->jurusan()->first()->nama;
                 return $jur;
             })
-            ->rawColumns(['opsi', 'jurusan','gmb'])
+            ->rawColumns(['aksi', 'jurusan'])
             ->make(true);
     }
 
@@ -386,11 +431,11 @@ class AdminController extends Controller
         $data = praktikum::where('laboratorium',$id)->get();
         return Datatables::of($data)
             ->addIndexColumn()
-            ->addColumn('opsi', function ($data){
-                return '<a onclick="hapusPrak('.$data->id.')" class="btn btn-warning btn-sm">Hapus <i class="fa fa-trash" aria-hidden="true"></i></a>';
+            ->addColumn('aksi', function ($data){
+                return '<a target="_blank" href="'.route('detail-materi',$data->id).'" class="edit btn btn-info btn-sm"><i class="fas fa-eye"></i></a> <a class="btn btn-primary btn-sm" href=""><i class="fas fa-edit"></i></a> <a onclick="hapusPrak('.$data->id.')" class="btn btn-danger btn-sm"><i class="far fa-trash-alt" aria-hidden="true"></i></a> <a target="_blank" href="'.route('materi', $data->id).'" class="edit btn btn-info btn-sm"><i class="fas fa-book-open"></i></a>';
             })
             ->addColumn('materi', function ($data){
-                return '<a target="_blank" href="'.route('materi', $data->id).'" class="edit btn btn-info btn-sm">Materi <i class="fas fa-book-open"></i>';
+                return '';
             })
             ->addColumn('th', function ($data){
                 return $data->semester.'/'.$data->tahun_ajaran;
@@ -398,7 +443,7 @@ class AdminController extends Controller
             ->editColumn('kelas', function ($data){
                 return $data->getKelas->nama;
             })
-            ->rawColumns(['opsi','th','materi'])
+            ->rawColumns(['aksi','th','materi'])
             ->make(true);
     }
 
@@ -459,10 +504,10 @@ class AdminController extends Controller
         $data = Materi::where('praktikum_id',$id)->get();
         return Datatables::of($data)
             ->addIndexColumn()
-            ->addColumn('opsi', function ($data){
-                return '<a target="_blank" href="#" class="edit btn btn-info btn-sm">Lihat <i class="fas fa-eye"></i></a>';
+            ->addColumn('aksi', function ($data){
+                return '<a target="_blank" href="'.route('detail-materi',$data->praktikum_id).'" class="edit btn btn-info btn-sm"><i class="fas fa-eye"></i></a> <a class="btn btn-primary btn-sm" href=""><i class="fas fa-edit"></i></a> <a onclick="hapusMateri('.$data->id.')" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></a>';
             })
-            ->rawColumns(['opsi'])
+            ->rawColumns(['aksi'])
             ->make(true);
     }
 
@@ -509,16 +554,16 @@ class AdminController extends Controller
     }
 
     public function deleteMateri($id){
-        $lab = Materi::where('id', $id)->first();
+        $materi = Materi::where('id', $id)->first();
 
-        $delete = $lab->delete();
+        $delete = $materi->delete();
 
         // check data deleted or not
         if ($delete == 1) {
             $success = true;
             $message = "Materi berhasil dihapus";
         } else {
-            $success = true;
+            $success = false;
             $message = "Materi tidak ditemukan";
         }
 
@@ -717,346 +762,4 @@ class AdminController extends Controller
         }
     }
 
-    // Rekrutmen 
-    public function indexRek(){
-        $data = lab::orderBy('nama', 'asc')->get();
-        return view('admin.rekrutmen', compact('data'));
-    }
-
-    public function postRekrut(Request $request){
-        // dd($request->all());
-        $validator = Validator::make($request->all(), [
-            'nama_rekrutmen' => ' string | max:100',
-            'deskripsi' => 'string | max:1000',
-            'kuota' => 'required',
-            'deadline' => 'required',
-            'kode_praktikum' => 'required',
-            'fileSyarat' => 'required | mimes:pdf,zip,rar,doc,docx | max:10000'
-        ]);
-        if ($validator->fails()) { 
-            return redirect()
-            ->back()
-            ->withErrors($validator)
-            ->withInput();
-        };
-
-        // $name = Carbon::now()->format('YmdHs')."_".$request->file('fileSyarat')->getClientOriginalName();
-        // $path_file = Storage::putFileAs('public/file', $request->file('fileSyarat'), $name);
-        $path = public_path('rekrut_file');
-        $nameFile = "r_".Carbon::now()->format('YmdHs')."_".$request->file('fileSyarat')->getClientOriginalName();
-        $request->file('fileSyarat')->move($path,$nameFile);
-
-        rekrutmen::create([
-            'nama' => $request->get('nama_rekrutmen'),
-            'deskripsi' => $request->get('deskripsi'),
-            'kuota' => $request->get('kuota'),
-            'deadline' => date("Y-m-d", strtotime($request->get('deadline'))), 
-            'praktikum_id'=>$request->get('kode_praktikum'),
-            'file'=> $nameFile
-        ]);
-
-        return redirect()
-                ->back()
-                ->withSuccess("Data berhasil di simpan");
-    }
-
-    public function getTableRek(){
-        $data = rekrutmen::orderBy('created_at','desc')->get();
-        return Datatables::of($data)
-                ->editColumn('praktikum_id', function ($data){
-                    return $data->getPrak->nama;
-                })
-                ->addIndexColumn()
-                ->addColumn('opsi', function ($data){
-                    return '<button title="Hapus" onclick="deleted('.$data->id.')" class="hapus btn btn-danger btn-sm"><i class="fa fa-trash"></i></button> <button title="list" onclick="getList('.$data->id.')" class="hapus btn btn-danger btn-sm"><i class="fa fa-eye"></i></button>';
-                    
-                })
-                ->addColumn('file', function ($data){
-                    return '<a download title="download" href="'.route('downloadFileSyarat',$data->file).'" class="btn btn-info btn-sm">Download File</a>';
-                })
-                    ->addColumn('total', function ($data){
-                        return rekrut::where('rekrut_id', $data->id)->count();
-                        
-                    })
-                ->rawColumns(['opsi','file'])
-                ->make(true);
-    }
-
-    public function downloadFileRekrut($file){
-        $file= public_path('rekrut_file').'/'.$file;
-        return response()->download($file);
-    }
-
-    public function getDetailrekrut($id){
-        $rekrut = rekrutmen::where('id', $id)->orderBy('created_at')->first();
-        $userRekrut = rekrut::where('user_id', Auth::id())->where('rekrut_id',$id)->exists();
-        $user = Auth::user();
-
-        if (!empty($rekrut)) {
-            $data = [
-                'nama' => $rekrut->nama,
-                'deskripsi' => $rekrut->deskripsi,
-                'kuota' => $rekrut->kuota,
-                'deadline' => $rekrut->deadline,
-                'file' => $rekrut->file,
-                'praktikum' => $rekrut->getPrak->nama,
-                'user' => $user,
-                'rekrut' => $id,
-                'cek' => $userRekrut
-            ];
-            return response()->json($data);
-        }else{
-            $data = "Belum ada rekrutmen";
-            return response()->json($data); // Status code here
-        }
-    }
-
-    public function postDetailrekrut(Request $request){
-        $validator = Validator::make($request->all(), [
-            'userId' => ' required',
-            'biodata' => 'required|mimes:pdf|max:5000',
-            'transkip' => 'required|mimes:pdf|max:5000',
-            'file' => 'required | mimes:pdf,zip,rar | max:10000'
-        ]);
-        if ($validator->fails()) { 
-            return redirect()
-            ->back()
-            ->withErrors($validator)
-            ->withInput();
-        };
-        
-        $path = public_path('rekrut_file');
-        $bio = "b_".Carbon::now()->format('YmdHs').$request->file('biodata')->getClientOriginalName();
-        $nilai = "n_".Carbon::now()->format('YmdHs').$request->file('transkip')->getClientOriginalName();
-        $file = "f_".Carbon::now()->format('YmdHs').$request->file('file')->getClientOriginalName();
-
-        $request->file('biodata')->move($path,$bio);
-        $request->file('transkip')->move($path,$nilai);
-        $request->file('file')->move($path,$file);
-        
-        rekrut::create([
-            'biodata' => $bio,
-            'transkip' => $nilai,
-            'file' => $file,
-            'rekrut_id'=>$request->get('rekrutId'),
-            'user_id'=>$request->get('userId')
-        ]);
-
-        return redirect()
-                ->back()
-                ->withSuccess("Data berhasil di simpan");
-    }
-
-    public function getListRekrut($id){
-        $data = rekrut::where('rekrut_id',$id)->get();
-        return Datatables::of($data)
-                ->editColumn('nama', function ($data){
-                    return $data->getUser->name;
-                })
-                ->editColumn('nrp', function ($data){
-                    return $data->getUser->nomer_id;
-                })
-                ->editColumn('email', function ($data){
-                    return $data->getUser->email;
-                })
-                ->addIndexColumn()
-                ->addColumn('opsi', function ($data){
-                    return '<button title="Lihat" onclick="showRekrut('.$data->id.')" class="btn btn-info btn-sm"><i class="fa fa-eye"></i></button>'; 
-                })
-                ->addColumn('status', function ($data){
-                    if ($data->status == 0) {
-                        return '<span class="badge badge-secondary">Pending</span>';
-                    }elseif ($data->status == 1) {
-                        return '<span class="badge badge-success">Diterima</span>';
-                    }else{
-                        return '<span class="badge badge-danger">Ditolak</span>';
-                    }
-                })
-                ->rawColumns(['opsi','status'])
-                ->make(true);
-    }
-
-    public function getUserRekrut($id){
-        $rekrut = rekrut::where('id',$id)->first();
-
-        $data = [
-            'id' => $rekrut->rekrut_id,
-            'user_id' => $rekrut->user_id,
-            'nama' => $rekrut->getUser->name,
-            'nrp' => $rekrut->getUser->nomer_id,
-            'email' => $rekrut->getUser->email,
-            'bio' => $rekrut->biodata,
-            'transkip' => $rekrut->transkip,
-            'file' => $rekrut->file,
-            'tanggal' => $rekrut->created_at->format('d/m/Y')
-        ];
-        return response()->json($data);
-    }
-
-    public function acceptRekrut($id, $userId){
-        $rekrut = rekrutmen::where('id',$id)->first();
-
-        rekrut::where('user_id', $userId)
-                ->where('rekrut_id',$id)
-                ->first()
-                ->update(['status' => 1]);
-        
-        User::where('id', $userId)
-                ->first()
-                ->update(['roles_id' => 6]);
-
-        assisten::create([
-                'role' => 1,
-                'mahasiswa_id' => $userId,
-                'praktikum_id' => $rekrut->getPrak->id,
-                ]);
-
-        $data = ['message' => 'Sukses!'];
-        return response()->json($data, 200);
-    }
-
-    public function deniedRekrut($id, $userId)
-    {
-        $resp = rekrut::where('user_id', $userId)
-                ->where('rekrut_id',$id)
-                ->first()
-                ->update(['status' => 2]);
-
-        return response()->json($resp);
-    }
-
-    public function getRekrut($id)
-    {
-        $data = rekrutmen::where('praktikum_id',$id)
-        ->where('status', 1)
-        ->get();
-
-        return response()->json($data);
-    }
-
-    // Dosen 
-    public function postDosen(Request $request){
-        // dd($request->all());
-        $validator = Validator::make($request->all(), [
-            'nama' => 'required | string',
-            'noPegawai' => 'required | integer | unique:dosens,nomer_id',
-        ]);
-
-        if ($validator->fails()) { 
-            return redirect()
-            ->back()
-            ->withErrors($validator);
-        }
-
-        dosen::updateOrCreate([
-            'nama' => $request->get('nama'), 
-            'nomer_id' => $request->get('noPegawai')
-        ],
-        [
-            'nama' => $request->get('nama'), 
-            'nomer_id' => $request->get('noPegawai')
-        ]);
-
-        Alert::success('Sukses', 'Data Berhasil diinput');
-        return redirect()
-            ->back()
-            ->withSuccess("Data berhasil di simpan");
-    }
-
-    public function getDosen(){
-        return Datatables::collection(dosen::all())
-                        ->addIndexColumn()
-                        ->make(true);
-    }
-
-    public function indexDosen(){
-        return view('admin.dosen');
-    }
-
-    public function impotDosen(Request $request){
-        $this->validate($request, [
-			'file' => 'required|mimes:csv,xls,xlsx'
-		]);
- 
-		// menangkap file excel
-		$file = $request->file('file');
- 
-		// membuat nama file unik
-		$nama_file = rand().$file->getClientOriginalName();
- 
-		// upload ke folder file_siswa di dalam folder public
-		$file->move('file_import',$nama_file);
- 
-		// import data
-		Excel::import(new DosenImport, public_path('/file_import/'.$nama_file));
- 
-		// notifikasi dengan session
-		Session::flash('sukses','Data Siswa Berhasil Diimport!');
- 
-		// alihkan halaman kembali
-		return redirect()->back();
-    }
-
-    // Mahasiswa 
-    public function indexMahasiswa(){
-        return view('admin.mahasiswa');
-    }
-
-    public function postMahasiswa(Request $request){
-         // dd($request->all());
-         $validator = Validator::make($request->all(), [
-            'nama' => 'required | string',
-            'noMaha' => 'required | integer | unique:mahasiswas,nrp',
-        ]);
-
-        if ($validator->fails()) { 
-            return redirect()
-            ->back()
-            ->withErrors($validator);
-        }
-
-        mahasiswa::updateOrCreate([
-            'nama' => $request->get('nama'), 
-            'nrp' => $request->get('noMaha')
-        ],
-        [
-            'nama' => $request->get('nama'), 
-            'nrp' => $request->get('noMaha')
-        ]);
-
-        Alert::success('Sukses', 'Data Berhasil diinput');
-        return redirect()
-            ->back()
-            ->withSuccess("Data berhasil di simpan");
-    }
-
-    public function getMahasiswa(){
-        return Datatables::collection(mahasiswa::all())->addIndexColumn()->make(true);
-    }
-
-    public function impotMahasiswa(Request $request){
-        // dd($request->all());
-        // validasi
-		$this->validate($request, [
-			'file' => 'required|mimes:csv,xls,xlsx'
-		]);
- 
-		// menangkap file excel
-		$file = $request->file('file');
- 
-		// membuat nama file unik
-		$nama_file = rand().$file->getClientOriginalName();
- 
-		// upload ke folder file_siswa di dalam folder public
-		$file->move('file_import',$nama_file);
- 
-		// import data
-		Excel::import(new MahasiswaImport, public_path('/file_import/'.$nama_file));
- 
-		// notifikasi dengan session
-		Session::flash('sukses','Data Siswa Berhasil Diimport!');
- 
-		// alihkan halaman kembali
-		return redirect()->back();
-    }
 }

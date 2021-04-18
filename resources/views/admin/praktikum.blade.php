@@ -103,7 +103,7 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1 class="m-0 text-dark">{{$lab->nama}}</h1>
+              <h1 class="m-0 text-dark">Praktikum {{$lab->nama}}</h1>
             </div><!-- /.col -->
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
@@ -210,12 +210,21 @@
                     <th>Deskripsi</th>
                     <th>Tahun Ajaran</th>
                     <th>Kelas</th>
-                    <th>Materi</th>
-                    <th>Opsi</th>
+                    <th>Aksi</th>
                 </tr>
             </thead>
-            <tbody>
-            </tbody>
+            <tbody></tbody>
+            <tfoot>
+              <tr>
+                <th>No</th>
+                <th>Status</th>
+                <th>Nama</th>
+                <th>Deskripsi</th>
+                <th>Tahun Ajaran</th>
+                <th>Kelas</th>
+                <th>Aksi</th>
+              </tr>
+            </tfoot>
         </table>
         </div>
       </div>
@@ -299,14 +308,14 @@
                               </div>`
                   },
                   orderable: false, 
-                  searchable: false
+                  searchable: false,
+                  width: 20,
               },
               {data: 'nama'},
               {data: 'deskripsi'},
               {data: 'th'},
               {data: 'kelas'},
-              {data: 'materi', orderable: false, searchable: false},
-              {data: 'opsi', orderable: false, searchable: false}
+              {data: 'aksi', orderable: false, searchable: false}
           ]
       });
       

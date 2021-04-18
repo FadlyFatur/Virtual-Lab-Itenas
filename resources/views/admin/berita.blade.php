@@ -115,8 +115,7 @@
                       <th>No</th>
                       <th>Status</th>
                       <th>Judul</th>
-                      <th>Deskripsi</th>
-                      <th>Opsi</th>
+                      <th>Aksi</th>
                   </tr>
               </thead>
               <tbody>
@@ -201,15 +200,16 @@
                       checked = "checked";
                   }
                   return `<div class="custom-control custom-switch">
-                            <input type="checkbox" class="custom-control-input" onchange="" id="switch`+row.id+`" `+checked+`>
+                            <input type="checkbox" class="custom-control-input" onchange="changeStatus(`+row.id+`)" id="switch`+row.id+`" `+checked+`>
                             <label class="custom-control-label" for="switch`+row.id+`"></label>
                           </div>`
               },
               orderable: false, 
-              searchable: false
+              searchable: false,
+              width: 20,
             },
             {data: 'judul'},
-            {data: 'deskripsi'},
+            {data: 'aksi'},
             
         ]
     });
@@ -218,59 +218,62 @@
     });
 
     function changeStatus(id){
-      // $.ajax({
-      //     type:'GET',
-      //     url:"status-jurusan/"+id,
-      //     success:function(data){
-      //         if(data.status === true){
-      //             swal({
-      //                 title: "Success!",
-      //                 text: data.message,
-      //                 icon: "success",
-      //             });
-      //         }else{
-      //             let message = data.message;
-      //             swal({
-      //             title: "Ups!",
-      //                 text: data.message,
-      //                 icon: "error",
-      //             });
-      //         }
-      //     }
-      // });
+      $.ajax({
+          type:'GET',
+          url:"berita/status-berita/"+id,
+          success:function(data){
+              if(data.status === true){
+                  swal({
+                      title: "Success!",
+                      text: data.message,
+                      icon: "success",
+                  });
+              }else{
+                  let message = data.message;
+                  swal({
+                  title: "Ups!",
+                      text: data.message,
+                      icon: "error",
+                  });
+              }
+          }
+      });
     }
 
     function deleted(id){
-      // swal({
-      //       title: "Apakah yakin?",
-      //       text: "Jurusan yang dihapus tidak dapat dikembalikan!",
-      //       icon: "warning",
-      //       buttons: true,
-      //       dangerMode: true,
-      //   })
-      //   .then((willDelete) => {
-      //     if (willDelete) {
-      //       $.ajax({
-      //           type: 'POST',
-      //           url: "{{url('admin/delete-jurusan')}}/" + id,
-      //           dataType: 'JSON',
-      //           success: function (results) {
-      //               if (results.success === true) {
-      //                 swal("Oke! Jurusan telah dihapus", {
-      //                   icon: "success",
-      //                 });
-      //                 location.reload();
-      //               } else {
-      //                 swal("Gagal!", results.message, "error");
-      //                 location.reload();
-      //               }
-      //           }
-      //       });
-      //       swal("Jurusan telah terhapus!", {
-      //         icon: "success",
-      //       });
-      //     } 
-      // });
+      swal({
+          title: "Apakah yakin?",
+          text: "Data yang dihapus tidak dapat dikembalikan!",
+          icon: "warning",
+          buttons: true,
+          dangerMode: true,
+      })
+      .then((willDelete) => {
+        if (willDelete) {
+          $.ajax({
+                type: 'POST',
+                url: "hapus-berita/"+id ,
+                // data: {_token: CSRF_TOKEN},
+                dataType: 'JSON',
+                success: function (results) {
+                    if (results.success === true) {
+                      swal("Oke! Materi telah dihapus", {
+                        icon: "success",
+                      });
+                      location.reload();
+                    } else {
+                        swal("Gagal!", results.message, "error");
+                        location.reload();
+                    }
+                }
+            });
+          swal("Materi telah terhapus!", {
+            icon: "success",
+          });
+        } else {
+          swal("Materi Aman!");
+        }
+      });
     }
   </script>   
 @endsection

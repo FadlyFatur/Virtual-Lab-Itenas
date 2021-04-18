@@ -65,7 +65,7 @@ class MateriController extends Controller
             $dataAbsen_mhs = [];
         }
 
-        // dd($listAsisten);
+        dd($listAsisten);
         return view('landing.detail-materi',compact('listAsisten', 'data','prak', 'role','assisten', 'id','Cekabsen','absen','dataAbsen_mhs'));
     }
 
@@ -83,6 +83,7 @@ class MateriController extends Controller
             $assisten = assisten::where('mahasiswa_id', Auth::user()->id)->get();
             $Cekabsen = Absen::where('praktikum_id',$id)->get();
             $absen = absen_mahasiswa::where('user_id',Auth::id())->orderBy('absen_id','asc')->get();
+            $listAsisten = assisten::where('praktikum_id', $id)->get();
             if (count($absen) > 0) {
                 foreach ($absen as $a ) {
                     $dataAbsen_mhs []= $a->absen_id;
@@ -90,7 +91,7 @@ class MateriController extends Controller
             }else{
                 $dataAbsen_mhs = [];
             }
-            return view('landing.detail-materi',compact('data','prak', 'role','assisten', 'id','Cekabsen','absen','dataAbsen_mhs'));
+            return view('landing.detail-materi',compact('listAsisten','data','prak', 'role','assisten', 'id','Cekabsen','absen','dataAbsen_mhs'));
         }
         return redirect()->back();
     }
