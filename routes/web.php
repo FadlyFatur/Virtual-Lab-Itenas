@@ -46,7 +46,9 @@ Route::group(['prefix' => 'praktikum'], function () {
 });
 
 Route::get('get-materi/{id}','MateriController@getMateri')->name('getMateri');
+Route::get('get-list-materi/{id}','MateriController@getListMateri')->name('getListMateri');
 Route::post('delete-materi/{id}','MateriController@deleteMateri')->name('deleteMateri');
+Route::post('delete-detail-materi/{id}','MateriController@deleteDetailMateri')->name('delete-detailMateri');
 Route::post('add-absen','MateriController@addAbsen')->name('addAbsen');
 Route::post('absen','MateriController@absen')->name('absen');
 Route::get('praktikum/kelas/download/{file}','MateriController@downloadFile')->name('downloadFile');

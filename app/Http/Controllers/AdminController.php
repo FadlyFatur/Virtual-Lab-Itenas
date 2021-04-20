@@ -342,6 +342,7 @@ class AdminController extends Controller
     public function deleteLab($id){
         $lab = lab::where('id', $id)->first();
         Storage::delete($lab['thumbnail']);
+        
 
         // Storage::disk('public')->delete($lab['thumbnail']);
         $delete = $lab->delete();
@@ -686,8 +687,12 @@ class AdminController extends Controller
                 ->withErrors($validator);
             }
             $path = public_path('materi');
-            $nameFile = Carbon::now()->format('YmdHs')."_".$request->file('file')->getClientOriginalName();
-            $request->file('file')->move($path,$nameFile);
+            // $nameFile = Carbon::now()->format('YmdHs')."_".$request->file('file')->getClientOriginalName();
+            // $request->file('file')->move($path,$nameFile);
+
+            $nameFile = 'm_'.Carbon::now()->format('YmdHs').$request->file('file')->getClientOriginalName();
+            $path_img = Storage::putFileAs('file/file_materi', $request->file('file'), $nameFile);
+
             fmateri::create([
                 'nama' => $request->get('nama_materi'),
                 'file' => $nameFile,

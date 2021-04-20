@@ -9,7 +9,7 @@
         <div class="col-md-6">
             <div class="wrapper">
                 <div class="left">
-                    <img src="https://www.searchpng.com/wp-content/uploads/2019/02/Deafult-Profile-Pitcher.png" alt="user" width="100">
+                    <img src="{{asset('avatar-icon-6.jpg')}}" alt="user" width="100">
                     <h4>{{Auth::user()->name}}</h4>
                     @switch(Auth::user()->roles_id)
                         @case(2)

@@ -43,12 +43,12 @@ class MateriController extends Controller
         // dd($filter);
         $enroll = enroll::where('user_id', Auth::user()->id)->get();
         $assisten = assisten::where('mahasiswa_id', Auth::user()->id)->get();
+
         return view('landing.praktikum', compact('lab', 'data', 'enroll', 'role', 'filter', 'assisten'));
     }
 
     public function indexMateri($id)
     {
-        
         $role = Auth::user()->roles_id;
         $prak = praktikum::where('id',$id)->first();
         // dd($prak->id);
@@ -64,9 +64,10 @@ class MateriController extends Controller
         }else{
             $dataAbsen_mhs = [];
         }
+        $materi = Materi::where('praktikum_id',$id)->pluck('nama', 'id');
 
-        dd($listAsisten);
-        return view('landing.detail-materi',compact('listAsisten', 'data','prak', 'role','assisten', 'id','Cekabsen','absen','dataAbsen_mhs'));
+        // dd($materi);
+        return view('landing.detail-materi',compact('materi', 'listAsisten', 'data','prak', 'role','assisten', 'id','Cekabsen','absen','dataAbsen_mhs'));
     }
 
     public function daftarPrak($id)
@@ -91,13 +92,15 @@ class MateriController extends Controller
             }else{
                 $dataAbsen_mhs = [];
             }
-            return view('landing.detail-materi',compact('listAsisten','data','prak', 'role','assisten', 'id','Cekabsen','absen','dataAbsen_mhs'));
+            $materi = Materi::where('praktikum_id',$id)->pluck('nama', 'id');
+
+            return view('landing.detail-materi',compact('materi', 'listAsisten', 'data', 'prak', 'role','assisten', 'id','Cekabsen','absen','dataAbsen_mhs'));
         }
         return redirect()->back();
     }
 
     public function getMateri($id){
-        $fdata = file_materi::where('materi_id',$id)->orderBy('type','ASC')->get();
+        $fdata = file_materi::where('materi_id',$id)->orderBy('created_at','ASC')->get();
         $fmateri = Materi::where('id',$id)->first();
 
         if (!$fdata->isEmpty()) {
@@ -147,6 +150,12 @@ class MateriController extends Controller
         return response()->json($resp);
     }
 
+    public function getListMateri($id)
+    {
+        $materi = file_materi::where('materi_id',$id)->get();
+        return response()->json($materi);
+    }
+
     public function deleteMateri($id)
     {
         $delete = Materi::where('id', $id)->delete();
@@ -158,6 +167,37 @@ class MateriController extends Controller
         } else {
             $success = true;
             $message = "Materi tidak ditemukan";
+        }
+
+        //  Return response
+        return response()->json([
+            'success' => $success,
+            'message' => $message,
+        ]);
+    }
+
+    public function deleteDetailMateri($id)
+    {
+        $cek = file_materi::where('id', $id)->first();
+
+        if ($cek['type'] == 2 || $cek['type'] == 3) {
+            Storage::delete($cek['img']);
+        }
+
+        if ($cek['type'] == 3){
+            // Storage::delete($cek['file']);
+            $file_path =  public_path('file').'/file_materi/'.$cek['file'];
+            unlink($file_path);
+        }
+        
+        $delete = $cek->delete();
+        // // check data deleted or not
+        if ($delete == 1) {
+            $success = true;
+            $message = "Detail Materi berhasil dihapus";
+        } else {
+            $success = true;
+            $message = "Detail Materi tidak ditemukan";
         }
 
         //  Return response
@@ -222,7 +262,7 @@ class MateriController extends Controller
 
     public function downloadFile($file)
     {
-        $file= public_path('materi').'/'.$file;
+        $file= public_path('file').'/file_materi/'.$file;
         return response()->download($file);
     }
 
@@ -247,9 +287,13 @@ class MateriController extends Controller
             ->withErrors($validator);
         }
 
-        $path = public_path('file_tugas');
-        $nameFile = "t_".Carbon::now()->format('YmdHs').$request->file('tugas')->getClientOriginalName();
-        $request->file('tugas')->move($path,$nameFile);
+        // $path = public_path('file_tugas');
+        // $nameFile = "t_".Carbon::now()->format('YmdHs').$request->file('tugas')->getClientOriginalName();
+        // $request->file('tugas')->move($path,$nameFile);
+
+        $nameFile = 't_'.Carbon::now()->format('YmdHs').$request->file('tugas')->getClientOriginalName();
+        $path_img = Storage::putFileAs('file/file_tugas', $request->file('tugas'), $nameFile);
+
         tugas::updateOrCreate([
             'user_id' => $request->get('user_id'), 
             'file_materi' => $request->get('materi_id')
@@ -323,7 +367,7 @@ class MateriController extends Controller
 
     public function downloadTugas($file)
     {
-        $file= public_path('file_tugas').'/'.$file;
+        $file= public_path('file').'/file_tugas/'.$file;
         return response()->download($file);
     }
     

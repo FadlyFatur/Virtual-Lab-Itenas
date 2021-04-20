@@ -219,7 +219,7 @@
     </div>
   </div>
 
-  {{-- modal materi cek --}}
+  {{-- modal detail materi --}}
   <div class="modal fade" id="input_materi" tabindex="-1" role="dialog" aria-labelledby="input_materiTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
       <div class="modal-content">
@@ -307,6 +307,45 @@
     </div>
   </div>
 
+  {{-- modal list detauil materi --}}
+  <div class="modal fade" id="detail_materi" tabindex="-1" role="dialog" aria-labelledby="detail_materi" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="detail_materi">List Detail Materi</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+                <label for="tipe">Pilih Materi</label>
+                <select name="tipe" id="tipe" class="form-select" aria-label="type materi" onclick="getListMateri(this.value)">
+                  <option selected>Pilih salah satu</option>
+                  @foreach ($materi as $m => $nama)
+                    <option value="{{$m}}">{{$nama}}</option>
+                  @endforeach
+                </select><hr>
+                <div class="table-list-materi">
+                  <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Nama</th>
+                            <th>Tipe</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="data-list"></tbody>
+                  </table>
+                </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Simpan</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
     <div class="container-fluid margin-top">
         @if(session('success'))
         <div class="alert alert-success">
@@ -319,6 +358,7 @@
             {{ implode('', $errors->all(':message ')) }}
           </div>
       @endif
+
         <div class="row">
             <div class="col-md-3">
                 <ul class="list-group">
@@ -354,8 +394,9 @@
             <div class="col-md-8 side-line">
                 @if ($role == 0 || $assisten->where('praktikum_id', $id)->count() > 0 )
                   <div class="pull-left" id="input_area">
-                      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#input_materi">Input Materi</button>
-                      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#rekapAbsen">Rekap Absen</button>
+                      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#input_materi">Input Detail Materi</button>
+                      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#detail_materi">List Detail Materi</button>
+                      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#rekapAbsen">Rekapitulasi Absen</button>
                       <a href="{{route('Tugas',$prak->id)}}" class="btn btn-primary">Penilaian Tugas</a>
                   </div><br><hr>
                 @endif
@@ -552,6 +593,7 @@
                         console.log(value);
                           if (value.img != null) {
                             body += `<div class=" container multimedia-area d-flex justify-content-center">
+                              <h2>`+value.nama+`</h2>
                               <img class="img-fluid" src="`+value.img+`" alt="">
                               </div><hr><br>`
                           }
@@ -576,7 +618,7 @@
                             body += `<div class="link-area">
                                         <ul class="list-group">
                                             <li class="list-group-item">
-                                                <a target="_blank" href="`+value.link+`">Link Materi 1 <i class="fa fa-globe"></i></a>
+                                                <a target="_blank" href="`+value.link+`">`+value.nama+`<i class="fa fa-globe"></i></a>
                                             </li>
                                         </ul>
                                     </div><br>`
@@ -584,9 +626,10 @@
 
                           if (value.role != 1 && value.tugas != null) {
                             body += `<div class="tugas-area">
-                                        <p><b>Tugas : </b> `+value.tugas+`</p>
+                                        <h2>`+value.nama+`</h2>
+                                        <p>`+value.tugas+`</p>
 
-                                        <button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#inputTugas">Simpan</button>
+                                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#inputTugas">Upload Tugas</button>
     
                                     </div><hr><br>`
                             
@@ -650,6 +693,34 @@
         });
     }
 
+    function hapusDetailMateri(id) {
+        swal({
+            title: "Apakah yakin?",
+            text: "Materi yang dihapus tidak dapat dikembalikan!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+        .then((willDelete) => {
+          if (willDelete) {
+            $.ajax({
+                  type: 'POST',
+                  url: "{{url('/delete-detail-materi')}}/" + id,
+                  // data: {_token: CSRF_TOKEN},
+                  dataType: 'JSON',
+                  success: function (results) {
+                    getListMateri(id)
+                  }
+              });
+            swal("Materi telah terhapus!", {
+              icon: "success",
+            });
+          } else {
+            swal("Materi Aman!");
+          }
+        });
+    }
+
     function download(path) {
       $.ajax({
             url: '/get-materi/'+id,
@@ -665,6 +736,52 @@
         });
     }
 
-
+    function getListMateri(id) {
+      $.ajax({
+            url: '/get-list-materi/'+id,
+            type: 'get',
+            dataType: 'json',
+            success: function (resp) {
+              // console.log(resp);
+              $(".data-list").empty();
+              let data = "";
+              // data +='<tr>';
+              $.each(resp,function(index,value){
+                switch(value.type) {
+                  case 1:
+                    tipe = "Teks/Deskriptif";
+                    break;
+                  case 2:
+                    tipe = "Gambar/Image";
+                    break;
+                  case 3:
+                    tipe = "File";
+                  break;
+                  case 4:
+                    tipe = "Link/URL";
+                  break;
+                  case 5:
+                    tipe = "Tugas";
+                  break;
+                  default:
+                    tipe = "None";
+                }
+                data += `<tr><td>`+value.nama+`</td>
+                         <td>`+tipe+`</td>
+                         <td><a onclick="hapusDetailMateri(`+value.id+`)" class="btn btn-danger">
+                                  <i class="fa fa-trash" aria-hidden="true"></i>
+                                </a></td></tr>`;
+                    
+              });
+              // data+='</tr>';
+              // console.log(data);
+              $(".data-list").append(data);
+            },
+            error: function (resp) {
+                alert('error! file tidak bisa dibuka/ditemukan')
+                console.log(resp);
+            }
+        });
+    }
     </script>
 @endsection

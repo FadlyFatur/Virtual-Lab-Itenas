@@ -150,7 +150,7 @@
                 <th>Aksi</th>
               </tr>
             </tfoot>
-        </table>
+          </table>
         </div>
       </div>
 
