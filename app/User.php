@@ -46,4 +46,14 @@ class User extends Authenticatable
     {
         return $this->hasMany('App\absen_mahasiswa', 'user_id', 'id');
     }
+
+    public function dosen()
+    {
+        return $this->belongsTo('App\dosen', 'nomer_id');
+    }
+
+    public function mahasiswa()
+    {
+        return $this->belongsTo('App\mahasiswa', 'nrp');
+    }
 }

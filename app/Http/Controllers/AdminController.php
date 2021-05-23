@@ -192,8 +192,8 @@ class AdminController extends Controller
         if ($request->has('thumb')){
             $validator = Validator::make($request->all(), [
                 'nama_jurusan' => 'string | max:100',
-                'deskripsi_jurusan' => 'string | max:1000',
-                'thumb_photo' => 'required|mimes:jpg,png,jpeg|max:7000', // max 7MB
+                'deskripsi_jurusan' => 'string | max:2000',
+                'thumb' => 'required|mimes:jpg,png,jpeg|max:7000', // max 7MB
             ]);
 
             if ($validator->fails()) { 
@@ -226,7 +226,7 @@ class AdminController extends Controller
         return Datatables::of($data)
             ->addIndexColumn()
             ->addColumn('aksi', function ($data){
-                return '<a target="_blank" href="'.asset($data->thumbnail_path).'" class="edit btn btn-secondary btn-sm"><i class="far fa-image"></i></a> <a target="_blank" href="'.route('lab', $data->slug).'" class="edit btn btn-info btn-sm"><i class="fas fa-eye"></i></a> <a class="btn btn-primary btn-sm" href=""><i class="fas fa-edit"></i></a>';
+                return '<a target="_blank" href="'.asset($data->thumbnail_path).'" class="edit btn btn-secondary btn-sm"><i class="far fa-image"></i></a> <a target="_blank" href="'.route('lab', $data->slug).'" class="edit btn btn-info btn-sm"><i class="fas fa-eye"></i></a> <a href="'.route('edit-jurusan', $data->id).'" class="btn btn-primary btn-sm" href=""><i class="fas fa-edit"></i></a>';
             })
             ->rawColumns(['aksi'])
             ->make(true);
@@ -273,10 +273,75 @@ class AdminController extends Controller
         ]);
     }
 
+    public function indexEditJurusan($id)
+    {
+        $jur = jurusan::where('id', $id)->first();
+        return view('admin.edit-jurusan', compact('jur'));
+    }
+
+    public function postEditJurusan($id, Request $request)
+    {
+        // dd($id, $request->all());
+        if ($request->has('thumb')){
+            $validator = Validator::make($request->all(), [
+                'nama_jurusan' => 'string | max:100',
+                'deskripsi_jurusan' => 'string | max:2000',
+                'thumb' => 'required|mimes:jpg,png,jpeg|max:7000', // max 7MB
+            ]);
+
+            if ($validator->fails()) { 
+                return redirect()
+                ->back()
+                ->withErrors($validator);
+            }
+
+            $name = "".Carbon::now()->format('YmdHs')."_".$request->file('thumb')->getClientOriginalName();
+            $path = Storage::putFileAs('images/thumbnail', $request->file('thumb'), $name);
+            jurusan::where('id',$id)->update([
+                'nama' => $request->get('nama_jurusan'),
+                'slug' => Str::slug($request->get('nama_jurusan'),'-'),
+                'deskripsi' => $request->get('deskripsi_jurusan'),
+                'thumbnail' => $name,
+                'thumbnail_path' => $path,
+            ]);
+
+            return redirect()
+                ->back()
+                ->withSuccess("Data berhasil di submit");
+        }else{
+            $validator = Validator::make($request->all(), [
+                'nama_jurusan' => 'string | max:100',
+                'deskripsi_jurusan' => 'string | max:2000',
+            ]);
+
+            if ($validator->fails()) { 
+                return redirect()
+                ->back()
+                ->withErrors($validator);
+            }
+
+            jurusan::where('id',$id)->update([
+                'nama' => $request->get('nama_jurusan'),
+                'slug' => Str::slug($request->get('nama_jurusan'),'-'),
+                'deskripsi' => $request->get('deskripsi_jurusan'),
+            ]);
+            dd("cek");
+            return redirect()
+                ->back()
+                ->withSuccess("Data berhasil di submit");
+        }
+
+        return redirect()
+                ->back()
+                ->withErrors("Data gagal di submit");
+    }
+
     // LAB 
     public function indexLab(){
         $data = jurusan::all();
-        return view('admin.laboratorium', compact('data'));
+        $dosen = user::whereIn('roles_id',[3,4,5])->get();
+        // dd($dosen);
+        return view('admin.laboratorium', compact('data', 'dosen'));
     }
 
     public function postLab(Request $request){
@@ -291,7 +356,7 @@ class AdminController extends Controller
             if ($validator->fails()) { 
                 return redirect()
                 ->back()
-                ->withError("Data gagal di submit, lengkapi form input data");
+                ->withErrors($validator);
             }
 
             $name = "".Carbon::now()->format('YmdHs')."_".$request->file('thumb')->getClientOriginalName();
@@ -321,7 +386,92 @@ class AdminController extends Controller
         }
         return redirect()
                 ->back()
-                ->withError("Data gagal di submit");
+                ->withErrors("Data gagal di submit");
+    }
+
+    public function indexEditLab($id)
+    {
+        $lab = lab::where('id',$id)->first();
+        $data = jurusan::all();
+        $dosen = user::whereIn('roles_id',[3,4,5])->get();
+        return view('admin.edit-lab', compact('data','lab', 'dosen'));
+    }
+
+    public function postEditLab($id, Request $request)
+    {
+        // dd($id, $request->all());
+        if ($request->has('thumb')){
+            $validator = Validator::make($request->all(), [
+                'nama_lab' => 'required | string | max:100',
+                'deskripsi_lab' => 'required | string | max:1000',
+                'thumb' => 'required|mimes:jpg,png,jpeg|max:7000', // max 7MB
+                'kode' => 'required'
+            ]);
+            if ($validator->fails()) { 
+                return redirect()
+                ->back()
+                ->withErrors($validator);
+            }
+
+            $name = "".Carbon::now()->format('YmdHs')."_".$request->file('thumb')->getClientOriginalName();
+            $path = Storage::putFileAs('images/thumbnail', $request->file('thumb'), $name);
+
+            if ($request->get('klab') != null) {
+                lab::where('id',$id)->update([
+                    'nama' => $request->get('nama_lab'),
+                    'slug' => Str::slug($request->get('nama_lab'),'-'),
+                    'deskripsi' => $request->get('deskripsi_lab'),
+                    'thumbnail' => $path,
+                    'jurusan'=>$request->get('kode'),
+                    'kepala_lab'=>$request->get('klab')
+                ]);
+            }else {
+                lab::where('id',$id)->update([
+                    'nama' => $request->get('nama_lab'),
+                    'slug' => Str::slug($request->get('nama_lab'),'-'),
+                    'deskripsi' => $request->get('deskripsi_lab'),
+                    'thumbnail' => $path,
+                    'jurusan'=>$request->get('kode'),
+                ]);
+            }
+            return redirect()
+                ->back()
+                ->withSuccess("Data berhasil di submit");
+        }else {
+            $validator = Validator::make($request->all(), [
+                'nama_lab' => 'required | string | max:100',
+                'deskripsi_lab' => 'required | string | max:1000',
+                'kode' => 'required'
+            ]);
+            if ($validator->fails()) { 
+                return redirect()
+                ->back()
+                ->withErrors($validator);
+            }
+
+            if ($request->get('klab') != null) {
+                lab::where('id',$id)->update([
+                    'nama' => $request->get('nama_lab'),
+                    'slug' => Str::slug($request->get('nama_lab'),'-'),
+                    'deskripsi' => $request->get('deskripsi_lab'),
+                    'jurusan'=>$request->get('kode'),
+                    'kepala_lab'=>$request->get('klab')
+                ]);
+            }else {
+                lab::where('id',$id)->update([
+                    'nama' => $request->get('nama_lab'),
+                    'slug' => Str::slug($request->get('nama_lab'),'-'),
+                    'deskripsi' => $request->get('deskripsi_lab'),
+                    'jurusan'=>$request->get('kode'),
+                ]);
+            }
+            return redirect()
+                ->back()
+                ->withSuccess("Data berhasil di submit");
+        }
+        return redirect()
+                ->back()
+                ->withErrors("Data gagal di submit");
     }
 
     public function getTableLab(){
@@ -329,7 +479,7 @@ class AdminController extends Controller
         return Datatables::of($data)
             ->addIndexColumn()
             ->addColumn('aksi', function ($data){
-                return '<a target="_blank" href="'.asset($data->thumbnail).'" class="edit btn btn-secondary btn-sm"><i class="far fa-image"></i></a> <a target="_blank" href="'.route('praktikum-list', $data->slug).'" class="edit btn btn-info btn-sm"><i class="fas fa-eye"></i></a> <a class="btn btn-primary btn-sm" href=""><i class="fas fa-edit"></i></a> <a onclick="hapusLab('.$data->id.')" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></a> <a target="_blank" href="'.route('praktikumAdmin', $data->slug).'" class="edit btn btn-primary btn-sm"><i class="fas fa-book-open"></i></a>';
+                return '<a target="_blank" href="'.asset($data->thumbnail).'" class="edit btn btn-secondary btn-sm"><i class="far fa-image"></i></a> <a target="_blank" href="'.route('praktikum-list', $data->slug).'" class="edit btn btn-info btn-sm"><i class="fas fa-eye"></i></a> <a class="btn btn-primary btn-sm" href="'.route('edit-lab', $data->id).'"><i class="fas fa-edit"></i></a> <a onclick="hapusLab('.$data->id.')" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></a> <a target="_blank" href="'.route('praktikumAdmin', $data->slug).'" class="edit btn btn-primary btn-sm"><i class="fas fa-book-open"></i></a>';
             })
             ->addColumn('jurusan', function ($data){
                 $jur = $data->jurusan()->first()->nama;

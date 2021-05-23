@@ -8,6 +8,7 @@ use Faker\Generator as Faker;
 $factory->define(dosen::class, function (Faker $faker) {
     return [
         'nama' => 'rohman',
-        'nomer_id' => '001',
+        'nomer_id' => '1001',
+        'status' => 1
     ];
 });

@@ -31,7 +31,7 @@
               {{ session('error') }}
           </div>
       @endif
-      <div class="card card-info collapsed-card">
+      <div class="card card-primary collapsed-card">
         <div class="card-header">
           <h5 class="card-title">Input Dosen</h5>
 
@@ -54,6 +54,40 @@
                 <div class="form-group">
                   <label>Nama</label>
                   <input type="text" class="form-control" name="nama" placeholder="Nama Lengkap" required autofocus> 
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- /.card-body -->
+          <div class="card-footer">
+            <button type="submit" class="btn btn-primary">Simpan</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="card card-info">
+        <div class="card-header">
+          <h5 class="card-title">Edit Dosen</h5>
+
+          <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body pb-0">
+          <form role="form" id="form-edit" method="POST" action="" enctype="multipart/form-data">
+            @csrf
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label>Nomer Pegawai</label>
+                  <input type="text" class="form-control" id="nomer_id" name="noPegawai" placeholder="Nomer ID" required autofocus>
+                </div>
+                <div class="form-group">
+                  <label>Nama</label>
+                  <input type="text" class="form-control" id="nama" name="nama" placeholder="Nama Lengkap" required autofocus> 
                 </div>
               </div>
             </div>
@@ -150,6 +184,8 @@
             {data: 'aksi'}
         ]
     });
+
+    $(".card-info").hide();
     
   });
 
@@ -186,6 +222,22 @@
         }
       });
   }
+
+  function editDosen(id) {
+    $(".card-info").hide();
+    $.ajax({
+        type: 'get',
+        url: "get-dosen-detail/"+id ,
+        dataType: 'JSON',
+        success: function (resp) {
+            $(".card-info").show();
+            // console.log(resp);
+            $("form").attr("action", "edit-dosen/"+resp.nomer_id);
+            $("#nomer_id").attr("value", resp.nomer_id);
+            $("#nama").attr("value", resp.nama);
+        }
+    });
+  }    
 </script>   
 @endsection
 

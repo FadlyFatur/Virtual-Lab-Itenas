@@ -30,7 +30,7 @@ class UserController extends Controller
         return Datatables::of($data)
                         ->addIndexColumn()
                         ->addColumn('aksi', function ($data){
-                            return '<a class="btn btn-primary" href=""><i class="fas fa-edit"></i></a>';
+                            return '<button onclick="editUser('.$data->id.')" class="btn btn-primary"><i class="fas fa-edit"></i></button>';
                         })
                         ->addColumn('nomer', function ($data){
                             if ($data->nrp != null) {
@@ -46,6 +46,47 @@ class UserController extends Controller
                         })
                         ->rawColumns(['aksi'])
                         ->make(true);
+    }
+
+    public function postEditUser($id, Request $request)
+    {
+        // dd($id, $request->all());
+        $validator = Validator::make($request->all(), [
+            'nama' => 'required | string | max:255',
+            'email' => 'required | string | email | max:255',
+            'roles_id' => 'required'
+        ]);
+        if ($validator->fails()) { 
+            return redirect()
+            ->back()
+            ->withErrors($validator);
+        }
+
+        $user = user::query();
+        $cekEmail = $user->where('email',$request->get('email'))->get();
+        // dd($cekEmail[0]->id);
+        if($cekEmail->count() == 1 ){
+            if ($cekEmail[0]->id == $id) {
+                $user->where('id',$id)->update([
+                    'name' => $request->get('nama'),
+                    'email' => $request->get('email'),
+                    'roles_id' => $request->get('roles_id'),
+                ]);
+                return redirect()
+                        ->back()
+                        ->withSuccess("Data berhasil di submit");
+            }
+        }
+        return redirect()
+                ->back()
+                ->withErrors("Data gagal di submit");
+    }
+    
+    public function getUserDetail($id)
+    {
+        $user = User::where('id',$id)->first();
+        return response()->json($user);
+
     }
 
     // Dosen 
@@ -81,7 +122,7 @@ class UserController extends Controller
         return Datatables::collection(dosen::all())
                         ->addIndexColumn()
                         ->addColumn('aksi', function ($data){
-                            return '<a class="btn btn-primary" href=""><i class="fas fa-edit"></i></a> <a onclick="hapusDosen('.$data->nomer_id.')" class="btn btn-danger"><i class="far fa-trash-alt"></i></a>';
+                            return '<button class="btn btn-primary" onclick="editDosen('.$data->nomer_id.')"><i class="fas fa-edit"></i></button> <button onclick="hapusDosen('.$data->nomer_id.')" class="btn btn-danger"><i class="far fa-trash-alt"></i></button>';
                         })
                         ->rawColumns(['aksi'])
                         ->make(true);
@@ -142,6 +183,51 @@ class UserController extends Controller
             'success' => $success,
             'message' => $message,
         ]);
+    }
+
+    public function postEditDosen($id, Request $request)
+    {
+        // dd($request->all(), $id);
+        $validator = Validator::make($request->all(), [
+            'nama' => 'required | string',
+            'noPegawai' => 'required | integer',
+        ]);
+
+        if ($validator->fails()) { 
+            return redirect()
+            ->back()
+            ->withErrors($validator);
+        }
+
+        $user = dosen::query();
+        $cekDosen = $user->where('nomer_id',$id)->get();
+        if($cekDosen->count() == 1 ){
+            if ($cekDosen[0]->nomer_id == $id) {
+                $user->where('nomer_id',$id)->update([
+                    'nomer_id' => $request->get('noPegawai'),
+                    'nama' => $request->get('nama'),
+                ]);
+                return redirect()
+                        ->back()
+                        ->withSuccess("Data berhasil di submit");
+            }
+        }
+
+        dosen::where('nomer_id',$id)->update([
+            'nomer_id' => $request->get('noPegawai'),
+            'nama' => $request->get('nama'), 
+        ]);
+
+        Alert::success('Sukses', 'Data Berhasil diinput');
+        return redirect()
+            ->back()
+            ->withSuccess("Data berhasil di simpan");
+    }
+
+    public function getDosenDetail($id)
+    {
+        $user = dosen::where('nomer_id',$id)->first();
+        return response()->json($user);
     }
 
     // Mahasiswa 
@@ -213,8 +299,7 @@ class UserController extends Controller
 		return redirect()->back();
     }
 
-    public function hapusMahasiswa($id)
-    {
+    public function hapusMahasiswa($id){
         $maha = mahasiswa::where('nrp', $id)->first();
         if ($maha['status'] == 1){
             User::where('nrp', $id)

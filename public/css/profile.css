@@ -147,7 +147,7 @@ a {
     color: #363636;
 }
 .btn {
-    background: transparent;
+    /* background: transparent; */
     margin: 3px;
     border: 1px solid #eaeaea;
     border-radius: 0px;

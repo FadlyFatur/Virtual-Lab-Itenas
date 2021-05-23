@@ -58,11 +58,12 @@
         </div>
       @endif
   
-      @if(session('error'))
+      @if(session('errors'))
           <div class="alert alert-danger">
-              {{ session('error') }}
+              {{ implode('', $errors->all(':message ')) }}
           </div>
       @endif
+      
       <div class="card card-warning collapsed-card">
         <div class="card-header">
           <h5 class="card-title">Input Laboratorium</h5>
@@ -90,7 +91,10 @@
                 <div class="form-group">
                   <label>Pilih Kepala Laboratorium</label>
                   <select name="klab" class="custom-select form-control">
-                    <option value="" selected>Pilih Kepala Laboratorium</option>
+                      <option selected>Pilih Kepala Laboratorium</option>
+                    @foreach ($dosen as $d)
+                      <option value="{{$d->nomer_id}}">{{$d->nomer_id}} | {{$d->dosen->nama}}</option>
+                    @endforeach
                   </select>
                 </div>
               </div>

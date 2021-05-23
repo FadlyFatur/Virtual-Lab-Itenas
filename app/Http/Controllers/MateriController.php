@@ -220,10 +220,9 @@ class MateriController extends Controller
             ->withErrors($validator)
             ->withInput();
         };
-        // dd($request->get('tgl_absen'));
+        
         $createdAt = Carbon::parse($request->get('tgl_absen'));
         $createdAt->format('Y-m-d H:i:s');
-        // dd($createdAt);
         Absen::create([
             'nama' => $request->get('nama_absen'),
             'tanggal_absen' => $createdAt,
@@ -238,8 +237,6 @@ class MateriController extends Controller
 
     public function absen(Request $request)
     {
-        // dd($request->all());
-
         $validator = Validator::make($request->all(), [
             'absen' => 'required',
         ]);
@@ -274,7 +271,6 @@ class MateriController extends Controller
 
     public function inputTugas(Request $request)
     {
-        // dd($request->all());
         $validator = Validator::make($request->all(), [
             'user_id' => 'required',
             'materi_id' => 'required',

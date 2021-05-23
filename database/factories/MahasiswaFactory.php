@@ -9,5 +9,6 @@ $factory->define(mahasiswa::class, function (Faker $faker) {
     return [
         'nama' => 'fadly',
         'nrp' => '152017076',
+        'status' => 1
     ];
 });

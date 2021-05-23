@@ -25,17 +25,24 @@
                         <a class="nav-link"  href="{{ url('/') }}">Beranda</a>
                         </li>
                         <li class="nav-item">
-                        <a class="nav-link" href="{{ url('/jurusan') }}">Jurusan</a>
+                            <a class="nav-link" href="{{ url('/jurusan') }}">Jurusan</a>
                         </li>
                         <li class="nav-item">
-                        <a class="nav-link" href="{{ url('/pengajar') }}">Tim Pengajar</a>
+                            <a class="nav-link" href="{{ url('/pengajar') }}">Tim Pengajar</a>
                         </li>
                         <li class="nav-item">
-                        <a class="nav-link" href="{{ url('/berita') }}">Berita</a>
+                            <a class="nav-link" href="{{ url('/berita') }}">Berita</a>
                         </li>
-                        <li class="nav-item">
-                        <a class="nav-link" href="{{ url('/rekrutmen') }}">Rekrutmen</a></li>
-                        </li>
+                        @if (Auth::check())
+                            @if (Auth::user()->roles_id != 1)
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ url('/rekrutmen') }}">Rekrutmen</a></li>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="dropdown-item" href="{{route('home')}}">Profil</a>
+                                </li>  
+                            @endif
+                        @endif
                     </ul>
                     </div>
                     <div class="modal-footer" style="padding:2rem; padding-top: 0.75rem">
@@ -98,7 +105,7 @@
                             {{ Auth::user()->name }}
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="{{route('home')}}">Profil</a></li>
+                            <a class="dropdown-item" href="{{route('home')}}">Profil</a>
                             <a class="dropdown-item" href="{{ route('logout') }}"
                             onclick="event.preventDefault();
                                             document.getElementById('logout-form').submit();">

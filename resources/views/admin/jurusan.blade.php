@@ -58,6 +58,7 @@
               {{ session('error') }}
           </div>
       @endif
+      
       <div class="card card-info collapsed-card">
         <div class="card-header">
           <h5 class="card-title">Input Jurusan</h5>
@@ -80,7 +81,7 @@
                 </div>
                 <div class="form-group">
                   <label>Deskripsi</label>
-                  <textarea class="form-control" id="jurusan" name="deskripsi_jurusan" placeholder="Masukan Deskripsi Jurusan" required autofocus></textarea>
+                  <textarea class="form-control" id="jurusan" name="deskripsi_jurusan" placeholder="Masukan Deskripsi Jurusan" required autofocus rows="10"></textarea>
                 </div>
               </div>
               <div class="col-sm-6">
@@ -176,19 +177,19 @@
             readURL(this);
         }); 	
 
-        $('#jurusan').summernote({
-          height: 150,
-          toolbar: [
-            // [groupName, [list of button]]
-            ['style', ['bold', 'italic', 'underline', 'clear']],
-            ['font', ['strikethrough', 'superscript', 'subscript']],
-            ['fontsize', ['fontsize']],
-            ['color', ['color']],
-            ['para', ['ul', 'ol', 'paragraph']],
-            ['insert', ['link']],
-            ['view', ['fullscreen', 'codeview']],
-          ]
-        });
+        // $('#jurusan').summernote({
+        //   height: 150,
+        //   toolbar: [
+        //     // [groupName, [list of button]]
+        //     ['style', ['bold', 'italic', 'underline', 'clear']],
+        //     ['font', ['strikethrough', 'superscript', 'subscript']],
+        //     ['fontsize', ['fontsize']],
+        //     ['color', ['color']],
+        //     ['para', ['ul', 'ol', 'paragraph']],
+        //     ['insert', ['link']],
+        //     ['view', ['fullscreen', 'codeview']],
+        //   ]
+        // });
 
         var table = $('.data-table').DataTable({
           processing: true,

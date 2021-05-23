@@ -19,6 +19,7 @@ Route::get('/', 'landingController@landing')->name('landing');
 Route::get('/profil', 'landingController@profil')->name('profil');
 
 Route::get('/home', 'HomeController@index')->name('home');
+Route::post('/home/post-anggaran', 'HomeController@postAnggaran')->name('post-laporan');
 Route::get('/jurusan', 'landingController@indexJurusan')->name('jurusan');
 
 
@@ -83,11 +84,16 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth']], function (){
     Route::get('jurusan', 'AdminController@indexJurusan')->name('jurusan-admin')->middleware('admin');
     Route::get('jurusan/json', 'AdminController@getJurusan')->name('get-jurusan');
     Route::post('jurusan/post-jurusan', 'AdminController@postJurusan')->name('post-jurusan');
+    Route::get('/edit-jurusan/{id}', 'AdminController@indexEditJurusan')->name('edit-jurusan');
+    Route::post('/edit-jurusan/{id}/submit', 'AdminController@postEditJurusan')->name('post-edit-jurusan');
+
     
     Route::prefix('laboratorium')->group(function (){
         Route::get('/', 'AdminController@indexLab')->name('laboratorium')->middleware('admin');
         Route::get('json', 'AdminController@getTableLab')->name('get-Lab');
         Route::post('post-lab', 'AdminController@postLab')->name('post-Lab');
+        Route::get('/edit-lab/{id}', 'AdminController@indexEditLab')->name('edit-lab');
+        Route::post('/edit-lab/{id}/submit', 'AdminController@postEditLab')->name('post-edit-lab');
     });
     
     Route::get('status-lab/{id}', 'AdminController@statusLab')->name('status-Lab');
@@ -124,6 +130,8 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth']], function (){
     
     Route::get('/user', 'UserController@indexUser')->name('user')->middleware('admin');
     Route::get('/user/json', 'UserController@getUserData')->name('get-user');
+    Route::post('edit-user/{id}', 'UserController@postEditUser')->name('post-edit-user');
+    Route::get('get-user-detail/{id}', 'UserController@getUserDetail')->name('get-user-detail');
 
     Route::get('/mahasiswa', 'UserController@indexMahasiswa')->name('mahasiswa')->middleware('admin');
     Route::get('/mahasiswa/json', 'UserController@getMahasiswa')->name('get-mahasiswa');
@@ -136,6 +144,8 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth']], function (){
     Route::post('/dosen/import_excel', 'UserController@importDosen')->name('import-dosen');
     Route::post('/dosen/post-dosen', 'UserController@postDosen')->name('post-dosen');
     Route::post('/dosen/hapus-dosen/{id}', 'UserController@deleteDosen')->name('delete-dosen');
+    Route::post('edit-dosen/{id}', 'UserController@postEditDosen')->name('post-edit-dosen');
+    Route::get('get-dosen-detail/{id}', 'UserController@getDosenDetail')->name('get-dosen-detail');
 
     Route::get('/berita', 'AdminController@indexBerita')->name('Berita')->middleware('admin');
     Route::get('/berita/get-berita', 'AdminController@getBerita')->name('get-Berita');

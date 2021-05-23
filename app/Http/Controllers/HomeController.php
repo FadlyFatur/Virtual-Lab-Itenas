@@ -6,8 +6,13 @@ use Illuminate\Http\Request;
 use App\rekrutmen;
 use App\enroll;
 use App\tugas;
+use App\dosen;
+use App\laporan;
 use Auth;
 use App\user_rekrutmen as rekrut;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 
 class HomeController extends Controller
 {
@@ -33,6 +38,40 @@ class HomeController extends Controller
         $rekrut = rekrut::where('user_id',Auth::id())->orderBy('created_at', 'DESC')->get();
         $kelas = enroll::where('user_id',Auth::id())->latest('created_at')->get();
         $tugas = tugas::where('user_id',Auth::id())->latest('updated_at')->get();
-        return view('home', compact('kelas', 'rekrut', 'kelas', 'tugas'));
+        $dosen = dosen::where('status',1)->get();
+        $laporan = laporan::where('pengirim',Auth::user()->nomer_id)->get();
+        return view('home', compact('kelas', 'rekrut', 'kelas', 'tugas', 'dosen', 'laporan'));
+    }
+
+    public function postAnggaran(Request $request)
+    {
+        // dd($request->all());
+        $validator = Validator::make($request->all(), [
+            'deskripsi' => 'required | string | max:1000',
+            'file' => 'mimes:doc,docx,xlsx,pdf | max:10000'
+        ]);
+
+        if ($validator->fails()) { 
+            return redirect()
+            ->back()
+            ->withErrors($validator)
+            ->withInput();
+        };
+        
+        $path = public_path('file');
+        $file = "la_".Carbon::now()->format('YmdHs').$request->file('file')->getClientOriginalName();
+        $request->file('file')->move($path,$file);
+        
+        laporan::create([
+            'file' => $file,
+            'pengirim' => Auth::user()->nomer_id,
+            'penerima' => $request->get('penerima'),
+            'tipe'=>$request->get('tipe'),
+            'deskripsi'=>$request->get('deskripsi')
+        ]);
+
+        return redirect()
+                ->back()
+                ->withSuccess("Data berhasil di simpan");
     }
 }
