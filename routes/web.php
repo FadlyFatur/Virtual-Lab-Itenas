@@ -19,7 +19,8 @@ Route::get('/', 'landingController@landing')->name('landing');
 Route::get('/profil', 'landingController@profil')->name('profil');
 
 Route::get('/home', 'HomeController@index')->name('home');
-Route::post('/home/post-anggaran', 'HomeController@postAnggaran')->name('post-laporan');
+Route::post('/home/post-laporan', 'HomeController@postAnggaran')->name('post-laporan');
+Route::get('/home/download-laporan/{file}', 'HomeController@downloadLaporan')->name('download-laporan');
 Route::get('/jurusan', 'landingController@indexJurusan')->name('jurusan');
 
 

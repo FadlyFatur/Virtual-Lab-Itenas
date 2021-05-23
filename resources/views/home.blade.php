@@ -288,8 +288,10 @@
              <table class="table table-list-search">
                         <thead>
                             <tr>
+                                <th>Jenis</th>
                                 <th>Tipe</th>
                                 <th>Penerima</th>
+                                <th>Pengirim</th>
                                 <th>Tanggal Pengajuan</th>
                                 <th>Keterangan</th>
                                 <th>Status</th>
@@ -299,20 +301,26 @@
                         <tbody>
                             @forelse ($laporan as $l)
                             <tr>
+                                @if ($l->pengirim == Auth::user()->nomer_id)
+                                    <td><span class="badge badge-info">Form Dikirim</span></td>
+                                @else
+                                    <td><span class="badge badge-warning">Form Masuk</span></td>
+                                @endif
                                 @if ($l->tipe == 1)
                                     <td>Anggaran</td>
                                 @else
                                     <td>Laporan</td>
                                 @endif
-                                <td>{{$l->dosen->nama}}</td>
+                                <td>{{$l->dosenPenerima->nama}}</td>
+                                <td>{{$l->dosenPengirim->nama}}</td>
                                 <td>{{$l->created_at}}</td>
                                 <td>{{$l->deskripsi}}</td>
                                 @if ($l->status == 0)
-                                    <td>Terkirim</td>
+                                    <td><span class="badge badge-secondary">Terkirim</span></td>
                                 @else
-                                    <td>Dibaca</td>
+                                    <td><span class="badge badge-success">Terbaca</span></td>
                                 @endif
-                                <td>{{$l->file}}</td>
+                                <td><a href="{{route('download-laporan', $l->file)}}" class="btn btn-primary btn-sm"><i class="fas fa-download"></i></a></td>
                             </tr>
                             @empty
                             <tr>

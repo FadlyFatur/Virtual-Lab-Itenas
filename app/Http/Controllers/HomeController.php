@@ -39,7 +39,10 @@ class HomeController extends Controller
         $kelas = enroll::where('user_id',Auth::id())->latest('created_at')->get();
         $tugas = tugas::where('user_id',Auth::id())->latest('updated_at')->get();
         $dosen = dosen::where('status',1)->get();
-        $laporan = laporan::where('pengirim',Auth::user()->nomer_id)->get();
+        $kirim = laporan::where('pengirim',Auth::user()->nomer_id)->get();
+        $masuk = laporan::where('penerima',Auth::user()->nomer_id)->get();
+        $laporan = $kirim->merge($masuk);
+        // dd($laporan->merge($laporanMasuk));
         return view('home', compact('kelas', 'rekrut', 'kelas', 'tugas', 'dosen', 'laporan'));
     }
 
@@ -73,5 +76,14 @@ class HomeController extends Controller
         return redirect()
                 ->back()
                 ->withSuccess("Data berhasil di simpan");
+    }
+
+    public function downloadLaporan($file){
+        laporan::where('file', $file)
+                ->first()
+                ->update(['status' => 1]);
+
+        $file= public_path('file').'/'.$file;
+        return response()->download($file);
     }
 }

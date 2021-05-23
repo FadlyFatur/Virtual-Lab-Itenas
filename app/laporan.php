@@ -10,8 +10,13 @@ class laporan extends Model
         'file', 'deskripsi', 'pengirim','penerima','status', 'tipe'
     ];
 
-    public function dosen()
+    public function dosenPenerima()
     {
         return $this->belongsTo('App\dosen', 'penerima');
+    }
+
+    public function dosenPengirim()
+    {
+        return $this->belongsTo('App\dosen', 'pengirim');
     }
 }
