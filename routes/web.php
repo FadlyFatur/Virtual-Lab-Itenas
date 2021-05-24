@@ -70,7 +70,7 @@ Route::get('get-list-rekrut/{id}', 'RekrutmenController@getRekrut')->name('get-l
 // admin controller 
 Route::group(['prefix' => 'admin', 'middleware' => ['auth']], function (){
     Route::get('/', 'AdminController@index')->name('dashboard')->middleware('admin');
-    Route::get('get-lab-list/{id}', 'AdminController@getListLab')->name('get-prak-rekrut');
+    Route::get('get-lab-list/{id}', 'AdminController@getListLab')->name('get-lab-rekrut');
 
     Route::get('get-prak-rekrut/{id}', 'RekrutmenController@getPrak')->name('get-prak-rekrut');
     Route::get('rekrutmen/download/{file}','RekrutmenController@downloadFileRekrut')->name('downloadFileRekrut');

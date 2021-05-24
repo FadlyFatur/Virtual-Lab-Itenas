@@ -273,8 +273,7 @@ class AdminController extends Controller
         ]);
     }
 
-    public function indexEditJurusan($id)
-    {
+    public function indexEditJurusan($id){
         $jur = jurusan::where('id', $id)->first();
         return view('admin.edit-jurusan', compact('jur'));
     }

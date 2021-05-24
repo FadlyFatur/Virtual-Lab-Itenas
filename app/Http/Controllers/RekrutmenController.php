@@ -7,6 +7,7 @@ use App\rekrutmen;
 use App\user_rekrutmen as rekrut;
 use App\lab;
 use App\User;
+use App\praktikum;
 use DataTables;
 Use Alert;
 use Auth;
@@ -249,5 +250,13 @@ class RekrutmenController extends Controller
                 $data['message']="Ops telah terjadi kesalahan pada saat mengupdate data";
             }
             return response()->json($data, 200);
+        }
+
+        public function getPrak($id){
+            $data = praktikum::where('laboratorium',$id)
+                ->where('status', 1)
+                ->get();
+        
+            return response()->json($data);
         }
 }
