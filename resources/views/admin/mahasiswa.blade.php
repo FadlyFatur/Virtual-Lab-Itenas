@@ -97,6 +97,39 @@
         </div>
       </div>
       
+      <div class="card card-info card-edit">
+        <div class="card-header">
+          <h5 class="card-title">Edit mahasiswa</h5>
+
+          <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body pb-0">
+          <form role="form" id="form-edit" method="POST" action="" enctype="multipart/form-data">
+            @csrf
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label>NRP</label>
+                  <input type="text" class="form-control" id="nrp" name="nrp" placeholder="NRP" required autofocus>
+                </div>
+                <div class="form-group">
+                  <label>Nama</label>
+                  <input type="text" class="form-control" id="nama" name="nama" placeholder="Nama Lengkap" required autofocus> 
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- /.card-body -->
+          <div class="card-footer">
+            <button type="submit" class="btn btn-primary">Simpan</button>
+          </div>
+        </form>
+      </div>
     </div>
 
     <!-- Import Excel -->
@@ -130,7 +163,7 @@
 @section('js')
 <script type="text/javascript">
   $(function () {
-    
+    $(".card-edit").hide();
     var table = $('.data-table').DataTable({
         processing: true,
         serverSide: true,
@@ -156,6 +189,21 @@
     });
     
   });
+
+  function editMahasiswa(id) {
+    $(".card-info").hide();
+    $.ajax({
+        type: 'get',
+        url: "get-mahasiswa-detail/"+id ,
+        dataType: 'JSON',
+        success: function (resp) {
+            $(".card-edit").show();
+            $("form").attr("action", "edit-maha/"+resp.nrp);
+            $("#nrp").attr("value", resp.nrp);
+            $("#nama").attr("value", resp.nama);
+        }
+    });
+  }
 
   function hapusMaha(id) {
       swal({

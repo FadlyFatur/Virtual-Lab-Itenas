@@ -139,6 +139,8 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth']], function (){
     Route::post('/mahasiswa/import_excel', 'UserController@impotMahasiswa')->name('import-mahasiswa');
     Route::post('/mahasiswa/post-mahasiswa', 'UserController@postMahasiswa')->name('post-mahasiswa');
     Route::post('/mahasiswa/hapus-mahasiswa/{id}', 'UserController@hapusMahasiswa')->name('hapus-mahasiswa');
+    Route::get('get-mahasiswa-detail/{id}', 'UserController@getMahaDetail')->name('get-mahasiswa-detail');
+    Route::post('edit-maha/{id}', 'UserController@postEditMaha')->name('post-edit-Maha');
 
     Route::get('/dosen', 'UserController@indexDosen')->name('dosen')->middleware('admin');
     Route::get('/dosen/json', 'UserController@getDosen')->name('get-dosen');

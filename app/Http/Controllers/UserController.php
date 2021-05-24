@@ -235,6 +235,51 @@ class UserController extends Controller
         return view('admin.mahasiswa');
     }
 
+    public function getMahaDetail($id)
+    {
+        $user = mahasiswa::where('nrp',$id)->first();
+        return response()->json($user);
+    }
+
+    public function postEditMaha($id, Request $request)
+    {
+        // dd($request->all(), $id);
+        $validator = Validator::make($request->all(), [
+            'nama' => 'required | string',
+            'nrp' => 'required | integer',
+        ]);
+
+        if ($validator->fails()) { 
+            return redirect()
+            ->back()
+            ->withErrors($validator);
+        }
+
+        $user = mahasiswa::query();
+        $cekMaha = $user->where('nrp',$id)->get();
+        if($cekMaha->count() == 1 ){
+            if ($cekMaha[0]->nrp == $id) {
+                $user->where('nrp',$id)->update([
+                    'nrp' => $request->get('nrp'),
+                    'nama' => $request->get('nama'),
+                ]);
+                return redirect()
+                        ->back()
+                        ->withSuccess("Data berhasil di submit");
+            }
+        }
+
+        mahasiswa::where('nrp',$id)->update([
+            'nrp' => $request->get('nrp'),
+            'nama' => $request->get('nama'), 
+        ]);
+
+        Alert::success('Sukses', 'Data Berhasil diinput');
+        return redirect()
+            ->back()
+            ->withSuccess("Data berhasil di simpan");
+    }
+
     public function postMahasiswa(Request $request){
          // dd($request->all());
          $validator = Validator::make($request->all(), [
@@ -267,7 +312,7 @@ class UserController extends Controller
         return Datatables::collection(mahasiswa::all())
                             ->addIndexColumn()
                             ->addColumn('aksi', function ($data){
-                                return '<a class="btn btn-primary" href=""><i class="fas fa-edit"></i></a> <a onclick="hapusMaha('.$data->nrp.')" class="btn btn-danger"><i class="far fa-trash-alt"></i></a>';
+                                return '<button class="btn btn-primary" onclick="editMahasiswa('.$data->nrp.')"><i class="fas fa-edit"></i></button> <a onclick="hapusMaha('.$data->nrp.')" class="btn btn-danger"><i class="far fa-trash-alt"></i></a>';
                             })
                             ->rawColumns(['aksi'])
                             ->make(true);
