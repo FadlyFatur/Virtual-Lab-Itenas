@@ -36,7 +36,8 @@ class landingController extends Controller
     }
 
     public function indexPengajar(){
-        $data = assisten::groupBy('mahasiswa_id')->get();
+        // $data = assisten::groupBy('mahasiswa_id')->get();
+        $data = assisten::all();
         return view('landing.pengajar', compact('data'));
     }
 
