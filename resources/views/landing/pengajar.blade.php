@@ -22,7 +22,7 @@
                                         <img src="" class="img-fluid" alt="">
                                     </div>
                                     <div class="member-info mt-2">
-                                    <h4>{{$d->getUser->name}}</h4>
+                                    <h4>{{$d->getUser->nama}}</h4>
                                     @if ($d->getUser->roles == 3 || $d->getUser->roles == 0)
                                         <span>Assisten Laboratorium</span>
                                         <p><b>{{$d->praktikum->nama}}</b></p>

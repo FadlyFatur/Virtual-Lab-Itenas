@@ -55,7 +55,7 @@
                     <select name="maha" id="kodeMaha" class="custom-select form-control">
                       <option selected>Wajib dipilih</option>
                       @foreach ($maha as $m)
-                        <option value="{{$m->id}}">{{$m->nrp}} | {{$m->name}}</option>
+                        <option value="{{$m->nrp}}">{{$m->nrp}} | {{$m->nama}}</option>
                       @endforeach
                     </select>
                   </div>
@@ -64,7 +64,7 @@
                     <label>Pilih Jabatan Praktikum</label>
                     <select name="Jabatan" id="kodeJab" class="custom-select form-control">
                       <option selected>Pilih jabatan</option>
-                      <option value='2'>Kordinator Laboratorium</option>
+                      <option value='2'>Kordinator Assisten Laboratorium</option>
                       <option value='1'>Asissten Laboratorium</option>
                     </select>
                   </div>
@@ -94,7 +94,7 @@
                   <div class="form-group">
                     <label>Pilih Praktikum</label>
                     <select name="Prak" id="kodePrak" class="custom-select form-control">
-                      <option selected>Pilih Lab dahulu</option>
+                      <option selected>Pilih Laboratorium terlebih dahulu</option>
                     </select>
                   </div>
                 </div>
@@ -133,7 +133,7 @@
                   <div class="card-body pt-0">
                     <div class="row">
                       <div class="col-7">
-                        <h2 class="lead"><b>{{$d->getUser->name}}</b></h2>
+                        <h2 class="lead"><b>{{$d->getUser->nama}}</b></h2>
                         @if ($d->role == 1)
                           <p class="text-muted text-sm mb-0"><b>Asisten Laboratorium</b></p>
                         @else

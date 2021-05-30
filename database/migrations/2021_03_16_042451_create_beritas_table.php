@@ -19,6 +19,7 @@ class CreateBeritasTable extends Migration
             $table->string('slug');
             $table->text('deskripsi');
             $table->string('img')->nullable();
+            $table->foreignId('penulis')->nullable();
             $table->boolean('status')->default(1);
             $table->timestamps();
         });

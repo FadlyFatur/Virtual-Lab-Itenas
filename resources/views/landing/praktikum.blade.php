@@ -83,10 +83,11 @@
                     <label>Tahun Ajaran</label>
                     <select name="tahun_ajaran" class="custom-select form-control" required>
                       <option selected>Pilih salah satu</option>
-                      <option value="2019-2020">2019-2020</option>
                       <option value="2020-2021">2020-2021</option>
                       <option value="2021-2022">2021-2022</option>
                       <option value="2022-2023">2022-2023</option>
+                      <option value="2022-2023">2023-2024</option>
+                      <option value="2022-2023">2024-2025</option>
                     </select>
                   </div>
                 </div>
@@ -224,7 +225,9 @@
                               @else
                                 <p>-</p>
                               @endif
-                              <p>Koor Lab</p><hr>
+                              @if ($d->koor_dosen_prak)
+                                <p>{{$d->getKoorDosen->nama}}</p><hr>
+                              @endif
                               <p>Semester {{$d->semester}} <br> {{$d->tahun_ajaran}}</p>
                           </div>
                         </div>
@@ -235,10 +238,14 @@
                             <p class="card-text"><small class="text-muted">Tanggal Dibuat : {{$d->created_at->format('d F Y')}}</small></p>
                           </div>
                           <div class="card-footer d-flex justify-content-center">
-                            @if ($enroll->where('praktikum_id', $d->id)->count() > 0 || $assisten->where('praktikum_id', $d->id)->count() > 0 ||$role == 0)
+                            @if ($enroll->where('praktikum_id', $d->id)->count() > 0 || $assisten->where('praktikum_id', $d->id)->count() > 0 || $dosenRole->where('role',1)->contains('lab_id', $lab->id) || $dosenRole->where('role',2)->contains('praktikum_id', $d->id) || $role == 0)
                               <a href="{{route('detail-materi',$d->id)}}"><button class="btn btn-info" style="color: #fff;">Masuk</button></a>
                             @else
-                              <a href="{{route('daftar-prak',$d->id)}}"><button class="btn btn-success">Daftar</button></a>
+                              @if (Auth::user()->roles_id != 3)
+                                <a href="{{route('daftar-prak',$d->id)}}"><button class="btn btn-success">Daftar</button></a>\
+                              @else
+                                <p>Hubungi Admin untuk akses dosen</p>
+                              @endif
                             @endif
                           </div>
                         </div>

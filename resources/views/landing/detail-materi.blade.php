@@ -362,15 +362,15 @@
         <div class="row">
             <div class="col-md-3">
                 <ul class="list-group">
-                    @if ($role == 0 || $assisten->where('praktikum_id', $id)->count() > 0 )
+                    @if ($role == 0 || $assisten->where('praktikum_id', $id)->count() > 0 || $dosenRole->where('role',2)->contains('praktikum_id', $d->id) )
                       <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#exampleModal"><i class="fa fa-plus"></i> Tambah Materi</button>
                       <button class="btn btn-primary" data-toggle="modal" data-target="#TambahAbsen"><i class="fa fa-plus"></i> Tambah Absen</button>
                     @endif
                     <br>
-                    @if ($role != 1)
+                    @if ($role != 1 )
                       @if (count($Cekabsen) > 0)
                         <li class="list-group-item">
-                            <a href="#" id="absen" data-toggle="modal" data-target="#absen"><i class="fa fa-list" aria-hidden="true"></i> Absen</a>
+                            <a href="#absen" id="absen" data-toggle="modal" data-target="#absen"><i class="fa fa-list" aria-hidden="true"></i> Absen</a>
                         </li>
                       @endif
                     @endif
@@ -392,7 +392,7 @@
             </div>
 
             <div class="col-md-8 side-line">
-                @if ($role == 0 || $assisten->where('praktikum_id', $id)->count() > 0 )
+                @if ($role == 0 || $assisten->where('praktikum_id', $id)->count() > 0 || $dosenRole->where('role',2)->contains('praktikum_id', $d->id) )
                   <div class="pull-left" id="input_area">
                       <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#input_materi">Input Detail Materi</button>
                       <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#detail_materi">List Detail Materi</button>
@@ -407,16 +407,19 @@
                           <h3>Assisten Laboratorium</h3>
                           <ul class="list-group list-group-flush">
                             @forelse ($listAsisten as $la)
-                              <li class="list-group-item">{{$la->getUser->name}} | {{$la->getUser->nrp}}</li>
+                              <li class="list-group-item">{{$la->getUser->nama}} | {{$la->getUser->nrp}}</li>
                             @empty
                               Belum ada assisten
                             @endforelse
                           </ul><br>
                         <hr><div class="d-flex justify-content-center">
-                          <button class="btn btn-secondary">Silahkan Pilih Materi</button>
+                          @if ($data->count() > 0)
+                            <button class="btn btn-secondary">Silahkan Pilih Materi</button>
+                          @else
+                            <button class="btn btn-secondary">Belum Ada Materi</button>
+                          @endif
                         </div>
                     </div>
-                    
                 </div>
             </div>
         </div>

@@ -81,32 +81,26 @@
                     <img src="{{asset('avatar-icon-6.jpg')}}" alt="user" width="100">
                     <h4>{{Auth::user()->name}}</h4>
                     @switch(Auth::user()->roles_id)
+                        @case(1)
+
+                        <p>User</p>
+                        @break
+
                         @case(2)
-                            <p>Mahasiswa</p>
+                        
+                            @if ($roleUser == true)
+                                <p>Mahasiswa | Assisten Laboratorium</p>
+                            @else
+                                <p>Mahasiswa</p>
+                            @endif
                             @break
 
                         @case(3)
                             <p>Dosen</p>
                             @break
                         
-                        @case(4)
-                            <p>Dosen | Kepala Laboratorium</p>
-                            @break
-                        
-                        @case(5)
-                            <p>Dosen | Koordinator Praktikum</p>
-                            @break
-
-                        @case(6)
-                            <p>Mahasiswa | Assisten Laboratorium</p>
-                            @break
-
-                        @case(7)
-                            <p>Kaprodi</p>
-                            @break
-
                         @default
-                            <p>User</p>
+                            <p>Admin</p>
                     @endswitch
                 </div>
                 <div class="right">
@@ -331,43 +325,82 @@
                         </tbody>
                     </table>   
             </div>
-        </div><br><hr>
-    @endif
-
-    <div class="row mt-1">
-        <div class="col-md-12">
-            @if (Count($kelas) != 0)
-                <h3>Praktikum Saya</h3>
-                <div class="row">
-                    @foreach ($kelas as $k)
-                    <div class="col-md-3 tours">
-                        <div class="tourcard">
-                            <figure>
-                                <div class="tourpic">
-                                    <img width="320" height="180" src="{{asset($k->praktikum->lab->thumbnail)}}">
-                                    <span class="tourcat">Praktikum</span>                             
-                                    <span class="tourday hot">{{$k->praktikum->lab->nama}}</span>
-                                </div>
-                                <figcaption>
-                                <h3 class="entry-title">
-                                    <a href="{{route('detail-materi',$k->praktikum_id)}}">{{$k->praktikum->nama}}</a></h3>
-                                <span class="description">{{substr($k->praktikum->deskripsi,0,150)}}</span>
-                                </figcaption>
-                                <div class="tourbtn">
-                                    <a href="{{route('detail-materi',$k->praktikum_id)}}" class="btn btn-sm">
-                                        <i class="fa fa-arrow-right fa-fw"></i><span>Masuk</span>
-                                    </a>
-                                </div>
-                            </figure>
-                        </div>
-                    </div>
-                    @endforeach
-                </div>
-            @else
-                <h3>Belum Ada Praktikum</h3>
-            @endif
         </div>
-    </div><br>
+    @endif
+    
+    @if (Auth::user()->roles_id == 2)
+        <div class="row mt-1">
+            <div class="col-md-12">
+                @if (Count($kelas) != 0)
+                <br><hr><h3>Praktikum Saya</h3>
+                    <div class="row">
+                        @foreach ($kelas as $k)
+                        <div class="col-md-3 tours">
+                            <div class="tourcard">
+                                <figure>
+                                    <div class="tourpic">
+                                        <img width="320" height="180" src="{{asset($k->praktikum->lab->thumbnail)}}">
+                                        <span class="tourcat">Praktikum</span>                             
+                                        <span class="tourday hot">{{$k->praktikum->lab->nama}}</span>
+                                    </div>
+                                    <figcaption>
+                                    <h3 class="entry-title">
+                                        <a href="{{route('detail-materi',$k->praktikum_id)}}">{{$k->praktikum->nama}}</a></h3>
+                                    <span class="description">{{substr($k->praktikum->deskripsi,0,150)}}</span>
+                                    </figcaption>
+                                    <div class="tourbtn">
+                                        <a href="{{route('detail-materi',$k->praktikum_id)}}" class="btn btn-sm">
+                                            <i class="fa fa-arrow-right fa-fw"></i><span>Masuk</span>
+                                        </a>
+                                    </div>
+                                </figure>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                @else
+                <br><hr><h3>Belum Ada Praktikum</h3>
+                @endif
+            </div>
+        </div><br>
+
+        @if ($roleUser == true)
+        <div class="row mt-1">
+            <div class="col-md-12">
+                @if (Count($assistenKelas) != 0)
+                <br><hr><h3>Praktikum Asissten</h3>
+                    <div class="row">
+                        @foreach ($assistenKelas as $k)
+                        <div class="col-md-3 tours">
+                            <div class="tourcard">
+                                <figure>
+                                    <div class="tourpic">
+                                        <img width="320" height="180" src="{{asset($k->praktikum->lab->thumbnail)}}">
+                                        <span class="tourcat">Praktikum</span>                             
+                                        <span class="tourday hot">{{$k->praktikum->lab->nama}}</span>
+                                    </div>
+                                    <figcaption>
+                                    <h3 class="entry-title">
+                                        <a href="{{route('detail-materi',$k->praktikum_id)}}">{{$k->praktikum->nama}}</a></h3>
+                                    <span class="description">{{substr($k->praktikum->deskripsi,0,150)}}</span>
+                                    </figcaption>
+                                    <div class="tourbtn">
+                                        <a href="{{route('detail-materi',$k->praktikum_id)}}" class="btn btn-sm">
+                                            <i class="fa fa-arrow-right fa-fw"></i><span>Masuk</span>
+                                        </a>
+                                    </div>
+                                </figure>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                @else
+                <br><hr><h3>Belum Ada Praktikum</h3>
+                @endif
+            </div>
+        </div><br>
+        @endif
+    @endif
 
     
         

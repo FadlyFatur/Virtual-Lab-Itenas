@@ -332,8 +332,8 @@ function showRekrut(id) {
               </div>
 
               <div class="card-footer">
-                <button onclick="accept(`+resp.id+`,`+resp.user_id+`)" type="button" class="btn btn-danger"><i class="fa fa-check"></i> Diterima</button>
-                <button onclick="denied(`+resp.id+`,`+resp.user_id+`)" type="button" class="btn btn-success"><i class="fa fa-ban"></i> Ditolak</button>
+                <button onclick="accept(`+resp.id+`, `+resp.user_id+`, `+resp.nrp+`)" type="button" class="btn btn-danger"><i class="fa fa-check"></i> Diterima</button>
+                <button onclick="denied(`+resp.id+`, `+resp.user_id+`)" type="button" class="btn btn-success"><i class="fa fa-ban"></i> Ditolak</button>
               </div>`;
        }else{
           body =`<div class="card-header">
@@ -390,7 +390,7 @@ function showRekrut(id) {
     })
 }
 
-function accept(id, userId) {
+function accept(id, userId, nrp) {
 
   swal({
       title: "Apakah Yakin?",
@@ -410,7 +410,7 @@ function accept(id, userId) {
         }).then(function() {
           $.ajax({
             type:'GET',
-            url:"rekrutmen/"+id+"/rekrutmen-accept/"+userId,
+            url:"rekrutmen/"+id+"/rekrutmen-accept/"+userId+"/"+nrp,
             success:function (resp) {
               console.log('berhasil');
               $('#card-rekrutmen').empty();

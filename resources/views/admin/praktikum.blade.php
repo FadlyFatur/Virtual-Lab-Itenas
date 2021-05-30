@@ -185,6 +185,32 @@
                     <option value="2022-2023">2022-2023</option>
                   </select>
                 </div>
+
+                <div class="form-group">
+                  <label>Koordinator Praktikum (Dosen)</label>
+                  @php
+                    $data = App\dosen::all();
+                  @endphp
+                  <select name="koor_dosen" class="custom-select form-control">
+                    <option value= "" selected>Pilih salah satu</option>
+                    @foreach ($data as $d)
+                      <option value= "{{$d->nomer_id}}">{{$d->nama}}</option>
+                    @endforeach
+                  </select>
+                </div>
+
+                {{-- <div class="form-group">
+                  <label>Koordinator Assisten</label>
+                  @php
+                    $data2 = App\assisten::all();
+                  @endphp
+                  <select name="koor_asis" class="custom-select form-control">
+                    <option value="" selected>Pilih salah satu</option>
+                    @foreach ($data2 as $d)
+                      <option value= "{{$d->nrp}}">{{$d->nama}}</option>
+                    @endforeach
+                  </select>
+                </div> --}}
               </div>
             </div>
           </div>
@@ -210,6 +236,8 @@
                     <th>Deskripsi</th>
                     <th>Tahun Ajaran</th>
                     <th>Kelas</th>
+                    <th>Koor Assisten</th>
+                    <th>Koor Praktikum</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
@@ -222,6 +250,8 @@
                 <th>Deskripsi</th>
                 <th>Tahun Ajaran</th>
                 <th>Kelas</th>
+                <th>Koor Assisten</th>
+                <th>Koor Praktikum</th>
                 <th>Aksi</th>
               </tr>
             </tfoot>
@@ -315,6 +345,8 @@
               {data: 'deskripsi'},
               {data: 'th'},
               {data: 'kelas'},
+              {data: 'koor_assisten'},
+              {data: 'koor_dosen'},
               {data: 'aksi', orderable: false, searchable: false}
           ]
       });
@@ -332,7 +364,7 @@
       .then((willDelete) => {
         if (willDelete) {
           $.ajax({
-                type: 'POST',
+                type: 'GET',
                 url: "delete-prak/"+id ,
                 // data: {_token: CSRF_TOKEN},
                 dataType: 'JSON',

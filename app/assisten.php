@@ -17,7 +17,7 @@ class assisten extends Model
 
     public function getUser()
     {
-        return $this->belongsTo('App\User', 'mahasiswa_id');
+        return $this->belongsTo('App\mahasiswa', 'mahasiswa_id');
     }
 
 }

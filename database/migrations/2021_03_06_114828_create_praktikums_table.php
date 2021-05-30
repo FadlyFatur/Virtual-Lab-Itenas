@@ -23,8 +23,8 @@ class CreatePraktikumsTable extends Migration
             $table->string('tahun_ajaran');
             $table->foreignId('laboratorium');
             $table->foreignId('kelas')->nullable();
-            $table->foreignId('koor_lab')->nullable();
-            $table->foreignId('koor_prak')->nullable();
+            $table->string('koor_dosen_prak')->nullable();
+            $table->string('koor_assisten')->nullable();
             $table->timestamps();
         });
     }

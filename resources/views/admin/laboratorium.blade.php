@@ -143,6 +143,7 @@
                     <th>Status</th>
                     <th>Jurusan</th>
                     <th>Laboratorium</th>
+                    <th>Kepala Lab</th>
                     <th>Deskripsi</th>
                     <th>Aksi</th>
                 </tr>
@@ -154,6 +155,7 @@
                 <th>Status</th>
                 <th>Jurusan</th>
                 <th>Laboratorium</th>
+                <th>Kepala Lab</th>
                 <th>Deskripsi</th>
                 <th>Aksi</th>
               </tr>
@@ -233,6 +235,7 @@
             },
             {data: 'jurusan'},  
             {data: 'nama'},
+            {data: 'klab'},
             {data: 'deskripsi'},
             {data: 'aksi', orderable: false, searchable: false}
         ]

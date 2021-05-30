@@ -18,8 +18,6 @@ class CreateMahasiswasTable extends Migration
             $table->string('nama');
             $table->boolean('status')->default(0);
             $table->timestamps();
-
-           
         });
     }
 

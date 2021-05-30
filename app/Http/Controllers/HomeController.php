@@ -8,6 +8,7 @@ use App\enroll;
 use App\tugas;
 use App\dosen;
 use App\laporan;
+use App\assisten;
 use Auth;
 use App\user_rekrutmen as rekrut;
 use Illuminate\Support\Facades\Validator;
@@ -34,16 +35,32 @@ class HomeController extends Controller
     
     public function index()
     {
-        $kelas = enroll::where('user_id',Auth::id())->get();
+        $enroll = enroll::query();
+        $kelas = $enroll->where('user_id',Auth::id())->get();
+        $kelasTerbaru = $enroll->where('user_id',Auth::id())->latest('created_at')->get();
+
+        $assistenKelas = assisten::where('mahasiswa_id',Auth::user()->nrp)->get();
+
         $rekrut = rekrut::where('user_id',Auth::id())->orderBy('created_at', 'DESC')->get();
-        $kelas = enroll::where('user_id',Auth::id())->latest('created_at')->get();
+        
         $tugas = tugas::where('user_id',Auth::id())->latest('updated_at')->get();
-        $dosen = dosen::where('status',1)->get();
-        $kirim = laporan::where('pengirim',Auth::user()->nomer_id)->get();
-        $masuk = laporan::where('penerima',Auth::user()->nomer_id)->get();
+        
+        $dosen = dosen::where('nomer_id','!=',Auth::user()->nomer_id)->get();
+
+        $lap = laporan::query();
+        $kirim = $lap->where('pengirim',Auth::user()->nomer_id)->get();
+        $masuk = $lap->where('penerima',Auth::user()->nomer_id)->get();
         $laporan = $kirim->merge($masuk);
+
+        $role = Auth::user()->roles_id;
+        $roleUser = NULL;
+        if ($role = 2 && assisten::where('mahasiswa_id',Auth::user()->nrp)->exists()) {
+            $roleUser = true; 
+            // dd($assisten);
+        }
+
         // dd($laporan->merge($laporanMasuk));
-        return view('home', compact('kelas', 'rekrut', 'kelas', 'tugas', 'dosen', 'laporan'));
+        return view('home', compact('kelas', 'rekrut', 'kelasTerbaru', 'tugas', 'dosen', 'laporan','roleUser','assistenKelas'));
     }
 
     public function postAnggaran(Request $request)

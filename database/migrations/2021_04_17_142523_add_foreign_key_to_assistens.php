@@ -15,8 +15,8 @@ class AddForeignKeyToAssistens extends Migration
     {
         Schema::table('assistens', function (Blueprint $table) {
             $table->foreign('mahasiswa_id')
-                ->references('id')
-                ->on('users')
+                ->references('nrp')
+                ->on('mahasiswas')
                 ->onDelete('restrict')
                 ->onUpdate('cascade');
             $table->foreign('praktikum_id')

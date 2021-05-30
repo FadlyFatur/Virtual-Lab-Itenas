@@ -17,6 +17,7 @@ use App\kelas_praktikum as kelas;
 use App\file_materi as fmateri;
 use App\assisten;
 use App\berita;
+use App\dosen_role;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
@@ -120,7 +121,7 @@ class AdminController extends Controller
     public function indexAsisten(){
         $data = assisten::all();
         $jur = jurusan::all();
-        $maha = user::where('nrp','!=',NULL)->where('roles_id','!=', 6)->where('roles_id','!=', 7)->get();
+        $maha = mahasiswa::where('status','!=',0)->get();
         return view('admin.asisten', compact('data','jur', 'maha'));
     }
 
@@ -153,9 +154,15 @@ class AdminController extends Controller
             'praktikum_id' => $request->get('Prak'),
         ]);
 
-        User::where('id', $request->get('maha'))
-                ->first()
-                ->update(['roles_id' => 6]);
+        if ($request->get('Jabatan') == 2) {
+            praktikum::where('id',$request->get('Prak'))->update([
+                'koor_assisten' => $request->get('maha')
+            ]);
+        }
+
+        // User::where('id', $request->get('maha'))
+        //         ->first()
+        //         ->update(['roles_id' => 6]);
 
         return redirect()
             ->back()
@@ -166,8 +173,7 @@ class AdminController extends Controller
                 ->withError("Data gagal di submit");
     }
 
-    public function hapusAsisten($id)
-    {
+    public function hapusAsisten($id){
         $asis = assisten::where('id', $id)->first();
         
         $delete = $asis->delete();
@@ -278,8 +284,7 @@ class AdminController extends Controller
         return view('admin.edit-jurusan', compact('jur'));
     }
 
-    public function postEditJurusan($id, Request $request)
-    {
+    public function postEditJurusan($id, Request $request){
         // dd($id, $request->all());
         if ($request->has('thumb')){
             $validator = Validator::make($request->all(), [
@@ -345,13 +350,15 @@ class AdminController extends Controller
 
     public function postLab(Request $request){
         // dd($request->all());
+
         if ($request->has('thumb')){
             $validator = Validator::make($request->all(), [
                 'nama_lab' => 'required | string | max:100',
                 'deskripsi_lab' => 'required | string | max:1000',
                 'thumb' => 'required|mimes:jpg,png,jpeg|max:7000', // max 7MB
-                'kode' => 'required'
+                'kode' => 'required',
             ]);
+
             if ($validator->fails()) { 
                 return redirect()
                 ->back()
@@ -362,7 +369,7 @@ class AdminController extends Controller
             $path = Storage::putFileAs('images/thumbnail', $request->file('thumb'), $name);
 
             if ($request->get('klab') != null) {
-                lab::create([
+                $lab = lab::create([
                     'nama' => $request->get('nama_lab'),
                     'slug' => Str::slug($request->get('nama_lab'),'-'),
                     'deskripsi' => $request->get('deskripsi_lab'),
@@ -370,6 +377,16 @@ class AdminController extends Controller
                     'jurusan'=>$request->get('kode'),
                     'kepala_lab'=>$request->get('klab')
                 ]);
+
+                // dd($lab->id);
+                
+                dosen_role::create([
+                    'role' => 1,
+                    'dosen_id' => $request->get('klab'),
+                    'jurusan_id' => $request->get('kode'),
+                    'lab_id' => $lab->id
+                ]);
+
             }else {
                 lab::create([
                     'nama' => $request->get('nama_lab'),
@@ -388,24 +405,23 @@ class AdminController extends Controller
                 ->withErrors("Data gagal di submit");
     }
 
-    public function indexEditLab($id)
-    {
+    public function indexEditLab($id){
         $lab = lab::where('id',$id)->first();
         $data = jurusan::all();
         $dosen = user::whereIn('roles_id',[3,4,5])->get();
         return view('admin.edit-lab', compact('data','lab', 'dosen'));
     }
 
-    public function postEditLab($id, Request $request)
-    {
+    public function postEditLab($id, Request $request){
         // dd($id, $request->all());
         if ($request->has('thumb')){
             $validator = Validator::make($request->all(), [
                 'nama_lab' => 'required | string | max:100',
                 'deskripsi_lab' => 'required | string | max:1000',
-                'thumb' => 'required|mimes:jpg,png,jpeg|max:7000', // max 7MB
+                'thumb' => 'required|mimes:jpg,png,jpeg| max:7000', // max 7MB
                 'kode' => 'required'
             ]);
+
             if ($validator->fails()) { 
                 return redirect()
                 ->back()
@@ -424,6 +440,11 @@ class AdminController extends Controller
                     'jurusan'=>$request->get('kode'),
                     'kepala_lab'=>$request->get('klab')
                 ]);
+
+                dosen_role::where('lab_id',$id)->update([
+                    'dosen_id' => $request->get('klab'),
+                ]);
+
             }else {
                 lab::where('id',$id)->update([
                     'nama' => $request->get('nama_lab'),
@@ -456,6 +477,11 @@ class AdminController extends Controller
                     'jurusan'=>$request->get('kode'),
                     'kepala_lab'=>$request->get('klab')
                 ]);
+
+                dosen_role::where('lab_id',$id)->update([
+                    'dosen_id' => $request->get('klab'),
+                ]);
+
             }else {
                 lab::where('id',$id)->update([
                     'nama' => $request->get('nama_lab'),
@@ -478,13 +504,17 @@ class AdminController extends Controller
         return Datatables::of($data)
             ->addIndexColumn()
             ->addColumn('aksi', function ($data){
-                return '<a target="_blank" href="'.asset($data->thumbnail).'" class="edit btn btn-secondary btn-sm"><i class="far fa-image"></i></a> <a target="_blank" href="'.route('praktikum-list', $data->slug).'" class="edit btn btn-info btn-sm"><i class="fas fa-eye"></i></a> <a class="btn btn-primary btn-sm" href="'.route('edit-lab', $data->id).'"><i class="fas fa-edit"></i></a> <a onclick="hapusLab('.$data->id.')" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></a> <a target="_blank" href="'.route('praktikumAdmin', $data->slug).'" class="edit btn btn-primary btn-sm"><i class="fas fa-book-open"></i></a>';
+                return '<a target="_blank" href="'.asset($data->thumbnail).'" class="edit btn btn-secondary btn-sm"><i class="far fa-image"></i></a> <a target="_blank" href="'.route('praktikum-list', $data->slug).'" class="edit btn btn-info btn-sm"><i class="fas fa-eye"></i></a> <a class="btn btn-primary btn-sm" href="'.route('edit-lab', $data->id).'"><i class="fas fa-edit"></i></a> <a target="_blank" href="'.route('praktikumAdmin', $data->slug).'" class="edit btn btn-primary btn-sm"><i class="fas fa-book-open"></i></a>';
             })
             ->addColumn('jurusan', function ($data){
                 $jur = $data->jurusan()->first()->nama;
                 return $jur;
             })
-            ->rawColumns(['aksi', 'jurusan'])
+            ->addColumn('klab', function ($data){
+                $klab = $data->klab()->first()->nama;
+                return $klab;
+            })
+            ->rawColumns(['aksi', 'jurusan', 'klab'])
             ->make(true);
     }
 
@@ -539,6 +569,7 @@ class AdminController extends Controller
     }
 
     public function postPrak(Request $request, $id){
+        // dd($request->all());
         $validator = Validator::make($request->all(), [
             'nama_praktikum' => 'required | string | max:100',
             'deskripsi' => 'string | max:1000',
@@ -552,24 +583,59 @@ class AdminController extends Controller
         }
 
         if ($request->get('kelas') != null) {
-            praktikum::create([
+            $data = praktikum::create([
                 'nama' => $request->get('nama_praktikum'),
                 'slug' => Str::slug($request->get('nama_praktikum'),'-'),
                 'deskripsi' => $request->get('deskripsi'),
                 'semester' => $request->get('semester'),
                 'tahun_ajaran' => $request->get('tahun_ajaran'),
                 'laboratorium' => $id,
-                'kelas' => $request->get('kelas')
+                'kelas' => $request->get('kelas'),
+                'koor_dosen_prak' => $request->get('koor_dosen'),
+                // 'koor_assisten' => $request->get('koor_asis')
             ]);
+            
+            if ($request->get('koor_dosen') != NULL) {
+                dosen_role::create([
+                    'role' => 2,
+                    'dosen_id' => $request->get('koor_dosen'),
+                    'lab_id' => $id,
+                    'praktikum_id' => $data->id
+                ]);
+            }
+
+            // if ($request->get('koor_asis') != NULL) {
+            //     assisten::where('mahasiswa_id', $request->get('koor_asis'))->where('praktikum_id', $data->id)->update([
+            //         'role' => 2,
+            //     ]);
+            // }
+
         }else {
-            praktikum::create([
+            $data = praktikum::create([
                 'nama' => $request->get('nama_praktikum'),
                 'slug' => Str::slug($request->get('nama_praktikum'),'-'),
                 'deskripsi' => $request->get('deskripsi'),
                 'semester' => $request->get('semester'),
                 'tahun_ajaran' => $request->get('tahun_ajaran'),
                 'laboratorium' => $id,
+                'koor_dosen_prak' => $request->get('koor_dosen'),
+                // 'koor_assisten' => $request->get('koor_asis')
             ]);
+
+            if ($request->get('koor_dosen') != NULL) {
+                dosen_role::create([
+                    'role' => 2,
+                    'dosen_id' => $request->get('koor_dosen'),
+                    'lab_id' => $id,
+                    'praktikum_id' => $data->id
+                ]);
+            }
+
+            // if ($request->get('koor_asis') != NULL) {
+            //     assisten::where('mahasiswa_id', $request->get('koor_asis'))->where('praktikum_id', $data->id)->update([
+            //         'role' => 2,
+            //     ]);
+            // }
         }
 
         return redirect()
@@ -582,10 +648,7 @@ class AdminController extends Controller
         return Datatables::of($data)
             ->addIndexColumn()
             ->addColumn('aksi', function ($data){
-                return '<a target="_blank" href="'.route('detail-materi',$data->id).'" class="edit btn btn-info btn-sm"><i class="fas fa-eye"></i></a> <a class="btn btn-primary btn-sm" href=""><i class="fas fa-edit"></i></a> <a onclick="hapusPrak('.$data->id.')" class="btn btn-danger btn-sm"><i class="far fa-trash-alt" aria-hidden="true"></i></a> <a target="_blank" href="'.route('materi', $data->id).'" class="edit btn btn-info btn-sm"><i class="fas fa-book-open"></i></a>';
-            })
-            ->addColumn('materi', function ($data){
-                return '';
+                return '<a target="_blank" href="'.route('detail-materi',$data->id).'" class="edit btn btn-info btn-sm"><i class="fas fa-eye"></i></a> <a class="btn btn-primary btn-sm" href=""><i class="fas fa-edit"></i></a> <a target="_blank" href="'.route('materi', $data->id).'" class="edit btn btn-info btn-sm"><i class="fas fa-book-open"></i></a>';
             })
             ->addColumn('th', function ($data){
                 return $data->semester.'/'.$data->tahun_ajaran;
@@ -593,7 +656,23 @@ class AdminController extends Controller
             ->editColumn('kelas', function ($data){
                 return $data->getKelas->nama;
             })
-            ->rawColumns(['aksi','th','materi'])
+            ->addColumn('koor_assisten', function ($data){
+                if ($data->koor_assisten) {
+                    $koor = $data->getKoorAssisten->nama;
+                    return $koor;
+                }else{
+                    return $koor = '-';
+                }
+            })
+            ->addColumn('koor_dosen', function ($data){
+                if ($data->koor_dosen_prak) {
+                    $koor = $data->getKoorDosen->nama;
+                    return $koor;
+                }else{
+                    return $koor = '-';
+                }
+            })
+            ->rawColumns(['aksi','th', 'koor_assisten', 'koor_dosen'])
             ->make(true);
     }
 

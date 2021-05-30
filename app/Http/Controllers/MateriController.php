@@ -12,6 +12,7 @@ use App\assisten;
 use App\Absen;
 use App\absen_mahasiswa;
 use App\tugas;
+use App\dosen_role;
 Use Alert;
 use Auth;
 use Carbon\Carbon;
@@ -27,6 +28,7 @@ class MateriController extends Controller
     {
         // dd($request->all());
         $lab = lab::where('slug',$slug)->first();
+        // dd($lab);
         $role = Auth::user()->roles_id;
         $filter = praktikum::select('tahun_ajaran')
                             ->where('laboratorium',$lab->id)
@@ -40,11 +42,14 @@ class MateriController extends Controller
         }else {
             $data = praktikum::where('laboratorium',$lab->id)->where('status',1)->latest()->get();
         }
+
         // dd($filter);
         $enroll = enroll::where('user_id', Auth::user()->id)->get();
-        $assisten = assisten::where('mahasiswa_id', Auth::user()->id)->get();
+        $assisten = assisten::where('mahasiswa_id', Auth::user()->nrp)->get();
+        $dosenRole = dosen_role::where('dosen_id', Auth::user()->nomer_id)->get();
 
-        return view('landing.praktikum', compact('lab', 'data', 'enroll', 'role', 'filter', 'assisten'));
+        // dd($dosenRole->where('role',1)->contains('lab_id', $lab->id));
+        return view('landing.praktikum', compact('dosenRole', 'lab', 'data', 'enroll', 'role', 'filter', 'assisten'));
     }
 
     public function indexMateri($id)
@@ -53,7 +58,8 @@ class MateriController extends Controller
         $prak = praktikum::where('id',$id)->first();
         // dd($prak->id);
         $data = Materi::where('praktikum_id',$id)->get();
-        $assisten = assisten::where('mahasiswa_id', Auth::user()->id)->get();
+        $assisten = assisten::where('mahasiswa_id', Auth::user()->nrp)->get();
+        $dosenRole = dosen_role::where('dosen_id', Auth::user()->nomer_id)->get();
         $Cekabsen = Absen::where('praktikum_id',$id)->get();
         $absen = absen_mahasiswa::where('user_id',Auth::id())->orderBy('absen_id','asc')->get();
         $listAsisten = assisten::where('praktikum_id', $id)->get();
@@ -67,7 +73,7 @@ class MateriController extends Controller
         $materi = Materi::where('praktikum_id',$id)->pluck('nama', 'id');
 
         // dd($materi);
-        return view('landing.detail-materi',compact('materi', 'listAsisten', 'data','prak', 'role','assisten', 'id','Cekabsen','absen','dataAbsen_mhs'));
+        return view('landing.detail-materi',compact('dosenRole', 'materi', 'listAsisten', 'data','prak', 'role','assisten', 'id','Cekabsen','absen','dataAbsen_mhs'));
     }
 
     public function daftarPrak($id)

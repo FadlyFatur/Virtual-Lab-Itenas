@@ -67,17 +67,16 @@ class RekrutmenController extends Controller
         public function getTableRek(){
             $data = rekrutmen::orderBy('created_at','desc')->get();
             return Datatables::of($data)
+                    ->addIndexColumn()
                     ->editColumn('praktikum_id', function ($data){
                         return $data->getPrak->nama;
                     })
-                    ->addIndexColumn()
                     ->addColumn('aksi', function ($data){
                         return '<a href="'.route('downloadFileSyarat',$data->file).'" class="btn btn-warning btn-sm"><i class="fas fa-download"></i></a> <a class="btn btn-primary btn-sm" href=""><i class="fas fa-edit"></i></a> <button title="list" onclick="getList('.$data->id.')" class="btn btn-info btn-sm"><i class="fa fa-eye"></i></button>';
                         
                     })
                     ->addColumn('total', function ($data){
                         return rekrut::where('rekrut_id', $data->id)->count();
-                        
                     })
                     ->rawColumns(['aksi','file'])
                     ->make(true);
@@ -155,7 +154,7 @@ class RekrutmenController extends Controller
                         return $data->getUser->name;
                     })
                     ->editColumn('nrp', function ($data){
-                        return $data->getUser->nomer_id;
+                        return $data->getUser->nrp;
                     })
                     ->editColumn('email', function ($data){
                         return $data->getUser->email;
@@ -184,7 +183,7 @@ class RekrutmenController extends Controller
                 'id' => $rekrut->rekrut_id,
                 'user_id' => $rekrut->user_id,
                 'nama' => $rekrut->getUser->name,
-                'nrp' => $rekrut->getUser->nomer_id,
+                'nrp' => $rekrut->getUser->nrp,
                 'email' => $rekrut->getUser->email,
                 'bio' => $rekrut->biodata,
                 'transkip' => $rekrut->transkip,
@@ -195,25 +194,26 @@ class RekrutmenController extends Controller
             return response()->json($data);
         }
     
-        public function acceptRekrut($id, $userId){
+        public function acceptRekrut($id, $userId, $nrp){
             $rekrut = rekrutmen::where('id',$id)->first();
     
+            assisten::create([
+                    'role' => 1,
+                    'mahasiswa_id' => $nrp,
+                    'praktikum_id' => $rekrut->getPrak->id,
+                    ]);
+
             rekrut::where('user_id', $userId)
                     ->where('rekrut_id',$id)
                     ->first()
                     ->update(['status' => 1]);
             
-            User::where('id', $userId)
-                    ->first()
-                    ->update(['roles_id' => 6]);
+            // User::where('id', $userId)
+            //         ->first()
+            //         ->update(['roles_id' => 6]);
     
-            assisten::create([
-                    'role' => 1,
-                    'mahasiswa_id' => $userId,
-                    'praktikum_id' => $rekrut->getPrak->id,
-                    ]);
     
-            $data = ['message' => 'Sukses!'];
+            $data = ['message' => 'Sukses di accept!'];
             return response()->json($data, 200);
         }
     

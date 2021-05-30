@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAssistensTable extends Migration
+class CreateDosenRolesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,15 @@ class CreateAssistensTable extends Migration
      */
     public function up()
     {
-        Schema::create('assistens', function (Blueprint $table) {
+        Schema::create('dosen_roles', function (Blueprint $table) {
             $table->id();
-            $table->string('mahasiswa_id');
+            $table->string('dosen_id');
             $table->boolean('status')->default(1);
             $table->integer('role')->default(0);
             $table->string('foto')->nullable();
-            $table->foreignId('praktikum_id');
+            $table->foreignId('praktikum_id')->nullable();
+            $table->foreignId('lab_id')->nullable();
+            $table->foreignId('jurusan_id')->nullable();
             $table->timestamps();
         });
     }
@@ -31,6 +33,6 @@ class CreateAssistensTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('assistens');
+        Schema::dropIfExists('dosen_roles');
     }
 }

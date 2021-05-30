@@ -35,9 +35,11 @@
                         </li>
                         @if (Auth::check())
                             @if (Auth::user()->roles_id != 1)
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ url('/rekrutmen') }}">Rekrutmen</a></li>
-                                </li>
+                                @if (Auth::user()->roles_id != 3)
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ url('/rekrutmen') }}">Rekrutmen</a></li>
+                                    </li>
+                                @endif
                                 <li class="nav-item">
                                     <a class="dropdown-item" href="{{route('home')}}">Profil</a>
                                 </li>  
@@ -81,9 +83,11 @@
                     </li>
                     @if (Auth::check())
                         @if (Auth::user()->roles_id != 1)
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ url('/rekrutmen') }}">Rekrutmen</a></li>
-                            </li>
+                            @if (Auth::user()->roles_id != 3)
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ url('/rekrutmen') }}">Rekrutmen</a></li>
+                                </li>
+                            @endif
                             @if (Auth::user()->roles_id == 0 )
                                 <li class="nav-item">
                                     <a class="nav-link" href="{{ route('dashboard') }}">Dashboard</a></li>

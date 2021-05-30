@@ -19,4 +19,9 @@ class lab extends Model
     {
         return $this->hasMany('App\praktikum', 'laboratorium', 'id');
     }
+
+    public function klab()
+    {
+        return $this->belongsTo('App\dosen', 'kepala_lab');
+    }
 }

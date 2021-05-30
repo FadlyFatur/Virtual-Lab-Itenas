@@ -24,14 +24,14 @@ class AddForeignKeyToPraktikums extends Migration
                 ->on('kelas_praktikums')
                 ->onDelete('restrict')
                 ->onUpdate('cascade');
-            $table->foreign('koor_lab')
-                ->references('id')
-                ->on('users')
+            $table->foreign('koor_dosen_prak')
+                ->references('nomer_id')
+                ->on('dosens')
                 ->onDelete('restrict')
                 ->onUpdate('cascade');
-            $table->foreign('koor_prak')
-                ->references('id')
-                ->on('users')
+            $table->foreign('koor_assisten')
+                ->references('nrp')
+                ->on('mahasiswas')
                 ->onDelete('restrict')
                 ->onUpdate('cascade');
         });
@@ -47,8 +47,8 @@ class AddForeignKeyToPraktikums extends Migration
         Schema::table('praktikums', function (Blueprint $table) {
             $table->dropForeign('praktikums_laboratorium_foreign');
             $table->dropForeign('praktikums_kelas_foreign');
-            $table->dropForeign('praktikums_koor_lab_foreign');
-            $table->dropForeign('praktikums_koor_prak_foreign');
+            $table->dropForeign('praktikums_koor_dosen_prak_foreign');
+            $table->dropForeign('praktikums_koor_assisten_foreign');
         });
     }
 }

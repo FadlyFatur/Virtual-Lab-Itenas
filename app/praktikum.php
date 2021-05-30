@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class praktikum extends Model
 {
     protected $fillable = [
-        'status', 'nama', 'slug', 'deskripsi', 'semester', 'tahun_ajaran', 'laboratorium', 'kelas', 'koor_lab'
+        'status', 'nama', 'slug', 'deskripsi', 'semester', 'tahun_ajaran', 'laboratorium', 'kelas', 'koor_dosen_prak', 'koor_assisten'
     ];
 
     public function lab()
@@ -33,6 +33,16 @@ class praktikum extends Model
     public function getRekrutmen()
     {
         return $this->hasMany('App\rekrutmen', 'praktikum_id', 'id');
+    }
+
+    public function getKoorAssisten()
+    {
+        return $this->belongsTo('App\mahasiswa', 'koor_assisten');
+    }
+
+    public function getKoorDosen()
+    {
+        return $this->belongsTo('App\dosen', 'koor_dosen_prak');
     }
 
 }
