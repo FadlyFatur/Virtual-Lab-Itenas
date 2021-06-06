@@ -307,7 +307,7 @@
     </div>
   </div>
 
-  {{-- modal list detauil materi --}}
+  {{-- modal list detail materi --}}
   <div class="modal fade" id="detail_materi" tabindex="-1" role="dialog" aria-labelledby="detail_materi" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
       <div class="modal-content">
@@ -320,7 +320,7 @@
         <div class="modal-body">
                 <label for="tipe">Pilih Materi</label>
                 <select name="tipe" id="tipe" class="form-select" aria-label="type materi" onclick="getListMateri(this.value)">
-                  <option selected>Pilih salah satu</option>
+                  <option value="0" selected>Pilih salah satu</option>
                   @foreach ($materi as $m => $nama)
                     <option value="{{$m}}">{{$nama}}</option>
                   @endforeach
@@ -781,7 +781,7 @@
               $(".data-list").append(data);
             },
             error: function (resp) {
-                alert('error! file tidak bisa dibuka/ditemukan')
+                // alert('error! file tidak bisa dibuka/ditemukan')
                 console.log(resp);
             }
         });
