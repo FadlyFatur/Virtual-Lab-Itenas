@@ -85,22 +85,23 @@ class MateriController extends Controller
             ]);
             Alert::success('Berhasil', 'Selamat anda berhasil mendaftar kelas Praktikum');
             $data = Materi::where('praktikum_id',$id)->get();
-            $prak = praktikum::where('id',$id)->first();
-            $role = Auth::user()->roles_id;
-            $assisten = assisten::where('mahasiswa_id', Auth::user()->id)->get();
-            $Cekabsen = Absen::where('praktikum_id',$id)->get();
-            $absen = absen_mahasiswa::where('user_id',Auth::id())->orderBy('absen_id','asc')->get();
-            $listAsisten = assisten::where('praktikum_id', $id)->get();
-            if (count($absen) > 0) {
-                foreach ($absen as $a ) {
-                    $dataAbsen_mhs []= $a->absen_id;
-                }
-            }else{
-                $dataAbsen_mhs = [];
-            }
-            $materi = Materi::where('praktikum_id',$id)->pluck('nama', 'id');
+            // $prak = praktikum::where('id',$id)->first();
+            // $role = Auth::user()->roles_id;
+            // $assisten = assisten::where('mahasiswa_id', Auth::user()->id)->get();
+            // $dosenRole = dosen_role::where('dosen_id', Auth::user()->nomer_id)->get();
+            // $Cekabsen = Absen::where('praktikum_id',$id)->get();
+            // $absen = absen_mahasiswa::where('user_id',Auth::id())->orderBy('absen_id','asc')->get();
+            // $listAsisten = assisten::where('praktikum_id', $id)->get();
+            // if (count($absen) > 0) {
+            //     foreach ($absen as $a ) {
+            //         $dataAbsen_mhs []= $a->absen_id;
+            //     }
+            // }else{
+            //     $dataAbsen_mhs = [];
+            // }
+            // $materi = Materi::where('praktikum_id',$id)->pluck('nama', 'id');
 
-            return view('landing.detail-materi',compact('materi', 'listAsisten', 'data', 'prak', 'role','assisten', 'id','Cekabsen','absen','dataAbsen_mhs'));
+            // return view('landing.detail-materi',compact('dosenRole', 'materi', 'listAsisten', 'data', 'prak', 'role','assisten', 'id','Cekabsen','absen','dataAbsen_mhs'));
         }
         return redirect()->back();
     }

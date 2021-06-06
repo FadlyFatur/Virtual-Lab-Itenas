@@ -242,7 +242,7 @@
                               <a href="{{route('detail-materi',$d->id)}}"><button class="btn btn-info" style="color: #fff;">Masuk</button></a>
                             @else
                               @if (Auth::user()->roles_id != 3)
-                                <a href="{{route('daftar-prak',$d->id)}}"><button class="btn btn-success">Daftar</button></a>\
+                                <a href="{{route('daftar-prak',$d->id)}}"><button class="btn btn-success">Daftar</button></a>
                               @else
                                 <p>Hubungi Admin untuk akses dosen</p>
                               @endif

@@ -26,7 +26,7 @@ Route::get('/jurusan', 'landingController@indexJurusan')->name('jurusan');
 
 Route::prefix('pengajar')->group(function () {
     Route::get('/', 'landingController@indexPengajar')->name('pengajar');
-    Route::get('/detail-pengajar', 'landingController@indexPengajar')->name('pengajar');
+    // Route::get('/detail-pengajar', 'landingController@indexPengajar')->name('pengajar-detail');
 });
 
 Route::prefix('berita')->group(function () {
@@ -35,7 +35,7 @@ Route::prefix('berita')->group(function () {
 });
 
 Route::group(['middleware' => 'auth', 'verified'], function () {
-    Route::get('rekrutmen', 'landingController@indexRekrutmen')->name('rekrutmen');
+    Route::get('rekrutmen', 'landingController@indexRekrutmen')->name('rekrutmen-page');
     Route::get('rekrutmen/download/{file}','landingController@downloadFileSyarat')->name('downloadFileSyarat');
 });
 
@@ -155,7 +155,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth']], function (){
     Route::get('/berita/status-berita/{id}', 'AdminController@statusBerita')->name('status-Berita');
     Route::get('/asisten', 'AdminController@indexAsisten')->name('asisten');
     Route::post('/hapus-asisten/{id}', 'AdminController@hapusAsisten')->name('hapus-asisten');
-    Route::get('/get-asisten', 'AdminController@indexAsisten')->name('asisten');
+    Route::get('/get-asisten', 'AdminController@indexAsisten')->name('get-asisten');
     Route::post('/post-asisten', 'AdminController@postAssisten')->name('post-assisten');
 
 });
