@@ -3,6 +3,8 @@
 /public/storage
 /public/file
 /public/images
+/public/materi
+/public/rekrut_file
 /storage/*.key
 /vendor
 .env.backup
