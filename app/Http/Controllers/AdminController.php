@@ -121,7 +121,7 @@ class AdminController extends Controller
     public function indexAsisten(){
         $data = assisten::all();
         $jur = jurusan::all();
-        $maha = mahasiswa::where('status','!=',0)->get();
+        $maha = mahasiswa::all();
         return view('admin.asisten', compact('data','jur', 'maha'));
     }
 
