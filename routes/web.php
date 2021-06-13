@@ -169,5 +169,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth']], function (){
     Route::post('/hapus-asisten/{id}', 'AdminController@hapusAsisten')->name('hapus-asisten');
     Route::get('/get-asisten', 'AdminController@indexAsisten')->name('get-asisten');
     Route::post('/post-asisten', 'AdminController@postAssisten')->name('post-assisten');
+    Route::get('edit-assisten/{id}', 'AdminController@indexEditAssisten')->name('edit-Assisten');
+    Route::post('edit-assisten/{id}/submit', 'AdminController@postEditAssisten')->name('post-edit-Assisten');
 
 });

@@ -48,9 +48,9 @@ class AdminController extends Controller
     public function postBerita(Request $request){
         // dd($request->all());
         $validator = Validator::make($request->all(), [
-            'judul' => 'required | string | max:100',
+            'judul' => 'required | string | max:200',
             'isi_berita' => 'required | string | max:20000',
-            'thumb' => 'required | image',
+            'thumb' => 'image',
         ]);
 
         if ($validator->fails()) { 
@@ -58,17 +58,26 @@ class AdminController extends Controller
             ->back()
             ->withError("Data gagal di submit, lengkapi form input data");
         }
-
-        $name = "b_".Carbon::now()->format('YmdHs').$request->file('thumb')->getClientOriginalName();
-        $path_img = Storage::putFileAs('images/img_berita', $request->file('thumb'), $name);
-
-        berita::create([
-            'judul' => $request->get('judul'),
-            'slug' => Str::slug($request->get('judul'),'-'),
-            'deskripsi' => $request->get('isi_berita'),
-            'img' => $path_img,
-            'penulis' => Auth::id(),
-        ]);
+        // dd($request->all());
+        if ($request->has('thumb')) {
+            $name = "b_".Carbon::now()->format('YmdHs').$request->file('thumb')->getClientOriginalName();
+            $path_img = Storage::putFileAs('images/img_berita', $request->file('thumb'), $name);
+    
+            berita::create([
+                'judul' => $request->get('judul'),
+                'slug' => Str::slug($request->get('judul'),'-'),
+                'deskripsi' => $request->get('isi_berita'),
+                'img' => $path_img,
+                'penulis' => Auth::id(),
+            ]);
+        }else{
+            berita::create([
+                'judul' => $request->get('judul'),
+                'slug' => Str::slug($request->get('judul'),'-'),
+                'deskripsi' => $request->get('isi_berita'),
+                'penulis' => Auth::id(),
+            ]);
+        }
 
         return redirect()
             ->back()
@@ -209,17 +218,9 @@ class AdminController extends Controller
             ]);
         }
 
-        // User::where('id', $request->get('maha'))
-        //         ->first()
-        //         ->update(['roles_id' => 6]);
-
         return redirect()
             ->back()
             ->withSuccess("Data berhasil di submit");
-
-        return redirect()
-                ->back()
-                ->withError("Data gagal di submit");
     }
 
     public function hapusAsisten($id){
@@ -240,6 +241,61 @@ class AdminController extends Controller
             'success' => $success,
             'message' => $message,
         ]);
+    }
+
+    public function indexEditAssisten($id){
+        $maha = assisten::where('id',$id)->get();
+
+        $data = [];
+        foreach ($maha as $m) {
+            $data = [
+                'id' => $m->id,
+                'maha' => $m->getUser->nama,
+                'maha_id' => $m->mahasiswa_id,
+                'prak' => $m->praktikum->nama,
+                'prak_id' => $m->praktikum_id,
+                'lab' => $m->praktikum->lab->nama,
+                'lab_id' => $m->praktikum->lab->id,
+                // 'jurusan' => $m->praktikum->lab->jurusan()->nama,
+                'role' => $m->role,
+                'status' => $m->status,
+                'foto' => $m->foto,
+            ];
+        }
+
+        $prak = praktikum::where('laboratorium', $data['lab_id'])->get();
+
+        return view('admin.edit-assisten', compact('data','prak') );
+    }
+
+    public function postEditAssisten($id, Request $request){
+        // dd($request->all());
+
+        $validator = Validator::make($request->all(), [
+            'Jabatan' => 'required',
+            'Prak' => 'required',
+        ]);
+
+        if ($validator->fails()) { 
+            return redirect()
+            ->back()
+            ->withError("Data gagal di submit, lengkapi form input data");
+        }
+        
+        assisten::where('id', $id)->update([
+            'role' => $request->get('Jabatan'),
+            'praktikum_id' => $request->get('Prak'),
+        ]);
+
+        if ($request->get('Jabatan') == 2) {
+            praktikum::where('id',$request->get('Prak'))->update([
+                'koor_assisten' => $request->get('maha_id')
+            ]);
+        }
+
+        return redirect()
+            ->back()
+            ->withSuccess("Data berhasil di submit");
     }
 
     // JURUSAN 

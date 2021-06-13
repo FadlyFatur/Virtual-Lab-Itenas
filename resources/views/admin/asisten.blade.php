@@ -55,7 +55,6 @@
                       @foreach ($maha as $m)
                         <option value="{{$m->nrp}}">{{$m->nama}}</option>
                       @endforeach
-
                     </datalist>
 
                   </div>
@@ -107,6 +106,7 @@
             </div>
           </form>
         </div>
+        
         <!-- Default box -->
         <div class="card card-solid">
             <div class="card-header">
@@ -126,7 +126,7 @@
                   <div class="card-header text-muted border-bottom-0 clearfix">
                     <p class="float-left">{{$d->praktikum->nama}}</p>
                     <div class="float-right">
-                      <a class="btn btn-primary btn-sm" href=""><i class="fas fa-edit"></i></a> 
+                      <a class="btn btn-primary btn-sm" href="{{route('edit-Assisten', $d->id)}}"><i class="fas fa-edit"></i></a> 
                       <button class="btn btn-danger btn-sm" onclick="hapusAssisten({{$d->id}})"><i class="fas fa-trash"></i></button>
                     </div>
                   </div>
