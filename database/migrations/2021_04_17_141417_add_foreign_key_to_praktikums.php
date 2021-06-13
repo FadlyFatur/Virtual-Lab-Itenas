@@ -17,22 +17,19 @@ class AddForeignKeyToPraktikums extends Migration
             $table->foreign('laboratorium')
                 ->references('id')
                 ->on('labs')
-                ->onDelete('restrict')
+                ->onDelete('cascade')
                 ->onUpdate('cascade');
             $table->foreign('kelas')
                 ->references('id')
                 ->on('kelas_praktikums')
-                ->onDelete('restrict')
                 ->onUpdate('cascade');
             $table->foreign('koor_dosen_prak')
                 ->references('nomer_id')
                 ->on('dosens')
-                ->onDelete('restrict')
                 ->onUpdate('cascade');
             $table->foreign('koor_assisten')
                 ->references('nrp')
                 ->on('mahasiswas')
-                ->onDelete('restrict')
                 ->onUpdate('cascade');
         });
     }

@@ -34,6 +34,7 @@
     width: 100px;
   }
 </style>
+  @if ($role == 0 || $dosenRole->where('role',1)->contains('lab_id', $lab->id))
     <!-- Modal -->
     <div class="modal fade" id="tambah" tabindex="-1" role="dialog" aria-labelledby="tambahLabel" aria-hidden="true">
       <div class="modal-dialog modal-lg" role="document">
@@ -168,6 +169,7 @@
         </div>
       </div>
     </div>
+  @endif
 
     <div class="container margin-top nama-lab">
       @if(session('success'))
@@ -202,7 +204,7 @@
             </div>
           </div>
           @if (Auth::check())
-              @if ($role == 0 || $role == 4)
+              @if ($role == 0 || $dosenRole->where('role',1)->contains('lab_id', $lab->id))
                 <button class="btn btn-info" data-toggle="modal" data-target="#tambah" style="margin-left: 32px">Tambah Praktikum</button>
                 <button class="btn btn-info" data-toggle="modal" data-target="#tambah-kelas" style="margin-left: 32px">Tambah Kelas</button>
               @endif

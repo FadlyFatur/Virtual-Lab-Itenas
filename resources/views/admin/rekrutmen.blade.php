@@ -9,10 +9,6 @@
               <h1 class="m-0 text-dark">Rekrutmen</h1>
             </div><!-- /.col -->
             <div class="col-sm-6">
-              <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item active">Dashboard v1</li>
-              </ol>
             </div><!-- /.col -->
           </div><!-- /.row -->
         </div><!-- /.container-fluid -->
@@ -465,26 +461,54 @@ function denied(id, userId) {
 }
 
 function changeStatus(id){
-      $.ajax({
-          type:'GET',
-          url:"status-rekrutmen/"+id,
-          success:function(data){
-              if(data.status === true){
-                  swal({
-                      title: "Success!",
-                      text: data.message,
-                      icon: "success",
-                  });
-              }else{
-                  let message = data.message;
-                  swal({
-                  title: "Ups!",
-                      text: data.message,
-                      icon: "error",
-                  });
-              }
+  $.ajax({
+      type:'GET',
+      url:"status-rekrutmen/"+id,
+      success:function(data){
+          if(data.status === true){
+              swal({
+                  title: "Success!",
+                  text: data.message,
+                  icon: "success",
+              });
+          }else{
+              let message = data.message;
+              swal({
+              title: "Ups!",
+                  text: data.message,
+                  icon: "error",
+              });
           }
-      });
+      }
+  });
+}
+
+function hapusRekrutmen(id) {
+  swal({
+      title: "Apakah yakin?",
+      text: "Data yang dihapus tidak dapat dikembalikan!",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+  })
+  .then((willDelete) => {
+    if (willDelete) {
+      $.ajax({
+            type: 'post',
+            url: "rekrutmen/delete-rekrutmen/"+id ,
+            success: function (results) {
+              if (results.success === true) {
+                swal("Oke!", results.message, "success");
+                window.setTimeout(function(){ 
+                  location.reload();
+                } ,2000);
+              } else {
+                swal("Gagal!", results.message, "error");
+              }
+            }
+        });
     }
+  });
+}
 </script> 
 @endsection

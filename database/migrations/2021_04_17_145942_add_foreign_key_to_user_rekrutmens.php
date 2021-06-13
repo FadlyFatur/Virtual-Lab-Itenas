@@ -17,12 +17,12 @@ class AddForeignKeyToUserRekrutmens extends Migration
             $table->foreign('rekrut_id')
                 ->references('id')
                 ->on('rekrutmens')
-                ->onDelete('restrict')
+                ->onDelete('cascade')
                 ->onUpdate('cascade');
             $table->foreign('user_id')
                 ->references('id')
                 ->on('users')
-                ->onDelete('restrict')
+                ->onDelete('cascade')
                 ->onUpdate('cascade');
         });
     }

@@ -72,7 +72,7 @@ class RekrutmenController extends Controller
                         return $data->getPrak->nama;
                     })
                     ->addColumn('aksi', function ($data){
-                        return '<a href="'.route('downloadFileSyarat',$data->file).'" class="btn btn-warning btn-sm"><i class="fas fa-download"></i></a> <a class="btn btn-primary btn-sm" href=""><i class="fas fa-edit"></i></a> <button title="list" onclick="getList('.$data->id.')" class="btn btn-info btn-sm"><i class="fa fa-eye"></i></button>';
+                        return '<a href="'.route('downloadFileSyarat',$data->file).'" class="btn btn-warning btn-sm"><i class="fas fa-download"></i> Unduh</a> <a class="btn btn-primary btn-sm" href="'.route('edit-Rekrut',$data->id).'"><i class="fas fa-edit"></i> Edit</a> <button onclick="hapusRekrutmen('.$data->id.')" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i> Hapus</button> <button title="list" onclick="getList('.$data->id.')" class="btn btn-info btn-sm"><i class="fa fa-eye"></i> Hasil</button>';
                         
                     })
                     ->addColumn('total', function ($data){
@@ -258,5 +258,85 @@ class RekrutmenController extends Controller
                 ->get();
         
             return response()->json($data);
+        }
+
+        public function deleteRekrut($id)
+        {
+            try {
+                rekrutmen::destroy($id);
+                $success = true;
+                $message = "Rekrutmen berhasil dihapus";
+    
+            } catch (\Exception $e) {
+                $success = false;
+                $message = "Rekrutmen Gagal dihapus, masih memiliki data yang berhubungan";
+            }
+    
+            return response()->json([
+                'success' => $success,
+                'message' => $message,
+            ]);
+        }
+
+        public function indexEditRekrut($id)
+        {
+            $lab = lab::orderBy('nama', 'asc')->get();
+            $rekrut = rekrutmen::where('id',$id)->first();
+            $data = [];
+            
+            $data = [
+                'id' => $rekrut['id'],
+                'nama' => $rekrut['nama'],
+                'deadline' => date("m/d/Y", strtotime($rekrut['deadline'] )),
+                'kuota' => $rekrut['kuota'],
+                'deskripsi' => $rekrut['deskripsi'],
+            ];
+
+            // dd($data);
+            return view('admin.edit-rekrutmen', compact('data','lab'));
+        }
+
+        public function postEditRekrut($id, Request $request){
+            // dd($request->all(), $request->has('fileSyarat'));
+
+             $validator = Validator::make($request->all(), [
+                'nama_rekrutmen' => ' string | max:100',
+                'deskripsi' => 'string | max:1000',
+                'kuota' => 'required',
+                'deadline' => 'required',
+                'fileSyarat' => 'mimes:pdf,zip,rar,doc,docx | max:10000'
+            ]);
+            if ($validator->fails()) { 
+                return redirect()
+                ->back()
+                ->withErrors($validator)
+                ->withInput();
+            };
+            
+            rekrutmen::where('id', $id)->update([
+                'nama' => $request->get('nama_rekrutmen'),
+                'deskripsi' => $request->get('deskripsi'),
+                'kuota' => $request->get('kuota'),
+                'deadline' => date("Y-m-d", strtotime($request->get('deadline'))), 
+            ]);
+
+            if ($request->has('fileSyarat') != null) {
+                // dd('masuk sini');
+                $file = rekrutmen::where('id', $id)->first();
+                Storage::delete($file['file']);
+
+                $path = public_path('rekrut_file');
+                $nameFile = "r_".Carbon::now()->format('YmdHs')."_".$request->file('fileSyarat')->getClientOriginalName();
+                $request->file('fileSyarat')->move($path,$nameFile);
+        
+                rekrutmen::where('id', $id)->update([
+                    'file'=> $nameFile
+                ]);
+            }
+    
+            return redirect()
+                    ->back()
+                    ->withSuccess("Data berhasil di simpan");
+            
         }
 }

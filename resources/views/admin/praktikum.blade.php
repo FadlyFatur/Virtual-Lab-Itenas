@@ -106,10 +106,6 @@
               <h1 class="m-0 text-dark">Praktikum {{$lab->nama}}</h1>
             </div><!-- /.col -->
             <div class="col-sm-6">
-              <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item active">Dashboard v1</li>
-              </ol>
             </div><!-- /.col -->
           </div><!-- /.row -->
         </div><!-- /.container-fluid -->
@@ -155,18 +151,7 @@
                 </div>
               </div>
               <div class="col-sm-6">
-                <div class="form-group">
-                  <label>Kelas</label>
-                  @php
-                    $kelas = App\kelas_praktikum::all();
-                  @endphp
-                  <select name="kelas" class="custom-select form-control">
-                    <option value= "" selected>Pilih salah satu</option>
-                    @foreach ($kelas as $d)
-                      <option value= "{{$d->id}}">{{$d->nama}}</option>
-                    @endforeach
-                  </select>
-                </div>
+                
                 <div class="form-group">
                   <label>Semester</label>
                   <select name="semester" class="custom-select form-control" required>
@@ -179,38 +164,40 @@
                   <label>Tahun Ajaran</label>
                   <select name="tahun_ajaran" class="custom-select form-control" required>
                     <option selected>Pilih salah satu</option>
-                    <option value="2019-2020">2019-2020</option>
-                    <option value="2020-2021">2020-2021</option>
                     <option value="2021-2022">2021-2022</option>
                     <option value="2022-2023">2022-2023</option>
+                    <option value="2023-2024">2023-2024</option>
+                    <option value="2024-2025">2024-2025</option>
                   </select>
                 </div>
 
                 <div class="form-group">
-                  <label>Koordinator Praktikum (Dosen)</label>
+                  <label>Kelas</label>
                   @php
-                    $data = App\dosen::all();
+                    $kelas = App\kelas_praktikum::all();
                   @endphp
-                  <select name="koor_dosen" class="custom-select form-control">
-                    <option value= "" selected>Pilih salah satu</option>
-                    @foreach ($data as $d)
-                      <option value= "{{$d->nomer_id}}">{{$d->nama}}</option>
+                  <input list="kelases" name="kelas" id="kelas">
+                  <datalist id="kelases">
+                    @foreach ($kelas as $d)
+                      <option value= "{{$d->id}}">{{$d->nama}}</option>
                     @endforeach
-                  </select>
+                  </datalist>
                 </div>
 
-                {{-- <div class="form-group">
-                  <label>Koordinator Assisten</label>
+                <div class="form-group">
+                  <label for="koor_dosen">Koordinator Praktikum (Dosen)</label>
                   @php
-                    $data2 = App\assisten::all();
+                    $dosen = App\dosen::all();
                   @endphp
-                  <select name="koor_asis" class="custom-select form-control">
-                    <option value="" selected>Pilih salah satu</option>
-                    @foreach ($data2 as $d)
-                      <option value= "{{$d->nrp}}">{{$d->nama}}</option>
+
+                  <input list="koor_dosens" name="koor_dosen" id="koor_dosen">
+                  <datalist id="koor_dosens">
+                    @foreach ($dosen as $d)
+                      <option value="{{$d->nomer_id}}">{{$d->nama}}</option>
                     @endforeach
-                  </select>
-                </div> --}}
+                  </datalist>
+                </div>
+
               </div>
             </div>
           </div>
@@ -369,22 +356,16 @@
                 // data: {_token: CSRF_TOKEN},
                 dataType: 'JSON',
                 success: function (results) {
-                    if (results.success === true) {
-                      swal("Oke! Praktikum dan data lainya telah dihapus", {
-                        icon: "success",
-                      });
+                  if (results.success === true) {
+                    swal("Oke!", results.message, "success");
+                    window.setTimeout(function(){ 
                       location.reload();
-                    } else {
-                        swal("Gagal!", results.message, "error");
-                        location.reload();
-                    }
+                    } ,2000);
+                  } else {
+                    swal("Gagal!", results.message, "error");
+                  }
                 }
             });
-          swal("Praktikum telah terhapus!", {
-            icon: "success",
-          });
-        } else {
-          swal("Praktikum Aman!");
         }
       });
   }

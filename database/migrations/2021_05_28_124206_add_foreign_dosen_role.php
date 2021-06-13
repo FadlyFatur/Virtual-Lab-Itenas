@@ -17,22 +17,22 @@ class AddForeignDosenRole extends Migration
             $table->foreign('dosen_id')
                 ->references('nomer_id')
                 ->on('dosens')
-                ->onDelete('restrict')
+                ->onDelete('cascade')
                 ->onUpdate('cascade');
             $table->foreign('praktikum_id')
                 ->references('id')
                 ->on('praktikums')
-                ->onDelete('restrict')
+                ->onDelete('cascade')
                 ->onUpdate('cascade');
             $table->foreign('jurusan_id')
                 ->references('id')
                 ->on('jurusans')
-                ->onDelete('restrict')
+                ->onDelete('cascade')
                 ->onUpdate('cascade');
             $table->foreign('lab_id')
                 ->references('id')
                 ->on('labs')
-                ->onDelete('restrict')
+                ->onDelete('cascade')
                 ->onUpdate('cascade');
         });
     }

@@ -17,12 +17,12 @@ class AddForeignKeyToAssistens extends Migration
             $table->foreign('mahasiswa_id')
                 ->references('nrp')
                 ->on('mahasiswas')
-                ->onDelete('restrict')
+                ->onDelete('cascade')
                 ->onUpdate('cascade');
             $table->foreign('praktikum_id')
                 ->references('id')
                 ->on('praktikums')
-                ->onDelete('restrict')
+                ->onDelete('cascade')
                 ->onUpdate('cascade');
         });
     }

@@ -27,24 +27,17 @@
     width: 300px;
   }
 </style>
-    <!-- Content Header (Page header) -->
-    <div class="content-header">
-        <div class="container-fluid">
-
-          <div class="row mb-2">
-            <div class="col-sm-6">
-              <h1 class="m-0 text-dark">Jurusan</h1>
-            </div><!-- /.col -->
-            <div class="col-sm-6">
-              <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item active">Dashboard v1</li>
-              </ol>
-            </div><!-- /.col -->
-          </div><!-- /.row -->
-        </div><!-- /.container-fluid -->
-    </div>
-    <!-- /.content-header -->
+<div class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1 class="m-0 text-dark">List Jurusan</h1>
+      </div><!-- /.col -->
+      <div class="col-sm-6">
+      </div><!-- /.col -->
+    </div><!-- /.row -->
+  </div><!-- /.container-fluid -->
+</div> 
 
     <div class="container">
       @if(session('success'))
@@ -177,20 +170,6 @@
             readURL(this);
         }); 	
 
-        // $('#jurusan').summernote({
-        //   height: 150,
-        //   toolbar: [
-        //     // [groupName, [list of button]]
-        //     ['style', ['bold', 'italic', 'underline', 'clear']],
-        //     ['font', ['strikethrough', 'superscript', 'subscript']],
-        //     ['fontsize', ['fontsize']],
-        //     ['color', ['color']],
-        //     ['para', ['ul', 'ol', 'paragraph']],
-        //     ['insert', ['link']],
-        //     ['view', ['fullscreen', 'codeview']],
-        //   ]
-        // });
-
         var table = $('.data-table').DataTable({
           processing: true,
           serverSide: true,
@@ -245,38 +224,33 @@
       });
     }
 
-    function deleted(id){
+    function hapusJurusan(id){
       swal({
-            title: "Apakah yakin?",
-            text: "Jurusan yang dihapus tidak dapat dikembalikan!",
-            icon: "warning",
-            buttons: true,
-            dangerMode: true,
-        })
-        .then((willDelete) => {
-          if (willDelete) {
-            $.ajax({
-                type: 'POST',
-                url: "{{url('admin/delete-jurusan')}}/" + id,
-                dataType: 'JSON',
-                success: function (results) {
-                    if (results.success === true) {
-                      swal("Oke! Jurusan telah dihapus", {
-                        icon: "success",
-                      });
+        title: "Apakah yakin?",
+        text: "Jurusan yang dihapus tidak dapat dikembalikan!",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+      }).then((willDelete) => {
+        if (willDelete) {
+          $.ajax({
+              type: 'get',
+              url: "{{url('admin/delete-jurusan')}}/" + id,
+              dataType: 'JSON',
+              success: function (results) {
+                  // console.log(results);
+                  if (results.success === true) {
+                    swal("Oke!", results.message, "success");
+                    window.setTimeout(function(){ 
                       location.reload();
-                    } else {
-                      swal("Gagal!", results.message, "error");
-                      location.reload();
-                    }
-                }
-            });
-            swal("Jurusan telah terhapus!", {
-              icon: "success",
-            });
-          } 
+                    } ,2000);
+                  } else {
+                    swal("Gagal!", results.message, "error");
+                  }
+              }
+          });
+        } 
       });
-      // table.ajax.reload( null, false );
     }
   </script>   
 @endsection

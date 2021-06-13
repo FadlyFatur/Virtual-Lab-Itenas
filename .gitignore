@@ -5,6 +5,7 @@
 /public/images
 /public/materi
 /public/rekrut_file
+/public/file_import
 /storage/*.key
 /vendor
 .env.backup

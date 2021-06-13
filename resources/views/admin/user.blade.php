@@ -65,10 +65,6 @@
                       <option value="1">User/Tamu</option>
                       <option value="2">Mahasiswa</option>
                       <option value="3">Dosen</option>
-                      <option value="4">Dosen | Kepala Lab</option>
-                      <option value="5">Dosen | Koor Praktikum</option>
-                      <option value="6">Mahasiswa | Assisten Lab</option>
-                      <option value="7">Kaprodi</option>
                   </select>
                 </div>
               </div>

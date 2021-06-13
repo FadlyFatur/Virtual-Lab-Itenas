@@ -51,6 +51,9 @@ Route::get('get-materi/{id}','MateriController@getMateri')->name('getMateri');
 Route::get('get-list-materi/{id}','MateriController@getListMateri')->name('getListMateri');
 Route::post('delete-materi/{id}','MateriController@deleteMateri')->name('deleteMateri');
 Route::post('delete-detail-materi/{id}','MateriController@deleteDetailMateri')->name('delete-detailMateri');
+Route::get('edit-detail-materi/{id}','MateriController@EditDetailMateri')->name('edit-detailMateri');
+Route::post('edit-detail-materi/{id}/submit','MateriController@postEditDetailMateri')->name('post-edit-detailMateri');
+
 Route::post('add-absen','MateriController@addAbsen')->name('addAbsen');
 Route::post('absen','MateriController@absen')->name('absen');
 Route::get('praktikum/kelas/download/{file}','MateriController@downloadFile')->name('downloadFile');
@@ -76,7 +79,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth']], function (){
     Route::get('rekrutmen/download/{file}','RekrutmenController@downloadFileRekrut')->name('downloadFileRekrut');
     Route::get('status-rekrutmen/{id}', 'RekrutmenController@statusRekrutmen')->name('ganti-status-rekrutmen');
 
-    Route::post('delete-jurusan/{id}', 'AdminController@deleteJurusan')->name('delete-jurusan');
+    Route::get('delete-jurusan/{id}', 'AdminController@deleteJurusan')->name('delete-jurusan');
     Route::get('status-jurusan/{id}', 'AdminController@statusJurusan')->name('ganti-status-jurusan');
     
     Route::post('post-berita', 'AdminController@postBerita')->name('post-berita');
@@ -98,7 +101,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth']], function (){
     });
     
     Route::get('status-lab/{id}', 'AdminController@statusLab')->name('status-Lab');
-    Route::post('delete-lab/{id}', 'AdminController@deleteLab')->name('delete-Lab');
+    Route::get('delete-lab/{id}', 'AdminController@deleteLab')->name('delete-Lab');
 
     Route::prefix('praktikum')->group(function (){
         Route::get('{slug}', 'AdminController@indexPrak')->name('praktikumAdmin')->middleware('admin');
@@ -106,6 +109,8 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth']], function (){
         Route::post('post-praktikum/{id}', 'AdminController@postPrak')->name('post-praktikum');
         Route::get('status-prak/{id}', 'AdminController@statusPrak')->name('status-prak');
         Route::get('delete-prak/{id}', 'AdminController@deletePrak')->name('delete-Prak');
+        Route::get('/edit-praktikum/{id}', 'AdminController@indexEditPrak')->name('edit-prak');
+        Route::post('/edit-praktikum/{id}/submit', 'AdminController@postEditPrak')->name('post-edit-prak');
 
         Route::prefix('materi')->group(function (){
             Route::get('{id}', 'AdminController@indexMateri')->name('materi');
@@ -127,6 +132,9 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth']], function (){
         Route::get('/get-detail-rekrutmen/{id}', 'RekrutmenController@getUserRekrut')->name('get-user-rekrutmen');
         Route::get('{id}/rekrutmen-accept/{userId}/{nrp}', 'RekrutmenController@acceptRekrut')->name('rekrutmen-accept');
         Route::get('{id}/rekrutmen-denied/{userId}', 'RekrutmenController@deniedRekrut')->name('rekrutmen-denied');
+        Route::post('delete-rekrutmen/{id}', 'RekrutmenController@deleteRekrut')->name('delete-rekrut');
+        Route::get('/edit-rekrutmen/{id}', 'RekrutmenController@indexEditRekrut')->name('edit-Rekrut');
+        Route::post('/edit-rekrutmen/{id}/submit', 'RekrutmenController@postEditRekrut')->name('post-edit-Rekrut');
     });
     
     Route::get('/user', 'UserController@indexUser')->name('user')->middleware('admin');
@@ -153,6 +161,10 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth']], function (){
     Route::get('/berita', 'AdminController@indexBerita')->name('Berita')->middleware('admin');
     Route::get('/berita/get-berita', 'AdminController@getBerita')->name('get-Berita');
     Route::get('/berita/status-berita/{id}', 'AdminController@statusBerita')->name('status-Berita');
+    Route::get('/edit-berita/{id}', 'AdminController@indexEditberita')->name('edit-berita');
+    Route::post('/edit-berita/{id}/submit', 'AdminController@postEditberita')->name('post-edit-berita');
+
+
     Route::get('/asisten', 'AdminController@indexAsisten')->name('asisten');
     Route::post('/hapus-asisten/{id}', 'AdminController@hapusAsisten')->name('hapus-asisten');
     Route::get('/get-asisten', 'AdminController@indexAsisten')->name('get-asisten');

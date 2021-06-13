@@ -9,10 +9,6 @@
               <h1 class="m-0 text-dark">List Asisten/Staff Laboratorium</h1>
             </div><!-- /.col -->
             <div class="col-sm-6">
-              <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item active">Dashboard v1</li>
-              </ol>
             </div><!-- /.col -->
           </div><!-- /.row -->
         </div><!-- /.container-fluid -->
@@ -34,7 +30,7 @@
         </div>
     @endif
       <section class="content">
-        <div class="card card-info collapsed-card">
+        <div class="card card-primary collapsed-card">
           <div class="card-header">
             <h5 class="card-title">Input Assisten</h5>
   
@@ -51,13 +47,17 @@
               <div class="row">
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label>Pilih Mahasiswa</label>
-                    <select name="maha" id="kodeMaha" class="custom-select form-control">
-                      <option selected>Wajib dipilih</option>
+
+                    <label for="maha">Pilih Mahasiswa</label>
+                    <input list="mahasiswas" name="maha" id="maha">
+                    <datalist id="mahasiswas">
+                      {{-- <option selected>Wajib dipilih</option> --}}
                       @foreach ($maha as $m)
-                        <option value="{{$m->nrp}}">{{$m->nrp}} | {{$m->nama}}</option>
+                        <option value="{{$m->nrp}}">{{$m->nama}}</option>
                       @endforeach
-                    </select>
+
+                    </datalist>
+
                   </div>
 
                   <div class="form-group">
@@ -142,7 +142,7 @@
                           <p class="text-muted text-sm"><b>NRP: </b> {{$d->getUser->nrp}}</p>
                         <ul class="ml-4 mb-0 fa-ul text-muted">
                           <li class="small"><span class="fa-li"><i class="fas fa-lg fa-building"></i></span> {{$d->getUser->email}}</li>
-                          <li class="small"><span class="fa-li"><i class="fas fa-lg fa-phone"></i></span> Phone #: + 800 - 12 12 23 52</li>
+                          {{-- <li class="small"><span class="fa-li"><i class="fas fa-lg fa-phone"></i></span> Phone #: + 800 - 12 12 23 52</li> --}}
                         </ul>
                       </div>
                       <div class="col-5 text-center">
@@ -158,18 +158,6 @@
           </div>
           <!-- /.card-body -->
           <div class="card-footer">
-            {{-- <nav aria-label="Contacts Page Navigation">
-              <ul class="pagination justify-content-center m-0">
-                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item"><a class="page-link" href="#">4</a></li>
-                <li class="page-item"><a class="page-link" href="#">5</a></li>
-                <li class="page-item"><a class="page-link" href="#">6</a></li>
-                <li class="page-item"><a class="page-link" href="#">7</a></li>
-                <li class="page-item"><a class="page-link" href="#">8</a></li>
-              </ul>
-            </nav> --}}
           </div>
           <!-- /.card-footer -->
         </div>

@@ -14,4 +14,14 @@ class dosen_role extends Model
     {
         return $this->belongsTo('App\dosen', 'dosen_id');
     }
+
+    public function lab()
+    {
+        return $this->belongsTo('App\lab', 'lab_id');
+    }
+
+    public function praktikum()
+    {
+        return $this->belongsTo('App\praktikum', 'praktikum_id');
+    }
 }

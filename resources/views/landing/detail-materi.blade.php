@@ -362,7 +362,7 @@
         <div class="row">
             <div class="col-md-3">
                 <ul class="list-group">
-                    @if ($role == 0 || $assisten->where('praktikum_id', $id)->count() > 0 || $dosenRole->where('role',2)->contains('praktikum_id', $d->id) )
+                    @if ($role == 0 || $assisten->where('praktikum_id', $id)->count() > 0 || $dosenRole->where('role',2)->contains('praktikum_id', $id) )
                       <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#exampleModal"><i class="fa fa-plus"></i> Tambah Materi</button>
                       <button class="btn btn-primary" data-toggle="modal" data-target="#TambahAbsen"><i class="fa fa-plus"></i> Tambah Absen</button>
                     @endif
@@ -392,7 +392,7 @@
             </div>
 
             <div class="col-md-8 side-line">
-                @if ($role == 0 || $assisten->where('praktikum_id', $id)->count() > 0 || $dosenRole->where('role',2)->contains('praktikum_id', $d->id) )
+                @if ($role == 0 || $assisten->where('praktikum_id', $id)->count() > 0 || $dosenRole->where('role',2)->contains('praktikum_id', $id) )
                   <div class="pull-left" id="input_area">
                       <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#input_materi">Input Detail Materi</button>
                       <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#detail_materi">List Detail Materi</button>
@@ -596,7 +596,6 @@
                         console.log(value);
                           if (value.img != null) {
                             body += `<div class=" container multimedia-area d-flex justify-content-center">
-                              <h2>`+value.nama+`</h2>
                               <img class="img-fluid" src="`+value.img+`" alt="">
                               </div><hr><br>`
                           }
@@ -709,7 +708,6 @@
             $.ajax({
                   type: 'POST',
                   url: "{{url('/delete-detail-materi')}}/" + id,
-                  // data: {_token: CSRF_TOKEN},
                   dataType: 'JSON',
                   success: function (results) {
                     getListMateri(id)
@@ -771,9 +769,11 @@
                 }
                 data += `<tr><td>`+value.nama+`</td>
                          <td>`+tipe+`</td>
-                         <td><a onclick="hapusDetailMateri(`+value.id+`)" class="btn btn-danger">
-                                  <i class="fa fa-trash" aria-hidden="true"></i>
-                                </a></td></tr>`;
+                         <td>
+                          <a target="_blank" class="btn btn-primary" href="{{url('/edit-detail-materi')}}/`+value.id+`"><i class="fas fa-edit"></i> Edit</a>
+                          <button onclick="hapusDetailMateri(`+value.id+`)" class="btn btn-danger"><i class="fa fa-trash"></i> Hapus</button> 
+                         </td>
+                         </tr>`;
                     
               });
               // data+='</tr>';

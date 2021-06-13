@@ -54,9 +54,9 @@
           </div>
       @endif
       <div class="container">
-        <div class="card card-info collapsed-card">
+        <div class="card card-info">
           <div class="card-header">
-            <h5 class="card-title">Input Berita</h5>
+            <h5 class="card-title">Edit Berita</h5>
 
             <div class="card-tools">
               <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -66,17 +66,17 @@
           </div>
           <!-- /.card-header -->
           <div class="card-body pb-0">
-            <form role="form" method="POST" action="{{route('post-berita')}}" enctype="multipart/form-data">
+            <form role="form" method="POST" action="{{route('post-edit-berita', $berita['id'])}}" enctype="multipart/form-data">
               @csrf
               <div class="row">
                 <div class="col-sm-12">
                   <div class="form-group">
                     <label>Judul Berita</label>
-                    <input type="text" class="form-control" name="judul" placeholder="Judul berita yang akan ditampilkna" required autofocus> 
+                    <input type="text" class="form-control" name="judul" value="{{$berita['judul']}}" placeholder="Judul berita yang akan ditampilkna" required autofocus> 
                   </div>
                   <div class="form-group">
                     <label>Deskripsi</label>
-                    <textarea class="form-control" id="isi_berita" name="isi_berita" placeholder="Masukan Naraso" required autofocus></textarea>
+                    <textarea class="form-control" id="isi_berita" name="isi_berita" placeholder="Masukan Narasi" required autofocus>{{$berita['deskripsi']}}</textarea>
                   </div>
                 </div>
                   <div class="form-group">
@@ -89,7 +89,7 @@
                         </span>
                         <input type="text" class="form-control" readonly>
                     </div>
-                    <img id='img-upload'/>
+                    <img src="{{asset($berita['img'])}}" id='img-upload'/>
                   </div>
               </div>
             </div>
@@ -100,26 +100,6 @@
           </form>
         </div>
 
-        <div class="card">
-          <div class="card-header">
-            <h3 class="card-title">Data Semua User</h3>
-          </div>
-          <div class="card-body">
-            <table class="table table-bordered data-table">
-              <thead>
-                  <tr>
-                      <th>No</th>
-                      <th>Status</th>
-                      <th>Judul</th>
-                      <th>Aksi</th>
-                  </tr>
-              </thead>
-              <tbody>
-              </tbody>
-          </table>
-          </div>
-        </div>
-  
       </div>
 
     </div>
@@ -176,100 +156,7 @@
             ['view', ['fullscreen', 'codeview']],
           ]
         });
-
-          $(function () {
-    
-    var table = $('.data-table').DataTable({
-        processing: true,
-        serverSide: true,
-        ajax: "{{ route('get-Berita') }}",
-        columns: [
-            { data: 'DT_RowIndex',  
-              orderable: false, 
-              searchable: false,
-              width: 20,
-            },
-            {data: 'status', 
-              render: function (data, type, row) {
-                  let checked = null;
-                  if(data == 1){
-                      checked = "checked";
-                  }
-                  return `<div class="custom-control custom-switch">
-                            <input type="checkbox" class="custom-control-input" onchange="changeStatus(`+row.id+`)" id="switch`+row.id+`" `+checked+`>
-                            <label class="custom-control-label" for="switch`+row.id+`"></label>
-                          </div>`
-              },
-              orderable: false, 
-              searchable: false,
-              width: 20,
-            },
-            {data: 'judul'},
-            {data: 'aksi'},
-            
-        ]
-    });
-    
-  });
     });
 
-    function changeStatus(id){
-      $.ajax({
-          type:'GET',
-          url:"berita/status-berita/"+id,
-          success:function(data){
-              if(data.status === true){
-                  swal({
-                      title: "Success!",
-                      text: data.message,
-                      icon: "success",
-                  });
-              }else{
-                  let message = data.message;
-                  swal({
-                  title: "Ups!",
-                      text: data.message,
-                      icon: "error",
-                  });
-              }
-          }
-      });
-    }
-
-    function deleted(id){
-      swal({
-          title: "Apakah yakin?",
-          text: "Data yang dihapus tidak dapat dikembalikan!",
-          icon: "warning",
-          buttons: true,
-          dangerMode: true,
-      })
-      .then((willDelete) => {
-        if (willDelete) {
-          $.ajax({
-                type: 'POST',
-                url: "hapus-berita/"+id ,
-                // data: {_token: CSRF_TOKEN},
-                dataType: 'JSON',
-                success: function (results) {
-                    if (results.success === true) {
-                      swal("Oke! Materi telah dihapus", {
-                        icon: "success",
-                      });
-                      location.reload();
-                    } else {
-                        swal("Gagal!", results.message, "error");
-                        location.reload();
-                    }
-                }
-            });
-          swal("Materi telah terhapus!", {
-            icon: "success",
-          });
-        } else {
-          swal("Materi Aman!");
-        }
-      });
-    }
   </script>   
 @endsection

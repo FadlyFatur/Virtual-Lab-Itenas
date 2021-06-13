@@ -38,13 +38,9 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1 class="m-0 text-dark">Laboratorium</h1>
+              <h1 class="m-0 text-dark">List Laboratorium</h1>
             </div><!-- /.col -->
             <div class="col-sm-6">
-              <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item active">Dashboard v1</li>
-              </ol>
             </div><!-- /.col -->
           </div><!-- /.row -->
         </div><!-- /.container-fluid -->
@@ -89,13 +85,14 @@
                   <textarea class="form-control" rows="3" name="deskripsi_lab" placeholder="Masukan Deskripsi Jurusan" required autofocus></textarea>
                 </div>
                 <div class="form-group">
-                  <label>Pilih Kepala Laboratorium</label>
-                  <select name="klab" class="custom-select form-control">
-                      <option selected>Pilih Kepala Laboratorium</option>
-                    @foreach ($dosen as $d)
-                      <option value="{{$d->nomer_id}}">{{$d->nomer_id}} | {{$d->dosen->nama}}</option>
-                    @endforeach
-                  </select>
+                  <label for="klab">Kepala Laboratorium</label>
+                    <input list="klabs" name="klab" id="klab">
+                    <datalist id="klabs">
+                      {{-- <option selected>Wajib dipilih</option> --}}
+                      @foreach ($dosen as $d)
+                        <option value="{{$d->nomer_id}}">{{$d->nama}}</option>
+                      @endforeach
+                    </datalist>
                 </div>
               </div>
               
@@ -254,27 +251,22 @@
       .then((willDelete) => {
         if (willDelete) {
           $.ajax({
-                type: 'POST',
+                type: 'GET',
                 url: "delete-lab/"+id ,
                 // data: {_token: CSRF_TOKEN},
                 dataType: 'JSON',
                 success: function (results) {
-                    if (results.success === true) {
-                      swal("Oke! Materi telah dihapus", {
-                        icon: "success",
-                      });
+                  // console.log(results);
+                  if (results.success === true) {
+                    swal("Oke!", results.message, "success");
+                    window.setTimeout(function(){ 
                       location.reload();
-                    } else {
-                        swal("Gagal!", results.message, "error");
-                        location.reload();
-                    }
-                }
+                    } ,2000);
+                  } else {
+                    swal("Gagal!", results.message, "error");
+                  }
+              }
             });
-          swal("Materi telah terhapus!", {
-            icon: "success",
-          });
-        } else {
-          swal("Materi Aman!");
         }
       });
   }

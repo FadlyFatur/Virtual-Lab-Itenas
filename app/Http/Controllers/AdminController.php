@@ -11,6 +11,7 @@ use App\jurusan;
 use App\lab;
 use App\Materi;
 use App\praktikum;
+use App\enroll;
 use App\rekrutmen;
 use App\user_rekrutmen as rekrut;
 use App\kelas_praktikum as kelas;
@@ -30,7 +31,13 @@ use Session;
 class AdminController extends Controller
 {
     public function index(){
-        return view('admin.home');
+        $jur = jurusan::count(); 
+        $lab = lab::count(); 
+        $prak = praktikum::count(); 
+        $dosen = dosen::count(); 
+        $mahasiswa = mahasiswa::count(); 
+        $enroll = enroll::count(); 
+        return view('admin.home', compact('jur', 'lab', 'prak', 'dosen', 'mahasiswa', 'enroll'));
     }
 
     // Berita 
@@ -60,6 +67,7 @@ class AdminController extends Controller
             'slug' => Str::slug($request->get('judul'),'-'),
             'deskripsi' => $request->get('isi_berita'),
             'img' => $path_img,
+            'penulis' => Auth::id(),
         ]);
 
         return redirect()
@@ -72,7 +80,7 @@ class AdminController extends Controller
         return Datatables::of($data)
                             ->addIndexColumn()
                             ->addColumn('aksi', function ($data){
-                                return '<a class="btn btn-primary" href=""><i class="fas fa-edit"></i></a> <button onclick="deleted('.$data->id.')" class="btn btn-danger"><i class="far fa-trash-alt"></i></button>';
+                                return '<a class="btn btn-primary" href="'.route('edit-berita',$data->id).'"><i class="fas fa-edit"></i> Edit</a> <button onclick="deleted('.$data->id.')" class="btn btn-danger"><i class="far fa-trash-alt"></i> Hapus</button>';
                             })
                             ->rawColumns(['aksi'])
                             ->make(true);
@@ -96,8 +104,7 @@ class AdminController extends Controller
         return response()->json($data, 200);
     }
 
-    public function hapusBerita($id)
-    {
+    public function hapusBerita($id){
         $asis = berita::where('id', $id)->first();
         Storage::delete($asis['img']);
         $delete = $asis->delete();
@@ -115,6 +122,48 @@ class AdminController extends Controller
             'success' => $success,
             'message' => $message,
         ]);
+    }
+
+    public function indexEditberita($id){
+        $berita = berita::where('id', $id)->first();
+        return view('admin.edit-berita', compact('berita'));
+    }
+
+    public function postEditberita($id, Request $request){
+        // dd($request->all());
+        $validator = Validator::make($request->all(), [
+            'judul' => 'required | string | max:100',
+            'isi_berita' => 'required | string | max:20000',
+            'thumb' => 'image',
+        ]);
+
+        if ($validator->fails()) { 
+            return redirect()
+            ->back()
+            ->withError("Data gagal di submit, lengkapi form input data");
+        }
+
+        berita::where('id',$id)->update([
+            'judul' => $request->get('judul'),
+            'slug' => Str::slug($request->get('judul'),'-'),
+            'deskripsi' => $request->get('isi_berita'),
+        ]);
+
+        if ($request->has('thumb')) {
+            $file = berita::where('id', $id)->first();
+            Storage::delete($file['img']);
+
+            $name = "b_".Carbon::now()->format('YmdHs').$request->file('thumb')->getClientOriginalName();
+            $path_img = Storage::putFileAs('images/img_berita', $request->file('thumb'), $name);
+
+            berita::where('id',$id)->update([
+                'img' => $path_img
+            ]);
+        }
+
+        return redirect()
+            ->back()
+            ->withSuccess("Data berhasil di submit");
     }
 
     // Assisten 
@@ -232,7 +281,7 @@ class AdminController extends Controller
         return Datatables::of($data)
             ->addIndexColumn()
             ->addColumn('aksi', function ($data){
-                return '<a target="_blank" href="'.asset($data->thumbnail_path).'" class="edit btn btn-secondary btn-sm"><i class="far fa-image"></i></a> <a target="_blank" href="'.route('lab', $data->slug).'" class="edit btn btn-info btn-sm"><i class="fas fa-eye"></i></a> <a href="'.route('edit-jurusan', $data->id).'" class="btn btn-primary btn-sm" href=""><i class="fas fa-edit"></i></a>';
+                return '<a target="_blank" href="'.route('lab', $data->slug).'" class="edit btn btn-info btn-sm"><i class="fas fa-eye"></i> Lihat</a> <a href="'.route('edit-jurusan', $data->id).'" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i> Edit</a> <button onclick="hapusJurusan('.$data->id.')" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i> Hapus</button>';
             })
             ->rawColumns(['aksi'])
             ->make(true);
@@ -261,18 +310,17 @@ class AdminController extends Controller
     }
 
     public function deleteJurusan($id){
-        $delete = jurusan::where('id',$id)->delete();
+        try {
+            jurusan::destroy($id);
+            $success = true;
+            $message = "Jurusan berhasil dihapus";
+            
 
-        // check data deleted or not
-        if ($delete == 1) {
-            $success = true;
-            $message = "Materi berhasil dihapus";
-        } else {
-            $success = true;
-            $message = "Materi tidak ditemukan";
+        } catch (\Exception $e) {
+            $success = false;
+            $message = "Jurusan Gagal dihapus, masih memiliki data yang berhubungan";
         }
 
-        //  Return response
         return response()->json([
             'success' => $success,
             'message' => $message,
@@ -343,72 +391,55 @@ class AdminController extends Controller
     // LAB 
     public function indexLab(){
         $data = jurusan::all();
-        $dosen = user::whereIn('roles_id',[3,4,5])->get();
-        // dd($dosen);
+        $dosen = dosen::all();
         return view('admin.laboratorium', compact('data', 'dosen'));
     }
 
     public function postLab(Request $request){
-        // dd($request->all());
+        // dd($request->all(), $request->get('klab') == null);
 
-        if ($request->has('thumb')){
-            $validator = Validator::make($request->all(), [
-                'nama_lab' => 'required | string | max:100',
-                'deskripsi_lab' => 'required | string | max:1000',
-                'thumb' => 'required|mimes:jpg,png,jpeg|max:7000', // max 7MB
-                'kode' => 'required',
-            ]);
+        $validator = Validator::make($request->all(), [
+            'nama_lab' => 'required | string | max:100',
+            'deskripsi_lab' => 'required | string | max:1000',
+            'thumb' => 'required|mimes:jpg,png,jpeg|max:7000', // max 7MB
+            'kode' => 'required',
+            'klab' => 'required'
+        ]);
 
-            if ($validator->fails()) { 
-                return redirect()
-                ->back()
-                ->withErrors($validator);
-            }
-
-            $name = "".Carbon::now()->format('YmdHs')."_".$request->file('thumb')->getClientOriginalName();
-            $path = Storage::putFileAs('images/thumbnail', $request->file('thumb'), $name);
-
-            if ($request->get('klab') != null) {
-                $lab = lab::create([
-                    'nama' => $request->get('nama_lab'),
-                    'slug' => Str::slug($request->get('nama_lab'),'-'),
-                    'deskripsi' => $request->get('deskripsi_lab'),
-                    'thumbnail' => $path,
-                    'jurusan'=>$request->get('kode'),
-                    'kepala_lab'=>$request->get('klab')
-                ]);
-
-                // dd($lab->id);
-                
-                dosen_role::create([
-                    'role' => 1,
-                    'dosen_id' => $request->get('klab'),
-                    'jurusan_id' => $request->get('kode'),
-                    'lab_id' => $lab->id
-                ]);
-
-            }else {
-                lab::create([
-                    'nama' => $request->get('nama_lab'),
-                    'slug' => Str::slug($request->get('nama_lab'),'-'),
-                    'deskripsi' => $request->get('deskripsi_lab'),
-                    'thumbnail' => $path,
-                    'jurusan'=>$request->get('kode'),
-                ]);
-            }
+        if ($validator->fails()) { 
             return redirect()
-                ->back()
-                ->withSuccess("Data berhasil di submit");
+            ->back()
+            ->withErrors($validator);
         }
+
+        $name = "".Carbon::now()->format('YmdHs')."_".$request->file('thumb')->getClientOriginalName();
+        $path = Storage::putFileAs('images/thumbnail', $request->file('thumb'), $name);
+        $lab = lab::create([
+            'nama' => $request->get('nama_lab'),
+            'slug' => Str::slug($request->get('nama_lab'),'-'),
+            'deskripsi' => $request->get('deskripsi_lab'),
+            'thumbnail' => $path,
+            'jurusan'=>$request->get('kode'),
+            'kepala_lab'=>$request->get('klab')
+        ]);
+        
+        dosen_role::create([
+            'role' => 1,
+            'dosen_id' => $request->get('klab'),
+            'jurusan_id' => $request->get('kode'),
+            'lab_id' => $lab->id
+        ]);
+
         return redirect()
-                ->back()
-                ->withErrors("Data gagal di submit");
+            ->back()
+            ->withSuccess("Data berhasil di submit");
+        
     }
 
     public function indexEditLab($id){
         $lab = lab::where('id',$id)->first();
         $data = jurusan::all();
-        $dosen = user::whereIn('roles_id',[3,4,5])->get();
+        $dosen = dosen::all();
         return view('admin.edit-lab', compact('data','lab', 'dosen'));
     }
 
@@ -504,7 +535,7 @@ class AdminController extends Controller
         return Datatables::of($data)
             ->addIndexColumn()
             ->addColumn('aksi', function ($data){
-                return '<a target="_blank" href="'.asset($data->thumbnail).'" class="edit btn btn-secondary btn-sm"><i class="far fa-image"></i></a> <a target="_blank" href="'.route('praktikum-list', $data->slug).'" class="edit btn btn-info btn-sm"><i class="fas fa-eye"></i></a> <a class="btn btn-primary btn-sm" href="'.route('edit-lab', $data->id).'"><i class="fas fa-edit"></i></a> <a target="_blank" href="'.route('praktikumAdmin', $data->slug).'" class="edit btn btn-primary btn-sm"><i class="fas fa-book-open"></i></a>';
+                return '<a target="_blank" href="'.route('praktikum-list', $data->slug).'" class="edit btn btn-info btn-sm"><i class="fas fa-eye"></i> Lihat</a> <a class="btn btn-primary btn-sm" href="'.route('edit-lab', $data->id).'"><i class="fas fa-edit"></i> Edit</a> <button onclick="hapusLab('.$data->id.')" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i> Hapus</button> <a target="_blank" href="'.route('praktikumAdmin', $data->slug).'" class="edit btn btn-primary btn-sm"><i class="fas fa-book-open"></i> Prak</a>';
             })
             ->addColumn('jurusan', function ($data){
                 $jur = $data->jurusan()->first()->nama;
@@ -519,27 +550,24 @@ class AdminController extends Controller
     }
 
     public function deleteLab($id){
-        $lab = lab::where('id', $id)->first();
-        Storage::delete($lab['thumbnail']);
-        
+        try {
+            $lab = lab::where('id', $id)->first();
+            Storage::delete($lab['thumbnail']);
 
-        // Storage::disk('public')->delete($lab['thumbnail']);
-        $delete = $lab->delete();
+            lab::destroy($id);
+            $success = true;
+            $message = "Laboratorium berhasil dihapus";
 
-        // check data deleted or not
-        if ($delete == 1) {
-            $success = true;
-            $message = "Materi berhasil dihapus";
-        } else {
-            $success = true;
-            $message = "Materi tidak ditemukan";
+        } catch (\Exception $e) {
+            $success = false;
+            $message = "Laboratorium Gagal dihapus, masih memiliki data yang berhubungan";
         }
 
-        //  Return response
         return response()->json([
             'success' => $success,
             'message' => $message,
         ]);
+
     }
 
     public function statusLab($id){
@@ -575,7 +603,9 @@ class AdminController extends Controller
             'deskripsi' => 'string | max:1000',
             'semester' => 'required',
             'tahun_ajaran' => 'required',
+            'koor_dosen' => 'required'
         ]);
+
         if ($validator->fails()) { 
             return redirect()
             ->back()
@@ -592,7 +622,6 @@ class AdminController extends Controller
                 'laboratorium' => $id,
                 'kelas' => $request->get('kelas'),
                 'koor_dosen_prak' => $request->get('koor_dosen'),
-                // 'koor_assisten' => $request->get('koor_asis')
             ]);
             
             if ($request->get('koor_dosen') != NULL) {
@@ -604,11 +633,9 @@ class AdminController extends Controller
                 ]);
             }
 
-            // if ($request->get('koor_asis') != NULL) {
-            //     assisten::where('mahasiswa_id', $request->get('koor_asis'))->where('praktikum_id', $data->id)->update([
-            //         'role' => 2,
-            //     ]);
-            // }
+            return redirect()
+                ->back()
+                ->withSuccess("Data berhasil di submit");
 
         }else {
             $data = praktikum::create([
@@ -619,7 +646,6 @@ class AdminController extends Controller
                 'tahun_ajaran' => $request->get('tahun_ajaran'),
                 'laboratorium' => $id,
                 'koor_dosen_prak' => $request->get('koor_dosen'),
-                // 'koor_assisten' => $request->get('koor_asis')
             ]);
 
             if ($request->get('koor_dosen') != NULL) {
@@ -631,16 +657,15 @@ class AdminController extends Controller
                 ]);
             }
 
-            // if ($request->get('koor_asis') != NULL) {
-            //     assisten::where('mahasiswa_id', $request->get('koor_asis'))->where('praktikum_id', $data->id)->update([
-            //         'role' => 2,
-            //     ]);
-            // }
+            return redirect()
+                ->back()
+                ->withSuccess("Data berhasil di submit");
         }
 
         return redirect()
-            ->back()
-            ->withSuccess("Data berhasil di submit");
+                ->back()
+                ->withErrors("Data gagal di submit");
+
     }
 
     public function getTablePrak($id){
@@ -648,7 +673,7 @@ class AdminController extends Controller
         return Datatables::of($data)
             ->addIndexColumn()
             ->addColumn('aksi', function ($data){
-                return '<a target="_blank" href="'.route('detail-materi',$data->id).'" class="edit btn btn-info btn-sm"><i class="fas fa-eye"></i></a> <a class="btn btn-primary btn-sm" href=""><i class="fas fa-edit"></i></a> <a target="_blank" href="'.route('materi', $data->id).'" class="edit btn btn-info btn-sm"><i class="fas fa-book-open"></i></a>';
+                return '<a class="btn btn-primary btn-sm" href="'.route('edit-prak', $data->id).'"><i class="fas fa-edit"></i> Edit</a> <button onclick="hapusPrak('.$data->id.')" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i> Hapus</button> <a target="_blank" href="'.route('materi', $data->id).'" class="edit btn btn-info btn-sm"><i class="fas fa-book-open"></i>Materi</a>';
             })
             ->addColumn('th', function ($data){
                 return $data->semester.'/'.$data->tahun_ajaran;
@@ -685,20 +710,16 @@ class AdminController extends Controller
     }
 
     public function deletePrak($id){
-        $lab = praktikum::where('id', $id)->first();
-
-        $delete = $lab->delete();
-
-        // check data deleted or not
-        if ($delete == 1) {
+        try {
+            praktikum::destroy($id);
             $success = true;
-            $message = "Materi berhasil dihapus";
-        } else {
-            $success = true;
-            $message = "Materi tidak ditemukan";
+            $message = "Praktikum berhasil dihapus";
+
+        } catch (\Exception $e) {
+            $success = false;
+            $message = "Praktikum Gagal dihapus, masih memiliki data yang berhubungan";
         }
 
-        //  Return response
         return response()->json([
             'success' => $success,
             'message' => $message,
@@ -723,6 +744,88 @@ class AdminController extends Controller
         return response()->json($data, 200);
     }
 
+    public function indexEditPrak($id){
+        $prak = praktikum::where('id',$id)->first();
+        $kelas = kelas::all();
+        $dosen = dosen::all();
+        $assisten = mahasiswa::all();    
+        return view('admin.edit-praktikum', compact('prak','kelas','dosen','assisten'));
+    }
+
+    public function postEditPrak($id, Request $request){
+        // dd($request->all());
+        $validator = Validator::make($request->all(), [
+            'nama_praktikum' => 'required | string | max:100',
+            'deskripsi' => 'string | max:1000',
+            'semester' => 'required',
+            'tahun_ajaran' => 'required',
+            'kelas' => 'required'
+        ]);
+
+        if ($validator->fails()) { 
+            return redirect()
+            ->back()
+            ->withError("Data gagal di submit, lengkapi form input data");
+        }
+
+        if ($request->get('kelas') != null) {
+            $data = praktikum::where('id',$id)->update([
+                'nama' => $request->get('nama_praktikum'),
+                'slug' => Str::slug($request->get('nama_praktikum'),'-'),
+                'deskripsi' => $request->get('deskripsi'),
+                'semester' => $request->get('semester'),
+                'tahun_ajaran' => $request->get('tahun_ajaran'),
+                'kelas' => $request->get('kelas')
+            ]);
+
+            
+            if ($request->get('koor_dosen') != NULL) {
+
+                dosen_role::updateOrCreate(
+                    [
+                        'dosen_id' => $request->get('koor_dosen'),
+                        'praktikum_id' => $id
+                    ],
+                    [
+                        'role' => 2,
+                        'dosen_id' => $request->get('koor_dosen'),
+                        'praktikum_id' => $id
+                    ]
+                );
+
+                praktikum::where('id',$id)->update([
+                    'koor_dosen_prak' => $request->get('koor_dosen'),
+                ]);
+            }
+
+            if ($request->get('koor_asis') != NULL) {
+                assisten::updateOrCreate(
+                    [
+                        'mahasiswa_id' => $request->get('koor_asis'),
+                        'praktikum_id' => $id
+                    ],
+                    [
+                        'role' => 2,
+                        'mahasiswa_id' => $request->get('koor_asis'),
+                        'praktikum_id' => $id
+                    ]
+                );
+
+                praktikum::where('id',$id)->update([
+                    'koor_assisten' => $request->get('koor_asis'),
+                ]);
+            }
+
+            return redirect()
+                ->back()
+                ->withSuccess("Data berhasil di submit");
+        }
+
+        return redirect()
+                ->back()
+                ->withErrors("Data gagal di submit");
+    }
+
     // Materi 
     public function indexMateri($id){
         $lab = praktikum::where('id',$id)->first();
@@ -734,7 +837,7 @@ class AdminController extends Controller
         return Datatables::of($data)
             ->addIndexColumn()
             ->addColumn('aksi', function ($data){
-                return '<a target="_blank" href="'.route('detail-materi',$data->praktikum_id).'" class="edit btn btn-info btn-sm"><i class="fas fa-eye"></i></a> <a class="btn btn-primary btn-sm" href=""><i class="fas fa-edit"></i></a> <a onclick="hapusMateri('.$data->id.')" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></a>';
+                return '<a target="_blank" href="'.route('detail-materi',$data->praktikum_id).'" class="edit btn btn-info btn-sm"><i class="fas fa-eye"></i>  Lihat</a> <button class="btn btn-primary btn-sm"><i class="fas fa-edit"></i> Edit</button> <button onclick="hapusMateri('.$data->id.')" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i> Hapus</a>';
             })
             ->rawColumns(['aksi'])
             ->make(true);
@@ -783,20 +886,16 @@ class AdminController extends Controller
     }
 
     public function deleteMateri($id){
-        $materi = Materi::where('id', $id)->first();
-
-        $delete = $materi->delete();
-
-        // check data deleted or not
-        if ($delete == 1) {
+        try {
+            Materi::destroy($id);
             $success = true;
-            $message = "Materi berhasil dihapus";
-        } else {
+            $message = "MAteri berhasil dihapus";
+
+        } catch (\Exception $e) {
             $success = false;
-            $message = "Materi tidak ditemukan";
+            $message = "MAteri Gagal dihapus, masih memiliki data yang berhubungan";
         }
 
-        //  Return response
         return response()->json([
             'success' => $success,
             'message' => $message,

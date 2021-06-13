@@ -17,7 +17,7 @@ class AddForeignKeyToRekrutmens extends Migration
             $table->foreign('praktikum_id')
                 ->references('id')
                 ->on('praktikums')
-                ->onDelete('restrict')
+                ->onDelete('cascade')
                 ->onUpdate('cascade');
         });
     }

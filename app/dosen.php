@@ -13,7 +13,7 @@ class dosen extends Model
 
     protected $primaryKey = 'nomer_id';
 
-    public function role()
+    public function getRoles()
     {
         return $this->hasMany('App\dosen_role', 'nomer_id', 'dosen_id');
     }

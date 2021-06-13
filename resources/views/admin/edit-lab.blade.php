@@ -35,10 +35,6 @@
               <h1 class="m-0 text-dark">Laboratorium {{$lab['nama']}}</h1>
             </div><!-- /.col -->
             <div class="col-sm-6">
-              <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item active">Dashboard v1</li>
-              </ol>
             </div><!-- /.col -->
           </div><!-- /.row -->
         </div><!-- /.container-fluid -->
@@ -83,12 +79,15 @@
                   <textarea class="form-control" rows="3" name="deskripsi_lab" placeholder="Masukan Deskripsi Jurusan" required autofocus>{{$lab['deskripsi']}}</textarea>
                 </div>
                 <div class="form-group">
-                  <label>Pilih Kepala Laboratorium</label>
-                  <select name="klab" class="custom-select form-control">
-                    @foreach ($dosen as $d)
-                      <option value="{{$d->nomer_id}}" {{$lab['kepala_lab'] == $d->nomer_id ? 'selected' : '' }}>{{$d->nomer_id}} | {{$d->dosen->nama}}</option>
-                    @endforeach
-                  </select>
+                  <label>Kepala Laboratorium</label>
+                  <input list="klabs" name="klab" id="klab" value="{{$lab['kepala_lab']}}">
+                    <datalist id="klabs">
+                      {{-- <option selected>Wajib dipilih</option> --}}
+                      @foreach ($dosen as $d)
+                        <option value="{{$d->nomer_id}}">{{$d->nama}}</option>
+                      @endforeach
+                    </datalist>
+
                 </div>
               </div>
               

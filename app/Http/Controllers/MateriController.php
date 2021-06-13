@@ -21,11 +21,11 @@ use Illuminate\Support\Facades\Storage;
 use App\Exports\AbsenExport;
 use Maatwebsite\Excel\Facades\Excel;
 use DataTables;
+use App\file_materi as fmateri;
 
 class MateriController extends Controller
 {
-    public function listPraktikum(Request $request, $slug)
-    {
+    public function listPraktikum(Request $request, $slug){
         // dd($request->all());
         $lab = lab::where('slug',$slug)->first();
         // dd($lab);
@@ -52,8 +52,7 @@ class MateriController extends Controller
         return view('landing.praktikum', compact('dosenRole', 'lab', 'data', 'enroll', 'role', 'filter', 'assisten'));
     }
 
-    public function indexMateri($id)
-    {
+    public function indexMateri($id){
         $role = Auth::user()->roles_id;
         $prak = praktikum::where('id',$id)->first();
         // dd($prak->id);
@@ -76,8 +75,7 @@ class MateriController extends Controller
         return view('landing.detail-materi',compact('dosenRole', 'materi', 'listAsisten', 'data','prak', 'role','assisten', 'id','Cekabsen','absen','dataAbsen_mhs'));
     }
 
-    public function daftarPrak($id)
-    {
+    public function daftarPrak($id){
         if (enroll::where('user_id',Auth::user()->id)->where('praktikum_id',$id)->count() == 0){
             enroll::create([
                 'user_id' => Auth::user()->id,
@@ -382,5 +380,153 @@ class MateriController extends Controller
         ]);
         $msg = "Berhasil diupdate";
         return response()->json(array('msg'=> $msg), 200);
+    }
+
+    public function EditDetailMateri($id){
+        $detail = file_materi::where('id', $id)->get();
+        $data = [];
+        foreach ($detail as $d) {
+            // dd($d->materi['nama']);
+            $data = [
+                'id' => $d->id,
+                'materi_id' => $d->materi_id,
+                'nama_materi' => $d->getMateri->nama,
+                'type' => $d->type,
+                'nama' => $d->nama,
+                'materi' => $d->materi,
+                'img' => $d->img,
+                'file' => $d->file,
+                'link' => $d->link,
+                'tugas' => $d->tugas,
+            ];
+        }
+
+        // dd($detail);
+        
+        return view('landing.edit-detail-materi',compact('data'));
+    }
+
+    public function postEditDetailMateri($id, Request $request)
+    {
+        // dd($request->all());
+        if ($request->get('tipe') == '1' && $request->get('materi') != null) {
+            $validator = Validator::make($request->all(), [
+                'materi' => 'required | string | max:20000',
+                'nama_materi' => 'string',
+            ]);
+    
+            if ($validator->fails()) { 
+                return redirect()
+                ->back()
+                ->withErrors($validator);
+            }
+
+            fmateri::where('id',$id)->update([
+                'nama' => $request->get('nama_materi'),
+                'materi' => $request->get('materi'),
+            ]);
+            Alert::success('Sukses', 'Materi Berhasil ditambah');
+            return redirect()
+                ->back()
+                ->withSuccess("Data berhasil di simpan");
+
+        } if ($request->get('tipe') == '2' && $request->has('thumb')){
+            $validator = Validator::make($request->all(), [
+                'nama_materi' => 'required | string',
+                'thumb' => 'image', // max 7MB
+            ]);
+            if ($validator->fails()) { 
+                return redirect()
+                ->back()
+                ->withErrors($validator);
+            }
+
+
+            $name = Carbon::now()->format('YmdHs')."_".$request->file('thumb')->getClientOriginalName();
+            $path_img = Storage::putFileAs('images/img_materi', $request->file('thumb'), $name);
+
+            fmateri::where('id',$id)->update([
+                'nama' => $request->get('nama_materi'),
+                'img' => $path_img,
+            ]);
+            Alert::success('Sukses', 'Materi Berhasil ditambah');
+            return redirect()
+                ->back()
+                ->withSuccess("Data berhasil di simpan");
+
+        } if ($request->get('tipe') == '3' && $request->has('file')){
+            $validator = Validator::make($request->all(), [
+                'nama_materi' => 'required | string',
+                'file' => 'required|max:10000|mimes:doc,docx,xlsx,zip,rar,ppt,pptx,pdf,xls',
+            ]);
+
+            if ($validator->fails()) { 
+                return redirect()
+                ->back()
+                ->withErrors($validator);
+            }
+            $path = public_path('materi');
+
+            $nameFile = 'm_'.Carbon::now()->format('YmdHs').$request->file('file')->getClientOriginalName();
+            $path_img = Storage::putFileAs('file/file_materi', $request->file('file'), $nameFile);
+
+            fmateri::where('id',$id)->update([
+                'nama' => $request->get('nama_materi'),
+                'file' => $nameFile,
+            ]);
+            Alert::success('Sukses', 'Materi Berhasil ditambah');
+            return redirect()
+                ->back()
+                ->withSuccess("Data berhasil di simpan");
+
+        }if ($request->get('tipe') == '4' && $request->get('link_materi') != null){
+            $validator = Validator::make($request->all(), [
+                'link_materi' => 'required' ,
+                'nama_materi' => 'required | string',
+            ]);
+    
+            if ($validator->fails()) { 
+                return redirect()
+                ->back()
+                ->withErrors($validator);
+            }
+
+            fmateri::where('id',$id)->update([
+                'nama' => $request->get('nama_materi'),
+                'link' => $request->get('link_materi'),
+                'type' => $request->get('tipe'),
+                'materi_id' => $request->get('pilih_materi'),
+            ]);
+            Alert::success('Sukses', 'Materi Berhasil ditambah');
+            return redirect()
+                ->back()
+                ->withSuccess("Data berhasil di simpan");
+
+        }if ($request->get('tipe') == '5' && $request->get('tugas') != null){
+            $validator = Validator::make($request->all(), [
+                'tugas' => 'required | max:20000',
+                'nama_materi' => 'required | string | unique:materis,nama',
+            ]);
+    
+            if ($validator->fails()) { 
+                return redirect()
+                ->back()
+                ->withErrors($validator);
+            }
+            $data = $request->get('tugas');
+            fmateri::where('id',$id)->update([
+                'nama' => $request->get('nama_materi'),
+                'tugas' => $data,
+            ]);
+            
+            Alert::success('Sukses', 'Materi Berhasil ditambah');
+            return redirect()
+                ->back()
+                ->withSuccess("Data berhasil di simpan");
+        }else{
+            return redirect()
+                ->back()
+                ->withErrors("Data materi gagal di simpan, ulangi pengisian data");
+        }
     }
 }

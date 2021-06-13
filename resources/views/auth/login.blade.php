@@ -47,11 +47,11 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                @if (Route::has('password.request'))
+                                {{-- @if (Route::has('password.request'))
                                     <a class="btn btn-link float-right pt-0" href="{{ route('password.request') }}">
                                         {{ __('Lupa Password?') }}
                                     </a>
-                                @endif
+                                @endif --}}
                             </div>
                         </div>
                         <div class="row d-flex justify-content-center">

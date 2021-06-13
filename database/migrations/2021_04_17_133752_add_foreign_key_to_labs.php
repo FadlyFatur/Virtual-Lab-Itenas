@@ -22,7 +22,6 @@ class AddForeignKeyToLabs extends Migration
             $table->foreign('kepala_lab')
                 ->references('nomer_id')
                 ->on('dosens')
-                ->onDelete('restrict')
                 ->onUpdate('cascade');
         });
     }
