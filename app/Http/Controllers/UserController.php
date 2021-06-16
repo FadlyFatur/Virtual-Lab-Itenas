@@ -141,13 +141,14 @@ class UserController extends Controller
 		$file = $request->file('file');
  
 		// membuat nama file unik
-		$nama_file = rand().$file->getClientOriginalName();
+		// $nama_file = rand().$file->getClientOriginalName();
  
 		// upload ke folder file_siswa di dalam folder public
-		$file->move('file_import',$nama_file);
+		// $file->move('file_import',$nama_file);
  
 		// import data
-		Excel::import(new DosenImport, public_path('/file_import/'.$nama_file));
+		// Excel::import(new DosenImport, public_path('/file_import/'.$nama_file));
+		Excel::import(new DosenImport, $request->file('file'));
  
 		// notifikasi dengan session
 		Session::flash('sukses','Data Siswa Berhasil Diimport!');
@@ -329,13 +330,14 @@ class UserController extends Controller
 		$file = $request->file('file');
  
 		// membuat nama file unik
-		$nama_file = rand().$file->getClientOriginalName();
+		// $nama_file = rand().$file->getClientOriginalName();
  
 		// upload ke folder file_siswa di dalam folder public
-		$file->move('file_import',$nama_file);
+		// $file->move('file_import',$nama_file);
  
 		// import data
-		Excel::import(new MahasiswaImport, public_path('/file_import/'.$nama_file));
+		// Excel::import(new MahasiswaImport, public_path('/file_import/'.$nama_file));
+		Excel::import(new MahasiswaImport, $request->file('file'));
  
 		// notifikasi dengan session
 		Session::flash('sukses','Data Siswa Berhasil Diimport!');

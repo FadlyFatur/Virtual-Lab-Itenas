@@ -14,13 +14,15 @@ class MahasiswaImport implements ToModel
     */
     public function model(array $row)
     {   
+        // dd($row);
         $exists = mahasiswa::where('nrp',$row[0])->first();
-        if ($exists) {
+        if ($exists || $row[0] == NULL) {
             return null;    
+        }else{
+            return new mahasiswa([
+                'nrp' => $row[0],
+                'nama' => $row[1], 
+            ]);
         }
-        return new mahasiswa([
-            'nrp' => $row[0],
-            'nama' => $row[1], 
-        ]);
     }
 }

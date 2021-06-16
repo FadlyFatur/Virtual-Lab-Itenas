@@ -67,8 +67,9 @@ class HomeController extends Controller
     {
         // dd($request->all());
         $validator = Validator::make($request->all(), [
+            'penerima' => 'required',
             'deskripsi' => 'required | string | max:1000',
-            'file' => 'mimes:doc,docx,xlsx,pdf | max:10000'
+            'file' => 'mimes:doc,pdf,docx,zip,xlsx | max:10000'
         ]);
 
         if ($validator->fails()) { 
@@ -79,7 +80,7 @@ class HomeController extends Controller
         };
         
         $path = public_path('file');
-        $file = "la_".Carbon::now()->format('YmdHs').$request->file('file')->getClientOriginalName();
+        $file = "la".Carbon::now()->format('YmdHs').$request->file('file')->getClientOriginalName();
         $request->file('file')->move($path,$file);
         
         laporan::create([

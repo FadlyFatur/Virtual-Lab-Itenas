@@ -32,7 +32,7 @@
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="fileInput">Masukan File</label>
+                        <label for="fileInput">Masukan File <small style="color: red">(*doc, docx, pdf, zip)</small></label>
                         <input type="file" class="form-control-file" id="fileInput" name="file" required>
                     </div>
                 </div>
